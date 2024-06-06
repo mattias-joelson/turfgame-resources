@@ -7,11 +7,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class FeedsReader {
+public class FeedsTimeTypeReader {
 
     public static void main(String[] args) throws IOException {
         if (args.length < 1) {
-            System.out.printf("Usage:\n\t%s feed_file1.json ...%n", FeedsReader.class.getName());
+            System.out.printf("Usage:\n\t%s feed_file1.json ...%n", FeedsTimeTypeReader.class.getName());
             return;
         }
         for (String filename : args) {

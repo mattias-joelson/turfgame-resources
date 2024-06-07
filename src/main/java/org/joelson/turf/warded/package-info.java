@@ -1,4 +1,4 @@
 /**
- * Classes for accessing warded.se/turf
+ * Classes to handle data from warded.se/turf
  */
-package org.joelson.mattias.turfgame.warded;
+package org.joelson.turf.warded;

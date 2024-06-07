@@ -1,13 +1,13 @@
-package org.joelson.mattias.turfgame.warded;
+package org.joelson.turf.warded;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.joelson.mattias.turfgame.util.JacksonUtil;
+import org.joelson.turf.util.JacksonUtil;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public final class TakenZones {
-    
+
     private static final String PROPERTIES_PROPERTY = "properties"; // NON-NLS
     private static final String TITLE_PROPERTY = "title"; // NON-NLS
     private static final String COUNT_PROPERTY = "count"; // NON-NLS
@@ -27,7 +27,7 @@ public final class TakenZones {
         int endIndex = s.indexOf("</a>", startIndex); //NON-NLS
         return s.substring(startIndex, endIndex);
     }
-    
+
     public static Map<String, Integer> fromHTML(String s) {
         String json = getZonesJSONSting(s);
         Map<String, Integer> zoneCount = new HashMap<>();

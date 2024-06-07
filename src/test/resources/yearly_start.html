@@ -1,0 +1,104 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <META name="ROBOTS" content="NOINDEX,NOFOLLOW">
+    <LINK rel="stylesheet" type="text/css" href="//warded.se/turf/style2.css">
+    <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script src='https://api.mapbox.com/mapbox-gl-js/v0.44.1/mapbox-gl.js'></script>
+    <!-- <script src='https://api.mapbox.com/mapbox-gl-js/v0.38.0/mapbox-gl.js'></script> -->
+    <link href='https://api.mapbox.com/mapbox-gl-js/v0.44.1/mapbox-gl.css' rel='stylesheet' />
+    <style type="text/css">
+        .labels {
+            color: black;
+            font-family: "Lucida Grande", "Arial", sans-serif;
+            font-weight: bold;
+            font-size: 12px;
+            text-align: center;
+            width: 40px;
+            white-space: nowrap;
+        }
+        .InfoWindow {
+            color: black;
+            backgroundColor: 'black';
+            font-family: "Lucida Grande", "Arial", sans-serif;
+            font-weight: bold;
+            font-size: 12px;
+            text-align: center;
+            width: 40px;
+            white-space: nowrap;
+        }
+        .mapboxgl-popup-content {
+            position: relative;
+            background: #000000;
+            border-radius: 3px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.10);
+            padding: 6px 10px 4px;
+            pointer-events: auto;
+        }
+        .mapboxgl-popup-tip {
+            -webkit-align-self: center;
+            align-self: center;
+            border-top: none;
+            border-bottom-color: #000000;
+        }
+        .mapboxgl-popup-close-button {
+            position: absolute;
+            right: 0;
+            top: 0;
+            border: none;
+            border-radius: 0 0 0 0;
+            cursor: pointer;
+            color: rgb(245, 233, 149);
+        }
+
+    </style>
+</head>
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-44767133-1', 'warded.se');
+    ga('require', 'displayfeatures');
+    ga('set', 'userId', 80119);  ga('send', 'pageview');
+
+
+</script>
+<a href="/turf/index.php">Turf</a> <a href="/turf/zones.php">Zones</a> <a href="/turf/medals.php">Medals</a> <a href="/turf/regions.php">Regions</a> <a href="/turf/toplist.php">Toplists</a> <a href="/turf/round.php">Round history</a> <a href="/turf/beaver.php">Beaver history</a> <a href="/turf/users.php">Sessions</a> <a href="/turf/tvt.php">TvT</a>
+[Logged in as <a href=/turf/user.php>Oberoff</a>] <a href="/turf/unique.php?logout=true">Log out</a>  <a href="/turf/about.php">About</a>
+<br><table><tr><td>
+    <form method="GET" action="/turf/unique.php">
+        <select name='rid' onchange='this.form.submit()'>
+            <option value="0">Global</option>
+            <option value="136">Blekinge</option><option value="129">Dalarna</option><option value="138">Gotland</option><option value="134">Halland</option><option value="133">Jönköping</option><option value="137">Kalmar</option><option value="147">Kronoberg</option><option value="135">Skåne</option><option SELECTED value="141">Stockholm</option><option value="140">Södermanland</option><option value="142">Uppsala</option><option value="130">Värmland</option><option value="127">Västerbotten</option><option value="143">Västmanland</option><option value="132">Västra Götaland</option><option value="131">Örebro</option><option value="139">Östergötland</option><option value="211">Spain</option><option value="179">Østlandet</option><option value="185">Etelä-Suomi</option><option value="177">Åland</option></select>
+    </form>
+</td><td>
+    <p>1188/4466 (26%) unique zones taken.</p></td>
+
+    <td bgcolor=#00cc00><font color="black">405z<br>34%</td>
+    <td bgcolor=#ffff00><font color="black">534z<br>45%</td>
+    <td bgcolor=#ef8610><font color="black">154z<br>13%</td>
+    <td bgcolor=#ff0000><font color="black">48z<br>4%</td>
+    <td bgcolor=#cc00cc><font color="black">47z<br>4%</td>
+    </font>
+</tr></table>
+<div id='map' style='width: 100%; height: 90vh;'></div>
+<script>
+    //mapboxgl.accessToken = 'pk.eyJ1IjoiZWRkeXVldWUiLCJhIjoiY2o0Ym1paXdrMGRqaDJ3bGdqNHVoNmt1biJ9.8IHk71q107-GvxQisu4kZA';
+    if (!mapboxgl.supported()) {
+        alert('Your browser does not support WebGL maps. Make sure you have hardware acceleration enabled.');
+    } else {
+        var map = new mapboxgl.Map({
+            container: 'map',
+            style: 'https://openmaptiles.github.io/positron-gl-style/style-cdn.json',
+            zoom: 10,
+            center: [18.035035,59.378454],
+        });
+        map.on('load', function () {
+            map.addSource("unique", {
+                type: "geojson",
+                data: {
+                    "type": "FeatureCollection",
+                    "features": [

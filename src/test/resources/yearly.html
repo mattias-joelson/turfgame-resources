@@ -1,0 +1,6682 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <META name="ROBOTS" content="NOINDEX,NOFOLLOW">
+    <LINK rel="stylesheet" type="text/css" href="//warded.se/turf/style2.css">
+    <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script src='https://api.mapbox.com/mapbox-gl-js/v0.44.1/mapbox-gl.js'></script>
+    <!-- <script src='https://api.mapbox.com/mapbox-gl-js/v0.38.0/mapbox-gl.js'></script> -->
+    <link href='https://api.mapbox.com/mapbox-gl-js/v0.44.1/mapbox-gl.css' rel='stylesheet' />
+    <style type="text/css">
+        .labels {
+            color: black;
+            font-family: "Lucida Grande", "Arial", sans-serif;
+            font-weight: bold;
+            font-size: 12px;
+            text-align: center;
+            width: 40px;
+            white-space: nowrap;
+        }
+        .InfoWindow {
+            color: black;
+            backgroundColor: 'black';
+            font-family: "Lucida Grande", "Arial", sans-serif;
+            font-weight: bold;
+            font-size: 12px;
+            text-align: center;
+            width: 40px;
+            white-space: nowrap;
+        }
+        .mapboxgl-popup-content {
+            position: relative;
+            background: #000000;
+            border-radius: 3px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.10);
+            padding: 6px 10px 4px;
+            pointer-events: auto;
+        }
+        .mapboxgl-popup-tip {
+            -webkit-align-self: center;
+            align-self: center;
+            border-top: none;
+            border-bottom-color: #000000;
+        }
+        .mapboxgl-popup-close-button {
+            position: absolute;
+            right: 0;
+            top: 0;
+            border: none;
+            border-radius: 0 0 0 0;
+            cursor: pointer;
+            color: rgb(245, 233, 149);
+        }
+
+    </style>
+</head>
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-44767133-1', 'warded.se');
+    ga('require', 'displayfeatures');
+    ga('set', 'userId', 80119);  ga('send', 'pageview');
+
+
+</script>
+<a href="/turf/index.php">Turf</a> <a href="/turf/zones.php">Zones</a> <a href="/turf/medals.php">Medals</a> <a href="/turf/regions.php">Regions</a> <a href="/turf/toplist.php">Toplists</a> <a href="/turf/round.php">Round history</a> <a href="/turf/beaver.php">Beaver history</a> <a href="/turf/users.php">Sessions</a> <a href="/turf/tvt.php">TvT</a>
+[Logged in as <a href=/turf/user.php>Oberoff</a>] <a href="/turf/unique.php?logout=true">Log out</a>  <a href="/turf/about.php">About</a>
+<br><table><tr><td>
+    <form method="GET" action="/turf/unique.php">
+        <select name='rid' onchange='this.form.submit()'>
+            <option value="0">Global</option>
+            <option value="136">Blekinge</option><option value="129">Dalarna</option><option value="138">Gotland</option><option value="134">Halland</option><option value="133">Jönköping</option><option value="137">Kalmar</option><option value="147">Kronoberg</option><option value="135">Skåne</option><option SELECTED value="141">Stockholm</option><option value="140">Södermanland</option><option value="142">Uppsala</option><option value="130">Värmland</option><option value="127">Västerbotten</option><option value="143">Västmanland</option><option value="132">Västra Götaland</option><option value="131">Örebro</option><option value="139">Östergötland</option><option value="211">Spain</option><option value="179">Østlandet</option><option value="185">Etelä-Suomi</option><option value="177">Åland</option></select>
+    </form>
+</td><td>
+    <p>1188/4466 (26%) unique zones taken.</p></td>
+
+    <td bgcolor=#00cc00><font color="black">405z<br>34%</td>
+    <td bgcolor=#ffff00><font color="black">534z<br>45%</td>
+    <td bgcolor=#ef8610><font color="black">154z<br>13%</td>
+    <td bgcolor=#ff0000><font color="black">48z<br>4%</td>
+    <td bgcolor=#cc00cc><font color="black">47z<br>4%</td>
+    </font>
+</tr></table>
+<div id='map' style='width: 100%; height: 90vh;'></div>
+<script>
+    //mapboxgl.accessToken = 'pk.eyJ1IjoiZWRkeXVldWUiLCJhIjoiY2o0Ym1paXdrMGRqaDJ3bGdqNHVoNmt1biJ9.8IHk71q107-GvxQisu4kZA';
+    if (!mapboxgl.supported()) {
+        alert('Your browser does not support WebGL maps. Make sure you have hardware acceleration enabled.');
+    } else {
+        var map = new mapboxgl.Map({
+            container: 'map',
+            style: 'https://openmaptiles.github.io/positron-gl-style/style-cdn.json',
+            zoom: 10,
+            center: [18.035035,59.378454],
+        });
+        map.on('load', function () {
+            map.addSource("unique", {
+                type: "geojson",
+                data: {
+                    "type": "FeatureCollection",
+                    "features": [
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.03805,
+					59.37932
+				]
+			},
+			"properties": {
+				"title": "KrausTorg",
+				"count": 29
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.035035,
+					59.378454
+				]
+			},
+			"properties": {
+				"title": "Åbergssons",
+				"count": 15
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.029474,
+					59.378354
+				]
+			},
+			"properties": {
+				"title": "Bergspipet",
+				"count": 14
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.034967,
+					59.38134
+				]
+			},
+			"properties": {
+				"title": "Bergshamra",
+				"count": 11
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.031278,
+					59.380214
+				]
+			},
+			"properties": {
+				"title": "Berghamradjur",
+				"count": 10
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.03442,
+					59.383319
+				]
+			},
+			"properties": {
+				"title": "SvedenReserve",
+				"count": 10
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.0273,
+					59.388229
+				]
+			},
+			"properties": {
+				"title": "FelstavatLand",
+				"count": 9
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.030658,
+					59.385478
+				]
+			},
+			"properties": {
+				"title": "Svedenbadet",
+				"count": 8
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.01901,
+					59.385875
+				]
+			},
+			"properties": {
+				"title": "Ulriksdalz",
+				"count": 7
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.025394,
+					59.382505
+				]
+			},
+			"properties": {
+				"title": "Picassoparken",
+				"count": 7
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.013665,
+					59.389975
+				]
+			},
+			"properties": {
+				"title": "UriksCastle",
+				"count": 7
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.073934,
+					59.31514
+				]
+			},
+			"properties": {
+				"title": "BearZone",
+				"count": 7
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.010086,
+					59.365049
+				]
+			},
+			"properties": {
+				"title": "SolnaZone",
+				"count": 7
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.03582,
+					59.375546
+				]
+			},
+			"properties": {
+				"title": "IngenKarusell",
+				"count": 6
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.023547,
+					59.384194
+				]
+			},
+			"properties": {
+				"title": "Illerstigen",
+				"count": 7
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.073657,
+					59.311238
+				]
+			},
+			"properties": {
+				"title": "Southball",
+				"count": 6
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.043941,
+					59.375802
+				]
+			},
+			"properties": {
+				"title": "PowerWellBay",
+				"count": 6
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.013946,
+					59.382062
+				]
+			},
+			"properties": {
+				"title": "Pumphöjden",
+				"count": 6
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.064802,
+					59.314162
+				]
+			},
+			"properties": {
+				"title": "SödraStation",
+				"count": 6
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.020436,
+					59.379102
+				]
+			},
+			"properties": {
+				"title": "BrunnNorr",
+				"count": 6
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.970429,
+					59.361131
+				]
+			},
+			"properties": {
+				"title": "SundbybergC",
+				"count": 6
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.037826,
+					59.37345
+				]
+			},
+			"properties": {
+				"title": "Tivoliudden",
+				"count": 5
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.067775,
+					59.322885
+				]
+			},
+			"properties": {
+				"title": "GamlaStanT",
+				"count": 6
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.000255,
+					59.381074
+				]
+			},
+			"properties": {
+				"title": "Bagartunneln",
+				"count": 6
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.015212,
+					59.376934
+				]
+			},
+			"properties": {
+				"title": "iCanSeaWell",
+				"count": 6
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.973661,
+					59.35968
+				]
+			},
+			"properties": {
+				"title": "Landsbank",
+				"count": 5
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.041276,
+					59.362723
+				]
+			},
+			"properties": {
+				"title": "HagaSlott",
+				"count": 5
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.953138,
+					59.380325
+				]
+			},
+			"properties": {
+				"title": "LiteNyare",
+				"count": 5
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.041131,
+					59.390411
+				]
+			},
+			"properties": {
+				"title": "Dandezone",
+				"count": 5
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.022162,
+					59.373962
+				]
+			},
+			"properties": {
+				"title": "HagaBeach",
+				"count": 5
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.939716,
+					59.375828
+				]
+			},
+			"properties": {
+				"title": "Dragonplane",
+				"count": 5
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.012098,
+					59.393899
+				]
+			},
+			"properties": {
+				"title": "Kaninudden",
+				"count": 5
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.05868,
+					59.330405
+				]
+			},
+			"properties": {
+				"title": "CentralZone",
+				"count": 5
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.001866,
+					59.387504
+				]
+			},
+			"properties": {
+				"title": "Överjärvigt",
+				"count": 5
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.021949,
+					59.36938
+				]
+			},
+			"properties": {
+				"title": "Toppfoten",
+				"count": 4
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.00132,
+					59.343489
+				]
+			},
+			"properties": {
+				"title": "KarlBeach",
+				"count": 4
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.965809,
+					59.361554
+				]
+			},
+			"properties": {
+				"title": "Banangloben",
+				"count": 4
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.987366,
+					59.351741
+				]
+			},
+			"properties": {
+				"title": "Knoppängen",
+				"count": 4
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.008723,
+					59.341984
+				]
+			},
+			"properties": {
+				"title": "KanotMittemot",
+				"count": 4
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.953966,
+					59.371192
+				]
+			},
+			"properties": {
+				"title": "PigeonZone",
+				"count": 4
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.976715,
+					59.356328
+				]
+			},
+			"properties": {
+				"title": "UtPåLandet",
+				"count": 4
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.034143,
+					59.368591
+				]
+			},
+			"properties": {
+				"title": "Frösundavikz",
+				"count": 4
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.022096,
+					59.340728
+				]
+			},
+			"properties": {
+				"title": "Karlzone",
+				"count": 4
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.960772,
+					59.360273
+				]
+			},
+			"properties": {
+				"title": "Bellsbridge",
+				"count": 4
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.032324,
+					59.342415
+				]
+			},
+			"properties": {
+				"title": "DoYourWurst",
+				"count": 4
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.010322,
+					59.375515
+				]
+			},
+			"properties": {
+				"title": "SportsCorner",
+				"count": 4
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.964867,
+					59.395177
+				]
+			},
+			"properties": {
+				"title": "GhostStation",
+				"count": 4
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.035057,
+					59.354717
+				]
+			},
+			"properties": {
+				"title": "AstridZone",
+				"count": 4
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.036301,
+					59.362419
+				]
+			},
+			"properties": {
+				"title": "HagaVatten",
+				"count": 4
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.996437,
+					59.383591
+				]
+			},
+			"properties": {
+				"title": "Gunnarbo",
+				"count": 4
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.071291,
+					59.313048
+				]
+			},
+			"properties": {
+				"title": "Västgöten",
+				"count": 4
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.986737,
+					59.391533
+				]
+			},
+			"properties": {
+				"title": "DammtorpBro",
+				"count": 4
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.970401,
+					59.362684
+				]
+			},
+			"properties": {
+				"title": "NybergsTorg",
+				"count": 4
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.993106,
+					59.352598
+				]
+			},
+			"properties": {
+				"title": "Backstone",
+				"count": 4
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.007284,
+					59.345104
+				]
+			},
+			"properties": {
+				"title": "KirraJonne",
+				"count": 4
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.96957,
+					59.382156
+				]
+			},
+			"properties": {
+				"title": "Urzone",
+				"count": 4
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.012967,
+					59.340738
+				]
+			},
+			"properties": {
+				"title": "Ekelundzone",
+				"count": 4
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.067479,
+					59.310822
+				]
+			},
+			"properties": {
+				"title": "RosenZone",
+				"count": 4
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.031063,
+					59.358905
+				]
+			},
+			"properties": {
+				"title": "Klykan",
+				"count": 4
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.979438,
+					59.35557
+				]
+			},
+			"properties": {
+				"title": "SolnaStrand",
+				"count": 4
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.027483,
+					59.340987
+				]
+			},
+			"properties": {
+				"title": "Psnurrigt",
+				"count": 4
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.977559,
+					59.38482
+				]
+			},
+			"properties": {
+				"title": "Vinthundsväng",
+				"count": 4
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.009491,
+					59.373372
+				]
+			},
+			"properties": {
+				"title": "MotVänOMoSMot",
+				"count": 4
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.03249,
+					59.356133
+				]
+			},
+			"properties": {
+				"title": "OutWithABang",
+				"count": 4
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.042997,
+					59.380173
+				]
+			},
+			"properties": {
+				"title": "TittutTåget",
+				"count": 4
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.068309,
+					59.314582
+				]
+			},
+			"properties": {
+				"title": "HalfMoonZone",
+				"count": 4
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.99116,
+					59.387858
+				]
+			},
+			"properties": {
+				"title": "Ursviksbron",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.959136,
+					59.368016
+				]
+			},
+			"properties": {
+				"title": "Gosebänkarna",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.989504,
+					59.353743
+				]
+			},
+			"properties": {
+				"title": "SprungitVilse",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.011353,
+					59.368157
+				]
+			},
+			"properties": {
+				"title": "Luftkolonin",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.999106,
+					59.350861
+				]
+			},
+			"properties": {
+				"title": "WhereToNext",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.936724,
+					59.372046
+				]
+			},
+			"properties": {
+				"title": "Duvkulla",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.053682,
+					59.360155
+				]
+			},
+			"properties": {
+				"title": "BrunnensKanot",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.979478,
+					59.352193
+				]
+			},
+			"properties": {
+				"title": "Jonstorp",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.004528,
+					59.366801
+				]
+			},
+			"properties": {
+				"title": "Dalskogen",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.030458,
+					59.363727
+				]
+			},
+			"properties": {
+				"title": "Hagazone",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.023434,
+					59.35298
+				]
+			},
+			"properties": {
+				"title": "SoulnaChurch",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.01591,
+					59.342429
+				]
+			},
+			"properties": {
+				"title": "Gnagarträning",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.995389,
+					59.370014
+				]
+			},
+			"properties": {
+				"title": "RåstasjönsIP",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.035825,
+					59.364457
+				]
+			},
+			"properties": {
+				"title": "GustafsSlott",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.963617,
+					59.36261
+				]
+			},
+			"properties": {
+				"title": "Bällstabro",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.02911,
+					59.374753
+				]
+			},
+			"properties": {
+				"title": "KrausZone",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.004183,
+					59.391253
+				]
+			},
+			"properties": {
+				"title": "UlriksdalGrav",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.00151,
+					59.371432
+				]
+			},
+			"properties": {
+				"title": "FriendsArena",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.04331,
+					59.340149
+				]
+			},
+			"properties": {
+				"title": "VasaMitt",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.995687,
+					59.344437
+				]
+			},
+			"properties": {
+				"title": "Augustendalz",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.996965,
+					59.389524
+				]
+			},
+			"properties": {
+				"title": "Överjärva",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.962012,
+					59.380306
+				]
+			},
+			"properties": {
+				"title": "Vikingadungen",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.024426,
+					59.350167
+				]
+			},
+			"properties": {
+				"title": "OldWiderström",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.985424,
+					59.389722
+				]
+			},
+			"properties": {
+				"title": "URSäkta",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.037671,
+					59.341681
+				]
+			},
+			"properties": {
+				"title": "Tomtebo",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.042494,
+					59.387244
+				]
+			},
+			"properties": {
+				"title": "Mörbylund",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.937357,
+					59.383516
+				]
+			},
+			"properties": {
+				"title": "Rissnelänken",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.986813,
+					59.395689
+				]
+			},
+			"properties": {
+				"title": "Batongstaden",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.956988,
+					59.392431
+				]
+			},
+			"properties": {
+				"title": "JärvaCross",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.03423,
+					59.35774
+				]
+			},
+			"properties": {
+				"title": "Finnstugorna",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.00617,
+					59.382182
+				]
+			},
+			"properties": {
+				"title": "KickisParad",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.968924,
+					59.38781
+				]
+			},
+			"properties": {
+				"title": "Ormbunken",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.9621,
+					59.382713
+				]
+			},
+			"properties": {
+				"title": "Heptagram",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.941127,
+					59.382721
+				]
+			},
+			"properties": {
+				"title": "RinkebyKvarn",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.951158,
+					59.37807
+				]
+			},
+			"properties": {
+				"title": "SundbyGrop",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.977142,
+					59.350201
+				]
+			},
+			"properties": {
+				"title": "WorkIt",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.961674,
+					59.371054
+				]
+			},
+			"properties": {
+				"title": "Björkdunge",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.948598,
+					59.38589
+				]
+			},
+			"properties": {
+				"title": "UrsviksHolme",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.933158,
+					59.376984
+				]
+			},
+			"properties": {
+				"title": "TriRissne",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.008732,
+					59.356687
+				]
+			},
+			"properties": {
+				"title": "Tranzport",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.081267,
+					59.314042
+				]
+			},
+			"properties": {
+				"title": "Nytorg",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.962005,
+					59.365096
+				]
+			},
+			"properties": {
+				"title": "Duvgränd",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.014009,
+					59.369347
+				]
+			},
+			"properties": {
+				"title": "Signalisten",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.932964,
+					59.372718
+				]
+			},
+			"properties": {
+				"title": "RissneValla",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.055008,
+					59.357632
+				]
+			},
+			"properties": {
+				"title": "Halfbear",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.967353,
+					59.398002
+				]
+			},
+			"properties": {
+				"title": "Urswickzone",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.002865,
+					59.350526
+				]
+			},
+			"properties": {
+				"title": "PampasCross",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.031121,
+					59.361453
+				]
+			},
+			"properties": {
+				"title": "Stallgrunden",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.995979,
+					59.348464
+				]
+			},
+			"properties": {
+				"title": "Truppskallen",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.016162,
+					59.355525
+				]
+			},
+			"properties": {
+				"title": "MotKrogen",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.997639,
+					59.367921
+				]
+			},
+			"properties": {
+				"title": "Bathhouse",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.029727,
+					59.354872
+				]
+			},
+			"properties": {
+				"title": "StGravkoret",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.064098,
+					59.33225
+				]
+			},
+			"properties": {
+				"title": "Plattan",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.008258,
+					59.368486
+				]
+			},
+			"properties": {
+				"title": "Arenabron",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.022151,
+					59.342671
+				]
+			},
+			"properties": {
+				"title": "Pompe",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.031162,
+					59.409275
+				]
+			},
+			"properties": {
+				"title": "ShortCutZone",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.995617,
+					59.372112
+				]
+			},
+			"properties": {
+				"title": "RåstaLake",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.966353,
+					59.358773
+				]
+			},
+			"properties": {
+				"title": "Tuvanparken",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.027229,
+					59.37619
+				]
+			},
+			"properties": {
+				"title": "Sjöstugan",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.993956,
+					59.346395
+				]
+			},
+			"properties": {
+				"title": "HuvudstaHäst",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.072038,
+					59.314928
+				]
+			},
+			"properties": {
+				"title": "MediZone",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.998571,
+					59.392818
+				]
+			},
+			"properties": {
+				"title": "Polishög",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.962989,
+					59.358653
+				]
+			},
+			"properties": {
+				"title": "VikEllerÅ",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.040396,
+					59.339251
+				]
+			},
+			"properties": {
+				"title": "TorZone",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.034852,
+					59.346492
+				]
+			},
+			"properties": {
+				"title": "Torsplan",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.96148,
+					59.377088
+				]
+			},
+			"properties": {
+				"title": "Raspgarden",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.993168,
+					59.394732
+				]
+			},
+			"properties": {
+				"title": "SamtalPåBänk",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.007214,
+					59.37939
+				]
+			},
+			"properties": {
+				"title": "CantYouSea",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.984047,
+					59.386392
+				]
+			},
+			"properties": {
+				"title": "Hirudinea",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.973638,
+					59.393613
+				]
+			},
+			"properties": {
+				"title": "UrsValley",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.950694,
+					59.383755
+				]
+			},
+			"properties": {
+				"title": "Forskaren",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.957691,
+					59.372694
+				]
+			},
+			"properties": {
+				"title": "DuvboToppen",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.955726,
+					59.384199
+				]
+			},
+			"properties": {
+				"title": "TurfTrix",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.950461,
+					59.393004
+				]
+			},
+			"properties": {
+				"title": "Igelbäcksbron",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.041787,
+					59.354302
+				]
+			},
+			"properties": {
+				"title": "HagaparkZone",
+				"count": 3
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.982922,
+					59.373735
+				]
+			},
+			"properties": {
+				"title": "Färjetrafik",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.937875,
+					59.377646
+				]
+			},
+			"properties": {
+				"title": "MjölnerTrappa",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.952727,
+					59.374918
+				]
+			},
+			"properties": {
+				"title": "Tuppstugan",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.985059,
+					59.348371
+				]
+			},
+			"properties": {
+				"title": "HuvudstaTop",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.974719,
+					59.361907
+				]
+			},
+			"properties": {
+				"title": "LångaGatan",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.022352,
+					59.392424
+				]
+			},
+			"properties": {
+				"title": "KevingeStrand",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.024823,
+					59.366153
+				]
+			},
+			"properties": {
+				"title": "Hagatop",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.954327,
+					59.368303
+				]
+			},
+			"properties": {
+				"title": "Dalsänkan",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.972745,
+					59.371815
+				]
+			},
+			"properties": {
+				"title": "Golfängen",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.942241,
+					59.378087
+				]
+			},
+			"properties": {
+				"title": "Valkyrian",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.933952,
+					59.375087
+				]
+			},
+			"properties": {
+				"title": "Grönköping",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.999808,
+					59.352972
+				]
+			},
+			"properties": {
+				"title": "NothingStreet",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.047936,
+					59.355206
+				]
+			},
+			"properties": {
+				"title": "Brunnsviken",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.024259,
+					59.362999
+				]
+			},
+			"properties": {
+				"title": "NorraPorten",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.982706,
+					59.367055
+				]
+			},
+			"properties": {
+				"title": "Filmstaden",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.977755,
+					59.397184
+				]
+			},
+			"properties": {
+				"title": "Torpardöden",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.984419,
+					59.357715
+				]
+			},
+			"properties": {
+				"title": "Svetslågan",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.08326,
+					59.312474
+				]
+			},
+			"properties": {
+				"title": "NytorgZone",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.017231,
+					59.397861
+				]
+			},
+			"properties": {
+				"title": "SunCroftPier",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.98923,
+					59.381264
+				]
+			},
+			"properties": {
+				"title": "MulleMeck",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.978662,
+					59.365638
+				]
+			},
+			"properties": {
+				"title": "PåTvärsan",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.028732,
+					59.34795
+				]
+			},
+			"properties": {
+				"title": "VonEulers",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.943727,
+					59.376178
+				]
+			},
+			"properties": {
+				"title": "Rissneängarna",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.024851,
+					59.355692
+				]
+			},
+			"properties": {
+				"title": "Andrée",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.942304,
+					59.385587
+				]
+			},
+			"properties": {
+				"title": "Lagårdssväng",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.983065,
+					59.38312
+				]
+			},
+			"properties": {
+				"title": "IParkenDär",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.992117,
+					59.362958
+				]
+			},
+			"properties": {
+				"title": "RåsundaIdrott",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.959699,
+					59.398165
+				]
+			},
+			"properties": {
+				"title": "Spårbyte",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.00904,
+					59.35072
+				]
+			},
+			"properties": {
+				"title": "BackOffice",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.99596,
+					59.354957
+				]
+			},
+			"properties": {
+				"title": "RoDåOskar",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.095342,
+					59.324253
+				]
+			},
+			"properties": {
+				"title": "GrönaLund",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.973405,
+					59.378888
+				]
+			},
+			"properties": {
+				"title": "CirkuleraBär",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.009509,
+					59.361178
+				]
+			},
+			"properties": {
+				"title": "Hagalunden",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.018255,
+					59.349987
+				]
+			},
+			"properties": {
+				"title": "Granitbanan",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.950405,
+					59.367439
+				]
+			},
+			"properties": {
+				"title": "RailwayStreet",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.059649,
+					59.364813
+				]
+			},
+			"properties": {
+				"title": "Unizone",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.967211,
+					59.378952
+				]
+			},
+			"properties": {
+				"title": "Sundbyberg",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.062839,
+					59.318207
+				]
+			},
+			"properties": {
+				"title": "Mariatorget",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.985661,
+					59.34661
+				]
+			},
+			"properties": {
+				"title": "HuvudstaWater",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.00094,
+					59.365268
+				]
+			},
+			"properties": {
+				"title": "VasaparkJr",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.00351,
+					59.347525
+				]
+			},
+			"properties": {
+				"title": "VästraSkogenT",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.011501,
+					59.353779
+				]
+			},
+			"properties": {
+				"title": "Hedvigsdal",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.028686,
+					59.406574
+				]
+			},
+			"properties": {
+				"title": "KlockarMalm",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.968132,
+					59.370935
+				]
+			},
+			"properties": {
+				"title": "Blötsjön",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.016139,
+					59.366489
+				]
+			},
+			"properties": {
+				"title": "StoraFrösunda",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.052841,
+					59.368707
+				]
+			},
+			"properties": {
+				"title": "Naturtrappan",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.965647,
+					59.372358
+				]
+			},
+			"properties": {
+				"title": "Lootlake",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.990499,
+					59.347742
+				]
+			},
+			"properties": {
+				"title": "HuvudstaAllé",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.066513,
+					59.331372
+				]
+			},
+			"properties": {
+				"title": "BrunkeGryning",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.991312,
+					59.373222
+				]
+			},
+			"properties": {
+				"title": "RåstaNorr",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.027854,
+					59.370622
+				]
+			},
+			"properties": {
+				"title": "Frösundavik",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.02374,
+					59.40813
+				]
+			},
+			"properties": {
+				"title": "DanaSkog",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.987505,
+					59.360409
+				]
+			},
+			"properties": {
+				"title": "OakHillZone",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.977931,
+					59.373798
+				]
+			},
+			"properties": {
+				"title": "EarCity",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.991551,
+					59.350393
+				]
+			},
+			"properties": {
+				"title": "JobbigaBacken",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.047508,
+					59.377425
+				]
+			},
+			"properties": {
+				"title": "NäraHimlen",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.975565,
+					59.364932
+				]
+			},
+			"properties": {
+				"title": "TuleTorg",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.983686,
+					59.369309
+				]
+			},
+			"properties": {
+				"title": "SiggesTorn",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.041201,
+					59.365422
+				]
+			},
+			"properties": {
+				"title": "KnugligSten",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.939703,
+					59.390119
+				]
+			},
+			"properties": {
+				"title": "JärvaSyd",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.022174,
+					59.404471
+				]
+			},
+			"properties": {
+				"title": "SmallFrogs",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.006228,
+					59.359239
+				]
+			},
+			"properties": {
+				"title": "SolnaFlower",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.995674,
+					59.361578
+				]
+			},
+			"properties": {
+				"title": "RåsundaZone",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.981052,
+					59.39427
+				]
+			},
+			"properties": {
+				"title": "UrsSpår",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.965036,
+					59.356985
+				]
+			},
+			"properties": {
+				"title": "SmurfPier",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.05157,
+					59.378684
+				]
+			},
+			"properties": {
+				"title": "Bockholmen",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.991941,
+					59.358322
+				]
+			},
+			"properties": {
+				"title": "Skytteholm",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.020601,
+					59.344144
+				]
+			},
+			"properties": {
+				"title": "HejDåTomten",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.992985,
+					59.366563
+				]
+			},
+			"properties": {
+				"title": "LiteVinter",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.961555,
+					59.389856
+				]
+			},
+			"properties": {
+				"title": "Nötbacken",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.957044,
+					59.378076
+				]
+			},
+			"properties": {
+				"title": "Hallonstupet",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.033126,
+					59.348958
+				]
+			},
+			"properties": {
+				"title": "NKS",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.061468,
+					59.330837
+				]
+			},
+			"properties": {
+				"title": "ClaraKyrka",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.962247,
+					59.373958
+				]
+			},
+			"properties": {
+				"title": "Hallonstigen",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.0212,
+					59.36687
+				]
+			},
+			"properties": {
+				"title": "Toppkänning",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.004378,
+					59.36263
+				]
+			},
+			"properties": {
+				"title": "Kruthusbacken",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.067593,
+					59.335982
+				]
+			},
+			"properties": {
+				"title": "Regerking",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.970951,
+					59.35256
+				]
+			},
+			"properties": {
+				"title": "VretenSolna",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.03689,
+					59.391853
+				]
+			},
+			"properties": {
+				"title": "GrönaStigen",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.00329,
+					59.356607
+				]
+			},
+			"properties": {
+				"title": "MaleMountain",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.991386,
+					59.379387
+				]
+			},
+			"properties": {
+				"title": "Råstatunneln",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.99171,
+					59.368527
+				]
+			},
+			"properties": {
+				"title": "RåstaTop",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.963374,
+					59.391799
+				]
+			},
+			"properties": {
+				"title": "UschBron",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.933232,
+					59.378853
+				]
+			},
+			"properties": {
+				"title": "UnderMjölner",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.963383,
+					59.367937
+				]
+			},
+			"properties": {
+				"title": "Duvbo",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.972682,
+					59.36386
+				]
+			},
+			"properties": {
+				"title": "SundbyChurch",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.987303,
+					59.37462
+				]
+			},
+			"properties": {
+				"title": "RawLakeWoods",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.030888,
+					59.393203
+				]
+			},
+			"properties": {
+				"title": "HitTheWater",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.015882,
+					59.361049
+				]
+			},
+			"properties": {
+				"title": "OlleOlsson",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.945704,
+					59.371383
+				]
+			},
+			"properties": {
+				"title": "LekaDuvkull",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.972746,
+					59.373649
+				]
+			},
+			"properties": {
+				"title": "Golfklockan",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.030121,
+					59.344058
+				]
+			},
+			"properties": {
+				"title": "NorrbackZone",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.948239,
+					59.375955
+				]
+			},
+			"properties": {
+				"title": "RissneField",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.985561,
+					59.355714
+				]
+			},
+			"properties": {
+				"title": "AktaKranen",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.044011,
+					59.352155
+				]
+			},
+			"properties": {
+				"title": "Stallis",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.97823,
+					59.370432
+				]
+			},
+			"properties": {
+				"title": "Storgolf",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.941958,
+					59.373346
+				]
+			},
+			"properties": {
+				"title": "Skvadrontopp",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.999417,
+					59.345026
+				]
+			},
+			"properties": {
+				"title": "Guldporten",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.978431,
+					59.35994
+				]
+			},
+			"properties": {
+				"title": "SolnaBusiness",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.019979,
+					59.395113
+				]
+			},
+			"properties": {
+				"title": "ForeSome",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.99877,
+					59.378786
+				]
+			},
+			"properties": {
+				"title": "Bagarnz",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.972771,
+					59.369304
+				]
+			},
+			"properties": {
+				"title": "BolivarsPark",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.025827,
+					59.346739
+				]
+			},
+			"properties": {
+				"title": "JJBerzelius",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.983723,
+					59.354338
+				]
+			},
+			"properties": {
+				"title": "GöranP",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.018247,
+					59.352633
+				]
+			},
+			"properties": {
+				"title": "Husabyman",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.970242,
+					59.39536
+				]
+			},
+			"properties": {
+				"title": "URSkog",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.028289,
+					59.367524
+				]
+			},
+			"properties": {
+				"title": "HagaBacke",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.98723,
+					59.365185
+				]
+			},
+			"properties": {
+				"title": "Källstigen",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.972488,
+					59.357767
+				]
+			},
+			"properties": {
+				"title": "Humble",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.990262,
+					59.355689
+				]
+			},
+			"properties": {
+				"title": "Ankdammen",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.01929,
+					59.401204
+				]
+			},
+			"properties": {
+				"title": "RosornasVäg",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.97842,
+					59.381714
+				]
+			},
+			"properties": {
+				"title": "BrotorpPort",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.973748,
+					59.354536
+				]
+			},
+			"properties": {
+				"title": "SolnaStrandT",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.99822,
+					59.359378
+				]
+			},
+			"properties": {
+				"title": "Skyttezone",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.040116,
+					59.358803
+				]
+			},
+			"properties": {
+				"title": "Parkerat",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.948088,
+					59.373227
+				]
+			},
+			"properties": {
+				"title": "DuvboUtkiken",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.945813,
+					59.369106
+				]
+			},
+			"properties": {
+				"title": "LiteOff",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.056869,
+					59.362507
+				]
+			},
+			"properties": {
+				"title": "StökigaBygget",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.994758,
+					59.364674
+				]
+			},
+			"properties": {
+				"title": "ArmyZone",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.006714,
+					59.353555
+				]
+			},
+			"properties": {
+				"title": "Asplunds",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.095462,
+					59.323061
+				]
+			},
+			"properties": {
+				"title": "Bergådalbanan",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.030786,
+					59.404405
+				]
+			},
+			"properties": {
+				"title": "Gena",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.97047,
+					59.375382
+				]
+			},
+			"properties": {
+				"title": "RaspSquare",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.980176,
+					59.348188
+				]
+			},
+			"properties": {
+				"title": "HeadsCliff",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.011527,
+					59.362989
+				]
+			},
+			"properties": {
+				"title": "Blåkulla",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.048686,
+					59.361913
+				]
+			},
+			"properties": {
+				"title": "BrunnsPlaya",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.955863,
+					59.364645
+				]
+			},
+			"properties": {
+				"title": "MarabouPark",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.030818,
+					59.365888
+				]
+			},
+			"properties": {
+				"title": "FjärilnVingad",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.055558,
+					59.365373
+				]
+			},
+			"properties": {
+				"title": "Frescazone",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.965943,
+					59.376029
+				]
+			},
+			"properties": {
+				"title": "RaspHill",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.990193,
+					59.3455
+				]
+			},
+			"properties": {
+				"title": "Headzone",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.016037,
+					59.345417
+				]
+			},
+			"properties": {
+				"title": "DödaSlutet",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.952484,
+					59.39625
+				]
+			},
+			"properties": {
+				"title": "TjeEllerK",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.021423,
+					59.357927
+				]
+			},
+			"properties": {
+				"title": "EveningStar",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.973161,
+					59.366748
+				]
+			},
+			"properties": {
+				"title": "StoneCrime",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.985285,
+					59.377692
+				]
+			},
+			"properties": {
+				"title": "Tågväktaren",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.050982,
+					59.372895
+				]
+			},
+			"properties": {
+				"title": "Åminnet",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.968427,
+					59.367795
+				]
+			},
+			"properties": {
+				"title": "CleanUpZone",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.04381,
+					59.384979
+				]
+			},
+			"properties": {
+				"title": "Stocksund",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.982716,
+					59.371383
+				]
+			},
+			"properties": {
+				"title": "Råstasjön",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.021487,
+					59.34692
+				]
+			},
+			"properties": {
+				"title": "VonScheeles",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.062198,
+					59.334795
+				]
+			},
+			"properties": {
+				"title": "HayZone",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.001534,
+					59.3583
+				]
+			},
+			"properties": {
+				"title": "EricGrate",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.977595,
+					59.367713
+				]
+			},
+			"properties": {
+				"title": "MountainDale",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.009029,
+					59.34811
+				]
+			},
+			"properties": {
+				"title": "Pampaslänken",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.050104,
+					59.375912
+				]
+			},
+			"properties": {
+				"title": "Bryggpiren",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.981212,
+					59.362741
+				]
+			},
+			"properties": {
+				"title": "TrackStreet",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.012356,
+					59.344988
+				]
+			},
+			"properties": {
+				"title": "Athletezone",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.987267,
+					59.368526
+				]
+			},
+			"properties": {
+				"title": "RawChurch",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.970455,
+					59.390479
+				]
+			},
+			"properties": {
+				"title": "UschBush",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.963092,
+					59.386029
+				]
+			},
+			"properties": {
+				"title": "KillerSlope",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.045546,
+					59.341127
+				]
+			},
+			"properties": {
+				"title": "DalaZone",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.014474,
+					59.403303
+				]
+			},
+			"properties": {
+				"title": "NoraTräsk",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.016245,
+					59.363538
+				]
+			},
+			"properties": {
+				"title": "Kompassrosen",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.000728,
+					59.361622
+				]
+			},
+			"properties": {
+				"title": "Gnagetland",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.96139,
+					59.39345
+				]
+			},
+			"properties": {
+				"title": "Sunslope",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.072962,
+					59.336051
+				]
+			},
+			"properties": {
+				"title": "StureZone",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.977808,
+					59.388953
+				]
+			},
+			"properties": {
+				"title": "SheepPath",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.968658,
+					59.354417
+				]
+			},
+			"properties": {
+				"title": "BällstaBay",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.037454,
+					59.387993
+				]
+			},
+			"properties": {
+				"title": "DandyWood",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.995942,
+					59.357732
+				]
+			},
+			"properties": {
+				"title": "Skyttefältet",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.014682,
+					59.372529
+				]
+			},
+			"properties": {
+				"title": "BoulevardNr3",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.987427,
+					59.370902
+				]
+			},
+			"properties": {
+				"title": "RåstaSyd",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.936342,
+					59.380011
+				]
+			},
+			"properties": {
+				"title": "KrullZone",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.033155,
+					59.351342
+				]
+			},
+			"properties": {
+				"title": "Karolinezone",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.047025,
+					59.342753
+				]
+			},
+			"properties": {
+				"title": "VasasKyrka",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.965251,
+					59.369063
+				]
+			},
+			"properties": {
+				"title": "SaneTrack",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.011037,
+					59.370691
+				]
+			},
+			"properties": {
+				"title": "Ballongberget",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.947194,
+					59.391541
+				]
+			},
+			"properties": {
+				"title": "KymlingeDamm",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.036307,
+					59.361485
+				]
+			},
+			"properties": {
+				"title": "TheHole",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.973201,
+					59.351027
+				]
+			},
+			"properties": {
+				"title": "SpanaBrospann",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.957468,
+					59.375718
+				]
+			},
+			"properties": {
+				"title": "Hallonvägen",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.013932,
+					59.360049
+				]
+			},
+			"properties": {
+				"title": "HagaTower",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.977842,
+					59.377219
+				]
+			},
+			"properties": {
+				"title": "ÖrTennis",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.991316,
+					59.370129
+				]
+			},
+			"properties": {
+				"title": "ReadySteadyGo",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.951768,
+					59.389133
+				]
+			},
+			"properties": {
+				"title": "KrutStationen",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.946116,
+					59.379411
+				]
+			},
+			"properties": {
+				"title": "RissneDepå",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.930347,
+					59.377572
+				]
+			},
+			"properties": {
+				"title": "RissneIP",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.967912,
+					59.364931
+				]
+			},
+			"properties": {
+				"title": "Sundthorn",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.932157,
+					59.444261
+				]
+			},
+			"properties": {
+				"title": "HäggStation",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.000041,
+					59.354963
+				]
+			},
+			"properties": {
+				"title": "Huvudstatorg",
+				"count": 2
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.025802,
+					59.416312
+				]
+			},
+			"properties": {
+				"title": "DandeGolf",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.074607,
+					59.406448
+				]
+			},
+			"properties": {
+				"title": "LittleBritain",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.050982,
+					59.351678
+				]
+			},
+			"properties": {
+				"title": "EldshZone",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.070266,
+					59.326327
+				]
+			},
+			"properties": {
+				"title": "SkyldraGevär",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.887792,
+					59.585607
+				]
+			},
+			"properties": {
+				"title": "Viggeby",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.998456,
+					59.416725
+				]
+			},
+			"properties": {
+				"title": "SätraÄng",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.026682,
+					59.342502
+				]
+			},
+			"properties": {
+				"title": "PåLoftet",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.069015,
+					59.383951
+				]
+			},
+			"properties": {
+				"title": "FyraTallar",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.066407,
+					59.40427
+				]
+			},
+			"properties": {
+				"title": "Hildingen",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.993849,
+					59.43883
+				]
+			},
+			"properties": {
+				"title": "Rösjöbaden",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.003015,
+					59.399615
+				]
+			},
+			"properties": {
+				"title": "Rådandet",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.035657,
+					59.400546
+				]
+			},
+			"properties": {
+				"title": "Mörbyrundeln",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.076484,
+					59.408122
+				]
+			},
+			"properties": {
+				"title": "AltorpsKapell",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.04723,
+					59.365239
+				]
+			},
+			"properties": {
+				"title": "Piratbukten",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.074875,
+					59.326988
+				]
+			},
+			"properties": {
+				"title": "GurraTre",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.892219,
+					59.593966
+				]
+			},
+			"properties": {
+				"title": "Norrsunda",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.996139,
+					59.422277
+				]
+			},
+			"properties": {
+				"title": "Bygdeborgen",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.058576,
+					59.384895
+				]
+			},
+			"properties": {
+				"title": "Stenbåten",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.055203,
+					59.399269
+				]
+			},
+			"properties": {
+				"title": "Rondellzonen",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.056416,
+					59.329956
+				]
+			},
+			"properties": {
+				"title": "Waterfront",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.034905,
+					59.397105
+				]
+			},
+			"properties": {
+				"title": "MörbyZone",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.089427,
+					59.41668
+				]
+			},
+			"properties": {
+				"title": "BjörnsMinne",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.046306,
+					59.369456
+				]
+			},
+			"properties": {
+				"title": "Bergianska",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.070382,
+					59.330191
+				]
+			},
+			"properties": {
+				"title": "Jussizone",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.026962,
+					59.398633
+				]
+			},
+			"properties": {
+				"title": "Kevinge",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.007076,
+					59.424612
+				]
+			},
+			"properties": {
+				"title": "DandeWoods",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.063468,
+					59.390978
+				]
+			},
+			"properties": {
+				"title": "TimberPath",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.045884,
+					59.389717
+				]
+			},
+			"properties": {
+				"title": "Spårringen",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.076834,
+					59.307969
+				]
+			},
+			"properties": {
+				"title": "RealSkanstull",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.042818,
+					59.392342
+				]
+			},
+			"properties": {
+				"title": "TenderCare",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.075865,
+					59.423095
+				]
+			},
+			"properties": {
+				"title": "AnimalTee",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.047062,
+					59.372876
+				]
+			},
+			"properties": {
+				"title": "Ålakistan",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.951972,
+					59.398592
+				]
+			},
+			"properties": {
+				"title": "Fimpad",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.068146,
+					59.333466
+				]
+			},
+			"properties": {
+				"title": "EnKå",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.011713,
+					59.396384
+				]
+			},
+			"properties": {
+				"title": "LilleSkutt",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.071182,
+					59.322809
+				]
+			},
+			"properties": {
+				"title": "KornZone",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.033715,
+					59.435323
+				]
+			},
+			"properties": {
+				"title": "SpiceYard",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.074357,
+					59.388653
+				]
+			},
+			"properties": {
+				"title": "Gränsgärdet",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.044091,
+					59.396816
+				]
+			},
+			"properties": {
+				"title": "Myran",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.040254,
+					59.342845
+				]
+			},
+			"properties": {
+				"title": "AllaSnubbar",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.088289,
+					59.314842
+				]
+			},
+			"properties": {
+				"title": "Beckbrännarn",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.034574,
+					59.343998
+				]
+			},
+			"properties": {
+				"title": "SunZone",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.060527,
+					59.415533
+				]
+			},
+			"properties": {
+				"title": "SvalnäsWoods",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.945969,
+					59.395339
+				]
+			},
+			"properties": {
+				"title": "CoffinSouth",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.932001,
+					59.651492
+				]
+			},
+			"properties": {
+				"title": "ARNfive",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.063046,
+					59.336599
+				]
+			},
+			"properties": {
+				"title": "RIP1986",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.042687,
+					59.436021
+				]
+			},
+			"properties": {
+				"title": "GamlaElla",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.086185,
+					59.387123
+				]
+			},
+			"properties": {
+				"title": "Notchbay",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.039022,
+					59.400542
+				]
+			},
+			"properties": {
+				"title": "Karlsruhe",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.040627,
+					59.384258
+				]
+			},
+			"properties": {
+				"title": "Inverness",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.086154,
+					59.312151
+				]
+			},
+			"properties": {
+				"title": "SvenskaOrd",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.046685,
+					59.381988
+				]
+			},
+			"properties": {
+				"title": "BenkeMeFärjan",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.050438,
+					59.417842
+				]
+			},
+			"properties": {
+				"title": "Dalakröken",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.057971,
+					59.333459
+				]
+			},
+			"properties": {
+				"title": "OldBridge",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.030817,
+					59.426008
+				]
+			},
+			"properties": {
+				"title": "EnebybergsIP",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.09399,
+					59.396411
+				]
+			},
+			"properties": {
+				"title": "AnimalSquare",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.036244,
+					59.407456
+				]
+			},
+			"properties": {
+				"title": "DöendeDandyn",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.07183,
+					59.319802
+				]
+			},
+			"properties": {
+				"title": "Slussen",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.055808,
+					59.380495
+				]
+			},
+			"properties": {
+				"title": "Stockzone",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.047644,
+					59.410914
+				]
+			},
+			"properties": {
+				"title": "DandyFenja",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.949428,
+					59.427572
+				]
+			},
+			"properties": {
+				"title": "Sollstation",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.008187,
+					59.404561
+				]
+			},
+			"properties": {
+				"title": "Fågelvägen",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.051214,
+					59.4258
+				]
+			},
+			"properties": {
+				"title": "Enebyberg",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.079062,
+					59.397562
+				]
+			},
+			"properties": {
+				"title": "Midgårdsfält",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.880049,
+					59.583358
+				]
+			},
+			"properties": {
+				"title": "Rosenstoppet",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.005548,
+					59.409558
+				]
+			},
+			"properties": {
+				"title": "ForestBay",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.037348,
+					59.33762
+				]
+			},
+			"properties": {
+				"title": "Atlastäppan",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.070586,
+					59.379533
+				]
+			},
+			"properties": {
+				"title": "Lagmannen",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.047797,
+					59.408014
+				]
+			},
+			"properties": {
+				"title": "Lakestugan",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.983989,
+					59.401801
+				]
+			},
+			"properties": {
+				"title": "SulaTallrik",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.022413,
+					59.422723
+				]
+			},
+			"properties": {
+				"title": "DandyWoods",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.08118,
+					59.405616
+				]
+			},
+			"properties": {
+				"title": "Emblavägen",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.067099,
+					59.328205
+				]
+			},
+			"properties": {
+				"title": "Riksgatan",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.891318,
+					59.58282
+				]
+			},
+			"properties": {
+				"title": "RosePath",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.99855,
+					59.414411
+				]
+			},
+			"properties": {
+				"title": "Roddstigen",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.076394,
+					59.382455
+				]
+			},
+			"properties": {
+				"title": "Svanpasset",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.060386,
+					59.405472
+				]
+			},
+			"properties": {
+				"title": "Bråstoppet",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.998068,
+					59.438884
+				]
+			},
+			"properties": {
+				"title": "MidIsland2",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.991562,
+					59.400338
+				]
+			},
+			"properties": {
+				"title": "GärdestadsZon",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.034214,
+					59.415304
+				]
+			},
+			"properties": {
+				"title": "Transporten",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.072723,
+					59.410324
+				]
+			},
+			"properties": {
+				"title": "Altorp",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.056309,
+					59.351866
+				]
+			},
+			"properties": {
+				"title": "BattleOfRoses",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.071673,
+					59.32682
+				]
+			},
+			"properties": {
+				"title": "CastleZone",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.892368,
+					59.588026
+				]
+			},
+			"properties": {
+				"title": "Hobbyväxthus",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.991322,
+					59.421558
+				]
+			},
+			"properties": {
+				"title": "SnäppaBorgen",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.068289,
+					59.386633
+				]
+			},
+			"properties": {
+				"title": "Tunnelskog",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.067216,
+					59.400928
+				]
+			},
+			"properties": {
+				"title": "Animalisle",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.033255,
+					59.3987
+				]
+			},
+			"properties": {
+				"title": "EdviksGolf",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.093981,
+					59.412684
+				]
+			},
+			"properties": {
+				"title": "Ranängen",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.044974,
+					59.366898
+				]
+			},
+			"properties": {
+				"title": "WittrocksTorn",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.073161,
+					59.328893
+				]
+			},
+			"properties": {
+				"title": "Strömbron",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.907317,
+					59.591486
+				]
+			},
+			"properties": {
+				"title": "NordiansHög",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.99408,
+					59.425035
+				]
+			},
+			"properties": {
+				"title": "TurdusStair",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.05819,
+					59.389966
+				]
+			},
+			"properties": {
+				"title": "Petruskyrkan",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.056677,
+					59.394991
+				]
+			},
+			"properties": {
+				"title": "SkogsTrean",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.039188,
+					59.395933
+				]
+			},
+			"properties": {
+				"title": "Dandybron",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.082669,
+					59.416498
+				]
+			},
+			"properties": {
+				"title": "ColdNoseZone",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.042265,
+					59.369995
+				]
+			},
+			"properties": {
+				"title": "Greengrass",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.957782,
+					59.400594
+				]
+			},
+			"properties": {
+				"title": "Dreamhack",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.071359,
+					59.331441
+				]
+			},
+			"properties": {
+				"title": "KingsGarden",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.016943,
+					59.432235
+				]
+			},
+			"properties": {
+				"title": "EnebyBush",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.073931,
+					59.392051
+				]
+			},
+			"properties": {
+				"title": "LokePark",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.048073,
+					59.394893
+				]
+			},
+			"properties": {
+				"title": "Mörbydalen",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.039636,
+					59.345035
+				]
+			},
+			"properties": {
+				"title": "Vanadizone",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.072328,
+					59.418069
+				]
+			},
+			"properties": {
+				"title": "Animaliskt",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.065705,
+					59.334562
+				]
+			},
+			"properties": {
+				"title": "GadusMorhua",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.059566,
+					59.338163
+				]
+			},
+			"properties": {
+				"title": "AdolfFredriks",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.039884,
+					59.438148
+				]
+			},
+			"properties": {
+				"title": "SagornasSkog",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.081164,
+					59.385395
+				]
+			},
+			"properties": {
+				"title": "StockTown",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.039545,
+					59.398421
+				]
+			},
+			"properties": {
+				"title": "TenderCity",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.05103,
+					59.343018
+				]
+			},
+			"properties": {
+				"title": "OdenZone",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.089723,
+					59.312685
+				]
+			},
+			"properties": {
+				"title": "SkånskaSofia",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.062402,
+					59.411709
+				]
+			},
+			"properties": {
+				"title": "LillaKalmar",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.94513,
+					59.39326
+				]
+			},
+			"properties": {
+				"title": "Skogsvaktaren",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.015283,
+					59.407031
+				]
+			},
+			"properties": {
+				"title": "DandeForest",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.03496,
+					59.431701
+				]
+			},
+			"properties": {
+				"title": "RoseRoadZone",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.090594,
+					59.390532
+				]
+			},
+			"properties": {
+				"title": "KulleMedEk",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.03806,
+					59.403676
+				]
+			},
+			"properties": {
+				"title": "Bergakrysset",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.036282,
+					59.385607
+				]
+			},
+			"properties": {
+				"title": "CallesKlimp",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.080001,
+					59.311339
+				]
+			},
+			"properties": {
+				"title": "NackasHörna",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.051982,
+					59.382751
+				]
+			},
+			"properties": {
+				"title": "Bergstigen",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.043922,
+					59.414614
+				]
+			},
+			"properties": {
+				"title": "Danderyd",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.933889,
+					59.387391
+				]
+			},
+			"properties": {
+				"title": "EnGångÄrIngen",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.042664,
+					59.428648
+				]
+			},
+			"properties": {
+				"title": "AshZone",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.087973,
+					59.397356
+				]
+			},
+			"properties": {
+				"title": "DjursholmC",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.88633,
+					59.582257
+				]
+			},
+			"properties": {
+				"title": "LowFive",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.075754,
+					59.322858
+				]
+			},
+			"properties": {
+				"title": "DockZone",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.030022,
+					59.339641
+				]
+			},
+			"properties": {
+				"title": "KalleT",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.063093,
+					59.378408
+				]
+			},
+			"properties": {
+				"title": "Lagmanskungen",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.05668,
+					59.408196
+				]
+			},
+			"properties": {
+				"title": "Ekebysjön",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.046498,
+					59.421857
+				]
+			},
+			"properties": {
+				"title": "EnebyShopping",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.981472,
+					59.399434
+				]
+			},
+			"properties": {
+				"title": "Silvereken",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.001158,
+					59.408666
+				]
+			},
+			"properties": {
+				"title": "Dandeudde",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.036571,
+					59.422793
+				]
+			},
+			"properties": {
+				"title": "Santara",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.089507,
+					59.400982
+				]
+			},
+			"properties": {
+				"title": "Djursholm",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.065305,
+					59.329834
+				]
+			},
+			"properties": {
+				"title": "DancingQueen",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.889792,
+					59.579139
+				]
+			},
+			"properties": {
+				"title": "Råbergsvallen",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.030462,
+					59.39017
+				]
+			},
+			"properties": {
+				"title": "Dudden",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.015028,
+					59.413645
+				]
+			},
+			"properties": {
+				"title": "PilaVilan",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.034772,
+					59.339649
+				]
+			},
+			"properties": {
+				"title": "Filadelfia",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.082729,
+					59.379153
+				]
+			},
+			"properties": {
+				"title": "StockPier",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					18.05109,
+					59.406142
+				]
+			},
+			"properties": {
+				"title": "Ekebybryggan",
+				"count": 1
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					17.980008,
+					59.402635
+				]
+			},
+			"properties": {
+				"title": "Silverdalen",
+				"count": 1
+			}
+		}
+                    ]
+                },
+            });
+            map.touchZoomRotate.disableRotation();
+            var colors = [
+                [1, '#00cc00'],
+                [2, '#ffff00'],
+                [11, '#ef8610'],
+                [21, '#ff0000'],
+                [51, '#cc00cc']
+            ];
+
+            map.addLayer({
+                "id": "points",
+                "type": "circle",
+                "source": "unique",
+                "paint": {
+                    "circle-color": {
+                        "property": "count",
+                        "type": "interval",
+                        "stops": colors
+                    },
+                    'circle-radius': {
+                        'base': 2,
+                        'stops': [[6, 4],[9, 4], [11, 10],[12, 12], [16, 24]]
+                    },
+                    "circle-blur": 0.2
+                }
+            });
+
+            map.addLayer({
+                "id": "labels",
+                "type": "symbol",
+                "source": "unique",
+                "layout": {
+                    "text-field": "{count}",
+                    "text-size": {
+                        'base': 4,
+                        'stops': [[9, 6], [11, 11], [16, 18]]
+                    },
+                    "text-allow-overlap": true
+                },
+                "minzoom": 11,
+            });
+
+            map.on('click', 'points', function (e) {
+
+                new mapboxgl.Popup({offset:{'bottom': [0,-10]}})
+                    .setLngLat(e.features[0].geometry.coordinates)
+                    .setHTML('<div style="background-color: #000000;"><b><a href=http://www.warded.se/turf/zones.php?zone=' + e.features[0].properties.title + '>' + e.features[0].properties.title +  '</a> </div>')
+                    .addTo(map);
+            });
+
+
+            // Change the cursor to a pointer when the mouse is over the places layer.
+            map.on('mouseenter', 'points', function () {
+                map.getCanvas().style.cursor = 'pointer';
+            });
+
+            // Change it back to a pointer when it leaves.
+            map.on('mouseleave', 'points', function () {
+                map.getCanvas().style.cursor = '';
+            });
+
+            map.addControl(new mapboxgl.FullscreenControl());
+        });
+    }
+</script>

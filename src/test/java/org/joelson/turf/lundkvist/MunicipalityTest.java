@@ -26,8 +26,16 @@ public class MunicipalityTest {
         return URLReaderTest.readProperties("lundkvist_141_solna.html", Municipality::fromHTML);
     }
 
+    public static Map<String, Boolean> getStockholmZones() throws Exception {
+        return URLReaderTest.readProperties("lundkvist_141_stockholm.html", Municipality::fromHTML);
+    }
+
     public static Map<String, Boolean> getSundbybergZones() throws IOException {
         return URLReaderTest.readProperties("lundkvist_141_sundbyberg.html", Municipality::fromHTML);
+    }
+
+    public static Map<String, Boolean> getTabyZones() throws Exception {
+        return URLReaderTest.readProperties("lundkvist_141_taby.html", Municipality::fromHTML);
     }
 
     public static Map<String, Boolean> getVallentunaZones() throws Exception {

@@ -26,7 +26,7 @@ public class MonthlyTest {
     private static final int ROUND = 113;
 
     private static Monthly getPartMonthly() throws Exception {
-        return readProperties("monthly_oberoff_round113_part.html");
+        return readProperties("monthly_0beroff_round168.html");
     }
 
     private static Monthly readProperties(String resource) throws Exception {
@@ -39,15 +39,15 @@ public class MonthlyTest {
         assertNotNull(monthly);
         assertEquals(OBEROFF, monthly.getUserName());
         assertEquals(ROUND, monthly.getRound());
-        assertEquals(423, (monthly.getZones()).size());
+        assertEquals(40, (monthly.getZones()).size());
         int takes = monthly.getZones().stream().map(MonthlyZone::getTakes).mapToInt(Integer::intValue).sum();
-        assertEquals(872, takes);
+        assertEquals(69, takes);
         int sumPoints = monthly.getZones().stream().map(MonthlyZone::getPoints).mapToInt(Integer::intValue).sum();
-        assertEquals(159616, sumPoints);
+        assertEquals(9194, sumPoints);
         long totalDuration = monthly.getZones().stream().mapToLong(
                 zone -> zone.getTakes() * zone.getAverageDuration().toSeconds()).sum();
         long averageDuration = totalDuration / takes;
-        assertEquals(Duration.ofSeconds(13 * 3600 + 43 * 60 + 25), Duration.ofSeconds(averageDuration));
+        assertEquals(Duration.ofSeconds(4 * 3600 + 32 * 60 + 35), Duration.ofSeconds(averageDuration));
     }
 
     @Test

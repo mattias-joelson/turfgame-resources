@@ -1,0 +1,68 @@
+                    ]
+                },
+            });
+            map.touchZoomRotate.disableRotation();
+            var colors = [
+                [1, '#00cc00'],
+                [2, '#ffff00'],
+                [11, '#ef8610'],
+                [21, '#ff0000'],
+                [51, '#cc00cc']
+            ];
+
+            map.addLayer({
+                "id": "points",
+                "type": "circle",
+                "source": "unique",
+                "paint": {
+                    "circle-color": {
+                        "property": "count",
+                        "type": "interval",
+                        "stops": colors
+                    },
+                    'circle-radius': {
+                        'base': 2,
+                        'stops': [[6, 4],[9, 4], [11, 10],[12, 12], [16, 24]]
+                    },
+                    "circle-blur": 0.2
+                }
+            });
+
+            map.addLayer({
+                "id": "labels",
+                "type": "symbol",
+                "source": "unique",
+                "layout": {
+                    "text-field": "{count}",
+                    "text-size": {
+                        'base': 4,
+                        'stops': [[9, 6], [11, 11], [16, 18]]
+                    },
+                    "text-allow-overlap": true
+                },
+                "minzoom": 11,
+            });
+
+            map.on('click', 'points', function (e) {
+
+                new mapboxgl.Popup({offset:{'bottom': [0,-10]}})
+                    .setLngLat(e.features[0].geometry.coordinates)
+                    .setHTML('<div style="background-color: #000000;"><b><a href=http://www.warded.se/turf/zones.php?zone=' + e.features[0].properties.title + '>' + e.features[0].properties.title +  '</a> </div>')
+                    .addTo(map);
+            });
+
+
+            // Change the cursor to a pointer when the mouse is over the places layer.
+            map.on('mouseenter', 'points', function () {
+                map.getCanvas().style.cursor = 'pointer';
+            });
+
+            // Change it back to a pointer when it leaves.
+            map.on('mouseleave', 'points', function () {
+                map.getCanvas().style.cursor = '';
+            });
+
+            map.addControl(new mapboxgl.FullscreenControl());
+        });
+    }
+</script>

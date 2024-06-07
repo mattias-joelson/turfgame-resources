@@ -1,10 +1,12 @@
-package org.joelson.mattias.turfgame.statistics;
+package org.joelson.turf.statistics;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
 public class User implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private final int id;
@@ -25,8 +27,7 @@ public class User implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof User) {
-            User user = (User) obj;
+        if (obj instanceof User user) {
             return id == user.id && name.equals(user.name);
         }
         return super.equals(obj);

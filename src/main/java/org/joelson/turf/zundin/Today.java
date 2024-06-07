@@ -1,12 +1,10 @@
-package org.joelson.mattias.turfgame.zundin;
+package org.joelson.turf.zundin;
 
-import org.joelson.mattias.turfgame.util.URLReader;
+import org.joelson.turf.util.URLReader;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 public class Today {
@@ -22,18 +20,6 @@ public class Today {
         this.date = date;
         this.zones = new ArrayList<>();
         this.zones.addAll(zones);
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public List<TodayZone> getZones() {
-        return Collections.unmodifiableList(zones);
     }
 
     public static Today fromZundin(String userName, String date) throws IOException {
@@ -67,5 +53,17 @@ public class Today {
             }
         }
         return new Today(userName, date, zones);
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public List<TodayZone> getZones() {
+        return Collections.unmodifiableList(zones);
     }
 }

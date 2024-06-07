@@ -1,4 +1,4 @@
-package org.joelson.mattias.turfgame.zundin;
+package org.joelson.turf.zundin;
 
 import org.junit.jupiter.api.Test;
 

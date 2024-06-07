@@ -1,5 +1,6 @@
-package org.joelson.mattias.turfgame.statistics;
+package org.joelson.turf.statistics;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashSet;
@@ -10,6 +11,7 @@ import java.util.Set;
 
 public class Statistics implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private final HashSet<Country> countries;
@@ -28,6 +30,21 @@ public class Statistics implements Serializable {
         rounds = new HashSet<>();
         users = new HashSet<>();
         visits = new HashSet<>();
+    }
+
+    private static String getCountryCode(String name) {
+        /*for (String iso : Locale.getISOCountries()) {
+            Locale l = new Locale("", iso);
+            if (l.getDisplayCountry().equals(name)) {
+                return iso;
+            }
+        }*/
+        for (Locale locale : Locale.getAvailableLocales()) {
+            if (locale.getDisplayCountry().equals(name)) {
+                return locale.getISO3Country();
+            }
+        }
+        return "-1";
     }
 
     public boolean addCountry(Country country) {
@@ -99,10 +116,9 @@ public class Statistics implements Serializable {
     }
 
     public boolean addVisits(Visits visits) {
-        if (this.visits.stream()
-                .anyMatch(v -> v.getZone().equals(visits.getZone())
-                        && v.getUser().equals(visits.getUser())
-                        && v.getRound().equals(visits.getRound()))) {
+        if (this.visits.stream().anyMatch(
+                v -> v.getZone().equals(visits.getZone()) && v.getUser().equals(visits.getUser()) && v.getRound()
+                        .equals(visits.getRound()))) {
             return false;
         }
         return this.visits.add(visits);
@@ -114,8 +130,8 @@ public class Statistics implements Serializable {
                 + ",zones:" + zones + ",rounds:" + rounds + ",users:" + users + ",visits:" + visits + '}';
     }
 
-    public void importRegions(List<org.joelson.mattias.turfgame.apiv4.Region> regions) {
-        for (org.joelson.mattias.turfgame.apiv4.Region region : regions) {
+    public void importRegions(List<org.joelson.turf.turfgame.apiv4.Region> regions) {
+        for (org.joelson.turf.turfgame.apiv4.Region region : regions) {
             String countryName = region.getCountry();
             if (countryName == null) {
                 countryName = getCountryCode(region.getName());
@@ -123,21 +139,6 @@ public class Statistics implements Serializable {
             Country country = findOrAddCountry(countryName);
             findOrAddRegion(country, region.getId(), region.getName());
         }
-    }
-
-    private static String getCountryCode(String name) {
-        /*for (String iso : Locale.getISOCountries()) {
-            Locale l = new Locale("", iso);
-            if (l.getDisplayCountry().equals(name)) {
-                return iso;
-            }
-        }*/
-        for (Locale locale : Locale.getAvailableLocales()) {
-            if (locale.getDisplayCountry().equals(name)) {
-                return locale.getISO3Country();
-            }
-        }
-        return "-1";
     }
 
     private Country findOrAddCountry(String name) {
@@ -160,10 +161,11 @@ public class Statistics implements Serializable {
                 }
                 if (!country.equals(region.getCountry())) {
                     // is OK if belonging to different countries
-                } else if (!name.equals("Argentina") && !name.equals("Kenya") && !name.equals("Utah") && !name.equals("template")) {
+                } else if (!name.equals("Argentina") && !name.equals("Kenya") && !name.equals("Utah")
+                        && !name.equals("template")) {
                     // https://issues.turfgame.com/view/8013
-                    throw new IllegalStateException("Region '" + name + "' has both id "
-                            + region.getId() + " and " + id + '!');
+                    throw new IllegalStateException(
+                            "Region '" + name + "' has both id " + region.getId() + " and " + id + '!');
                 }
             }
         }
@@ -171,5 +173,4 @@ public class Statistics implements Serializable {
         addRegion(region);
         return region;
     }
-
 }

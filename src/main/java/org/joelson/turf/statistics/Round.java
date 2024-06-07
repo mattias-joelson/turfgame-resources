@@ -1,10 +1,13 @@
-package org.joelson.mattias.turfgame.statistics;
+package org.joelson.turf.statistics;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.Objects;
 
 public class Round implements Serializable {
+
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private final int id;
@@ -31,8 +34,7 @@ public class Round implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof Round) {
-            Round round = (Round) obj;
+        if (obj instanceof Round round) {
             return id == round.id && name.equals(round.name) && start.equals(round.start);
         }
         return super.equals(obj);

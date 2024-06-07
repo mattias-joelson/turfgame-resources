@@ -1,6 +1,6 @@
-package org.joelson.mattias.turfgame.zundin;
+package org.joelson.turf.zundin;
 
-import org.joelson.mattias.turfgame.util.URLReader;
+import org.joelson.turf.util.URLReader;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -20,18 +20,6 @@ public class Twoday {
         this.date = date;
         this.zones = new ArrayList<>();
         this.zones.addAll(zones);
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public List<TwodayZone> getZones() {
-        return Collections.unmodifiableList(zones);
     }
 
     public static Twoday fromZundin(String userName, String date) throws IOException {
@@ -65,5 +53,17 @@ public class Twoday {
             }
         }
         return new Twoday(userName, date, zones);
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public List<TwodayZone> getZones() {
+        return Collections.unmodifiableList(zones);
     }
 }

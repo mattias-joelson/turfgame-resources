@@ -1,4 +1,4 @@
-package org.joelson.mattias.turfgame.statistics;
+package org.joelson.turf.statistics;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -159,10 +159,7 @@ public final class StatisticsInitializer {
 
         statistics.addUser(new User(80119, "Oberoff"));
 
-        statistics.addRound(new Round(113, "June",
-                ZonedDateTime.of(2019, 11, 3,
-                        11, 0, 0, 0,
-                        ZoneId.of("UTC+00:00"))));
+        statistics.addRound(new Round(113, "June", ZonedDateTime.of(2019, 11, 3, 11, 0, 0, 0, ZoneId.of("UTC+00:00"))));
 
         return statistics;
     }

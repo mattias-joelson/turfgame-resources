@@ -1,6 +1,6 @@
-package org.joelson.mattias.turfgame.statistics;
+package org.joelson.turf.statistics;
 
-import org.joelson.mattias.turfgame.apiv4.RegionsTest;
+import org.joelson.turf.turfgame.apiv4.RegionsTest;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

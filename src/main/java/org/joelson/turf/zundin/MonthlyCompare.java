@@ -1,4 +1,4 @@
-package org.joelson.mattias.turfgame.zundin;
+package org.joelson.turf.zundin;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -32,9 +32,9 @@ public class MonthlyCompare {
                 MonthlyZone otherZone = second.get(zone.getName());
                 if (otherZone != null) {
                     if (otherZone.getTP() > zone.getTP()) {
-                        raised.add("" + zone.getTP() + " -> " + otherZone.getTP() + " : " + zone.getName());
+                        raised.add(zone.getTP() + " -> " + otherZone.getTP() + " : " + zone.getName());
                     } else if (otherZone.getTP() < zone.getTP()) {
-                        lowered.add("" + zone.getTP() + " -> " + otherZone.getTP() + " : " + zone.getName());
+                        lowered.add(zone.getTP() + " -> " + otherZone.getTP() + " : " + zone.getName());
                     } else {
                         same.add(zone.getName());
                     }

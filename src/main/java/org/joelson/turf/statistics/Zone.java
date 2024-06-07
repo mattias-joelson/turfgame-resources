@@ -1,9 +1,12 @@
-package org.joelson.mattias.turfgame.statistics;
+package org.joelson.turf.statistics;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
 public class Zone implements Serializable {
+
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private final Municipality municipality;
@@ -44,8 +47,7 @@ public class Zone implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof Zone) {
-            Zone zone = (Zone) obj;
+        if (obj instanceof Zone zone) {
             return id == zone.id && municipality.equals(zone.municipality) && name.equals(zone.name)
                     && latitude == zone.latitude && longitude == zone.longitude;
         }
@@ -59,7 +61,7 @@ public class Zone implements Serializable {
 
     @Override
     public String toString() {
-        return "Zone{id:" + id + ",name:'" + name + "',municipality:" + municipality
-                + ",latitude:" + latitude + ",longitude:" + longitude + '}';
+        return "Zone{id:" + id + ",name:'" + name + "',municipality:" + municipality + ",latitude:" + latitude
+                + ",longitude:" + longitude + '}';
     }
 }

@@ -1,4 +1,4 @@
-package org.joelson.mattias.turfgame.statistics;
+package org.joelson.turf.statistics;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -27,8 +27,7 @@ public class Municipality implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof Municipality) {
-            Municipality municipality = (Municipality) obj;
+        if (obj instanceof Municipality municipality) {
             return Objects.equals(region, municipality.region) && Objects.equals(name, municipality.name);
         }
         return super.equals(obj);
@@ -41,6 +40,6 @@ public class Municipality implements Serializable {
 
     @Override
     public String toString() {
-        return "Municipality{region:" + region + ",name:'" + name +"'}";
+        return "Municipality{region:" + region + ",name:'" + name + "'}";
     }
 }

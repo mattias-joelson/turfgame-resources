@@ -1,10 +1,12 @@
-package org.joelson.mattias.turfgame.statistics;
+package org.joelson.turf.statistics;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
 public class Visits implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private final Zone zone;
@@ -63,11 +65,10 @@ public class Visits implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof Visits) {
-            Visits visits = (Visits) obj;
-            return zone.equals(visits.zone) && user.equals(visits.user) && round.equals(visits.round)
-                    && tp == visits.tp && pph == visits.pph
-                    && takes == visits.takes && assists == visits.assists && revisits == visits.revisits;
+        if (obj instanceof Visits visits) {
+            return zone.equals(visits.zone) && user.equals(visits.user) && round.equals(visits.round) && tp == visits.tp
+                    && pph == visits.pph && takes == visits.takes && assists == visits.assists
+                    && revisits == visits.revisits;
         }
         return super.equals(obj);
     }
@@ -79,8 +80,7 @@ public class Visits implements Serializable {
 
     @Override
     public String toString() {
-        return "Visits{zone:" + zone + ",user:" + user + ",round:" + round
-                + ",tp:" + tp + ",pph:+" + pph
-                + ",takes:" + takes + ",assists:" + assists + ",revisits:" + revisits + '}';
+        return "Visits{zone:" + zone + ",user:" + user + ",round:" + round + ",tp:" + tp + ",pph:+" + pph + ",takes:"
+                + takes + ",assists:" + assists + ",revisits:" + revisits + '}';
     }
 }

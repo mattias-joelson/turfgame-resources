@@ -14,12 +14,24 @@ public class MunicipalityTest {
         return URLReaderTest.readProperties("lundkvist_141_danderyd.html", Municipality::fromHTML);
     }
 
+    public static Map<String, Boolean> getHuddingeZones() throws Exception {
+        return URLReaderTest.readProperties("lundkvist_141_huddinge.html", Municipality::fromHTML);
+    }
+
+    public static Map<String, Boolean> getJarfallaZones() throws Exception {
+        return URLReaderTest.readProperties("lundkvist_141_jarfalla.html", Municipality::fromHTML);
+    }
+
     public static Map<String, Boolean> getSolnaZones() throws IOException {
         return URLReaderTest.readProperties("lundkvist_141_solna.html", Municipality::fromHTML);
     }
 
     public static Map<String, Boolean> getSundbybergZones() throws IOException {
         return URLReaderTest.readProperties("lundkvist_141_sundbyberg.html", Municipality::fromHTML);
+    }
+
+    public static Map<String, Boolean> getVallentunaZones() throws Exception {
+        return URLReaderTest.readProperties("lundkvist_141_vallentuna.html", Municipality::fromHTML);
     }
 
     private static int countTakenZones(Map<String, Boolean> zones) {

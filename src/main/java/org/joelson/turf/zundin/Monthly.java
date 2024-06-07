@@ -1,12 +1,12 @@
-package org.joelson.mattias.turfgame.zundin;
+package org.joelson.turf.zundin;
 
-import org.joelson.mattias.turfgame.statistics.Municipality;
-import org.joelson.mattias.turfgame.statistics.Round;
-import org.joelson.mattias.turfgame.statistics.Statistics;
-import org.joelson.mattias.turfgame.statistics.User;
-import org.joelson.mattias.turfgame.statistics.Visits;
-import org.joelson.mattias.turfgame.statistics.Zone;
-import org.joelson.mattias.turfgame.util.URLReader;
+import org.joelson.turf.statistics.Municipality;
+import org.joelson.turf.statistics.Round;
+import org.joelson.turf.statistics.Statistics;
+import org.joelson.turf.statistics.User;
+import org.joelson.turf.statistics.Visits;
+import org.joelson.turf.statistics.Zone;
+import org.joelson.turf.util.URLReader;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -27,18 +27,6 @@ public class Monthly {
         this.round = round;
         this.zones = new ArrayList<>();
         this.zones.addAll(zones);
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public int getRound() {
-        return round;
-    }
-
-    public List<MonthlyZone> getZones() {
-        return Collections.unmodifiableList(zones);
     }
 
     public static void addToStatistics(Monthly monthly, Statistics statistics) {
@@ -85,4 +73,15 @@ public class Monthly {
         return new Monthly(userName, round, zones);
     }
 
+    public String getUserName() {
+        return userName;
+    }
+
+    public int getRound() {
+        return round;
+    }
+
+    public List<MonthlyZone> getZones() {
+        return Collections.unmodifiableList(zones);
+    }
 }

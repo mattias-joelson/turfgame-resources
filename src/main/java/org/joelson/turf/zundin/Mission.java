@@ -1,17 +1,18 @@
-package org.joelson.mattias.turfgame.zundin;
+package org.joelson.turf.zundin;
 
-import org.joelson.mattias.turfgame.util.URLReader;
+import org.joelson.turf.util.URLReader;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Mission {
-    
+
     private static final String ZONE_TABLE = "<th align='right'>Pos</th><th align='left'>Zone</th><th></th>";
     private static final String ZONE_ENTRY = "</td><td><a href='zone.php?zoneid=";
-    
+
     public static List<Integer> fromZundin(String user, int mission) throws IOException {
         return fromHTML(getMissionHTML(user, mission));
     }
@@ -26,8 +27,7 @@ public class Mission {
 
     public static void main(String[] args) throws IOException {
         if (args.length == 0) {
-            System.out.println(String.format("Usage:\n\t%s [user=username] mission [mission ...]",
-                    Mission.class.getName()));
+            System.out.printf("Usage:%n\t%s [user=username] mission [mission ...]%n", Mission.class.getName());
             return;
         }
         String username = null;
@@ -41,12 +41,12 @@ public class Mission {
         }
         for (Integer mission : missions) {
             String html = getMissionHTML(username, mission);
-            PrintWriter writer = new PrintWriter(getFileName(username, mission), "UTF8");
+            PrintWriter writer = new PrintWriter(getFileName(username, mission), StandardCharsets.UTF_8);
             writer.println(html);
             writer.close();
         }
     }
-    
+
     private static String getFileName(String username, Integer mission) {
         if (username == null) {
             return "mission_" + mission + ".html";

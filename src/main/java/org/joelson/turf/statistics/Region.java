@@ -1,10 +1,12 @@
-package org.joelson.mattias.turfgame.statistics;
+package org.joelson.turf.statistics;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
 public class Region implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private final Country country;
@@ -18,6 +20,7 @@ public class Region implements Serializable {
         this.id = id;
         this.name = Objects.requireNonNull(name);
     }
+
     public Country getCountry() {
         return country;
     }
@@ -32,8 +35,7 @@ public class Region implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof Region) {
-            Region region = (Region) obj;
+        if (obj instanceof Region region) {
             return id == region.id && name.equals(region.name);
         }
         return super.equals(obj);

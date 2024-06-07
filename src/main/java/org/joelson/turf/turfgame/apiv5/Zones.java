@@ -16,8 +16,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Zones {
-    private static final String ALL_ZONES_REQUEST = "https://api.turfgame.com/unstable/zones/all"; //NON-NLS
-    private static final String DEFAULT_ZONES_FILENAME = "zones-all.v5.json"; //NON-NLS
+    private static final String ALL_ZONES_REQUEST = "https://api.turfgame.com/unstable/zones/all";
+    private static final String DEFAULT_ZONES_FILENAME = "zones-all.v5.json";
 
     private Zones() throws InstantiationException {
         throw new InstantiationException("Should not be instantiated!");

@@ -11,12 +11,12 @@ import java.util.List;
 public final class ZonesFind {
 
     private ZonesFind() throws InstantiationException {
-        throw new InstantiationException("Should not be instantiated"); //NON-NLS
+        throw new InstantiationException("Should not be instantiated");
     }
 
     public static void main(String[] args) throws IOException {
         if (args.length < 2) {
-            System.out.printf("Usage:\n\t%s zone_name file [files...]%n", ZonesFind.class); //NON-NLS
+            System.out.printf("Usage:\n\t%s zone_name file [files...]%n", ZonesFind.class);
             return;
         }
         String zoneName = args[0];
@@ -25,7 +25,7 @@ public final class ZonesFind {
             String json = Files.readString(Path.of(fileName));
             List<Zone> zones = Zones.fromJSON(json);
             Zone zone = zones.stream().filter(z -> z.getName().equals(zoneName)).findFirst().orElse(null);
-            System.out.printf("%s: %s%n", fileName, toString(zone)); // NON-NLS
+            System.out.printf("%s: %s%n", fileName, toString(zone));
         }
     }
 

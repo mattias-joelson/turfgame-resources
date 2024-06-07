@@ -9,7 +9,7 @@ import java.util.List;
 
 public final class Rounds {
 
-    private static final String ROUNDS_REQUEST = "https://api.turfgame.com/v4/rounds"; // NON-NLS
+    private static final String ROUNDS_REQUEST = "https://api.turfgame.com/v4/rounds";
 
     private Rounds() throws InstantiationException {
         throw new InstantiationException("Should not be instantiated!");

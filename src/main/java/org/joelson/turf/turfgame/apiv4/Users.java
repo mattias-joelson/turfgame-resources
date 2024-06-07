@@ -16,9 +16,9 @@ import java.util.List;
 
 public final class Users {
     
-    private static final String USERS_REQUEST = "https://api.turfgame.com/v4/users"; //NON-NLS
-    private static final String NAME_PARAMETER = "name"; //NON-NLS
-    private static final String ID_PARAMETER = "id"; // NON-NLS
+    private static final String USERS_REQUEST = "https://api.turfgame.com/v4/users";
+    private static final String NAME_PARAMETER = "name";
+    private static final String ID_PARAMETER = "id";
     
     private Users() throws InstantiationException {
         throw new InstantiationException("Should not be instantiated!");

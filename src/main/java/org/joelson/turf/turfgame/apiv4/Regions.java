@@ -12,8 +12,8 @@ import java.util.List;
 
 public final class Regions {
 
-    private static final String REGIONS_REQUEST = "https://api.turfgame.com/v4/regions"; //NON-NLS
-    private static final String DEFAULT_REGIONS_FILENAME = "regions-all.json"; //NON-NLS
+    private static final String REGIONS_REQUEST = "https://api.turfgame.com/v4/regions";
+    private static final String DEFAULT_REGIONS_FILENAME = "regions-all.json";
 
     private Regions() throws InstantiationException {
         throw new InstantiationException("Should not be instantiated!");

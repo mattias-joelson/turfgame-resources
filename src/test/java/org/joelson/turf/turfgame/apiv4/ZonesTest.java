@@ -26,11 +26,9 @@ public class ZonesTest {
         List<Zone> zones = getAllZones();
         Set<String> zoneNames = new HashSet<>(zones.size());
         zones.forEach(zone -> zoneNames.add(zone.getName()));
-        System.out.println("zones: " + zones.size());
-        System.out.println("zoneNames: " + zoneNames.size());
-        zones.stream().filter(zone -> zone.getName().contains("FäbodaSwim") || zone.getName().contains("CarlislePlaza"))
-                .forEach(zone -> System.out.println(zone.getName() + " - " + zone.getId() + " - "
-                        + zone.getDateCreated() + " - " + zone.getRegion().getName() + " @ " + zone.getLatitude()
-                        + ", " + zone.getLongitude()));
+        assertEquals(131468, zones.size());
+        assertEquals(131467, zoneNames.size());
+        assertEquals(2, zones.stream().map(Zone::getName)
+                .filter(s -> s.contains("FäbodaSwim") || s.contains("CarlislePlaza")).count());
     }
 }

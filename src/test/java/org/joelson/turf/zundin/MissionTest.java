@@ -8,12 +8,10 @@ import org.joelson.turf.util.FilesUtil;
 import org.joelson.turf.util.URLReaderTest;
 import org.junit.jupiter.api.Test;
 
-import java.io.OutputStreamWriter;
+import java.io.File;
 import java.io.PrintWriter;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -235,10 +233,9 @@ public class MissionTest {
 
         List<ZoneStat> includedZones = zones.values().stream().sorted().toList();
         ZoneStat zoneStat = includedZones.get(0);
+        int nextNull = 0;
 
-        try (PrintWriter out = new PrintWriter(FilesUtil.newDefaultWriter("testSolna.html"));
-                PrintWriter stdout = new PrintWriter(new OutputStreamWriter(System.out, StandardCharsets.UTF_8),
-                        true)) {
+        try (PrintWriter out = new PrintWriter(FilesUtil.newDefaultWriter("testSolna.html"))) {
             out.println("<html><head><style>");
             out.println("#map { height: 75%; }");
             out.println("#table { height: 200px; }");
@@ -248,9 +245,10 @@ public class MissionTest {
                 out.println("  <tr><td>" + zone.name + "</td><td>" + (zone.next != null) + "</td><td>" + zone.taken
                         + "</td></tr>");
                 if (zone.next == null) {
-                    stdout.println(zone.name);
+                    nextNull += 1;
                 }
             }
+            assertEquals(89, nextNull);
             out.println("</table></div><div id='map'>");
             out.println("</div>");
             out.println("<script>");
@@ -283,11 +281,11 @@ public class MissionTest {
         }
     }
 
-    //@Test
+    @Test
     public void outAndReturn() throws Exception {
         Map<String, Zone> zones = ZoneUtil.toNameMap(ZonesTest.getAllZones());
         String filename = MissionTest.class.getResource("/oberoff_2019-11-26.txt").getFile();
-        Path path = Paths.get(filename);
+        Path path = new File(filename).toPath();
         List<Zone> run = new ArrayList<>();
         try (Stream<String> lines = Files.lines(path)) {
             lines.map(zoneName -> {
@@ -299,9 +297,7 @@ public class MissionTest {
             }).forEach(run::add);
         }
 
-        try (PrintWriter out = new PrintWriter(FilesUtil.newDefaultWriter("testUtflykt.html"));
-                PrintWriter stdout = new PrintWriter(new OutputStreamWriter(System.out, StandardCharsets.UTF_8),
-                        true)) {
+        try (PrintWriter out = new PrintWriter(FilesUtil.newDefaultWriter("testUtflykt.html"))) {
             out.println("<html><head><style>");
             out.println("#map { height: 75%; }");
             out.println("#table { height: 200px; }");
@@ -356,9 +352,7 @@ public class MissionTest {
                         "var " + name + " = new google.maps.Marker({ position: { lat: " + zone.getLatitude() + ", lng: "
                                 + zone.getLongitude() + " }, map: map, icon: { url: '" + icon + "' } });");
             });
-            for (Zone z : extraZones) {
-                stdout.println(z.getName());
-            }
+            assertEquals(257, extraZones.size());
             out.println("}");
             out.println("</script>");
             out.println("<script async defer src=\"https://maps.googleapis.com/maps/api/js?key=" + MAP_KEY

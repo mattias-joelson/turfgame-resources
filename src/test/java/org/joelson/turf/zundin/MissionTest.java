@@ -17,7 +17,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -159,7 +158,7 @@ public class MissionTest {
         addMissionZones(soderSnurrZoneIds, numberedZones, zones);
         addMissionZones(jarfallaSnurrZoneIds, numberedZones, zones);
 
-        List<ZoneStat> includedZones = zones.values().stream().sorted().collect(Collectors.toList());
+        List<ZoneStat> includedZones = zones.values().stream().sorted().toList();
         ZoneStat zoneStat = includedZones.get(0);
 
         try (PrintWriter out = new PrintWriter(FilesUtil.newDefaultWriter("testStockholm.html"))) {

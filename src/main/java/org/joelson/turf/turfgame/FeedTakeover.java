@@ -1,36 +1,40 @@
-package org.joelson.mattias.turfgame.apiv4;
+package org.joelson.turf.turfgame;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.joelson.mattias.turfgame.util.StringUtil;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.Objects;
 
-public final class TakeoverFeed extends FeedObject {
+public abstract class FeedTakeover<U extends User, Z extends Zone> extends FeedObject {
 
-    private final Zone zone;
-
-    private final double latitude;
+    private final U[] assists;
+    private final U previousOwner;
+    private final U currentOwner;
     private final double longitude;
-    private final User currentOwner;
+    private final double latitude;
+    private final Z zone;
 
     @JsonCreator
-    public TakeoverFeed(
-            @Nonnull @JsonProperty("type") String type,
-            @Nonnull @JsonProperty("time") String time,
-            @Nonnull @JsonProperty("zone") Zone zone,
-            @JsonProperty("latitude") double latitude,
-            @JsonProperty("longitude") double longitude,
-            @Nonnull @JsonProperty("currentOwner") User currentOwner) {
+    public FeedTakeover(
+            @Nonnull @JsonProperty(value = "type", required = true) String type,
+            @Nonnull @JsonProperty(value = "time", required = true) String time,
+            @Nullable @JsonProperty("assists") U[] assists,
+            @Nullable @JsonProperty("previousOwner") U previousOwner,
+            @Nonnull @JsonProperty(value = "currentOwner", required = true) U currentOwner,
+            @JsonProperty(value = "longitude", required = true) double longitude,
+            @JsonProperty(value = "latitude", required = true) double latitude,
+            @Nonnull @JsonProperty(value = "zone", required = true) Z zone
+    ) {
         super(type, time);
-        this.zone = Objects.requireNonNull(zone);
-        this.latitude = latitude;
-        this.longitude = longitude;
+        this.assists = assists;
+        this.previousOwner = previousOwner;
         this.currentOwner = Objects.requireNonNull(currentOwner);
-        if (!getType().equals(type)) {
-            throw new RuntimeException("Illegal type " + type);
-        }
+        this.longitude = longitude;
+        this.latitude = latitude;
+        this.zone = Objects.requireNonNull(zone);
     }
 
     @Override
@@ -38,31 +42,34 @@ public final class TakeoverFeed extends FeedObject {
         return "takeover";
     }
 
-    public Zone getZone() {
-        return zone;
+    public U[] getAssists() {
+        return assists;
     }
 
-    public double getLatitude() {
-        return latitude;
+    public U getPreviousOwner() {
+        return previousOwner;
+    }
+
+    public U getCurrentOwner() {
+        return currentOwner;
     }
 
     public double getLongitude() {
         return longitude;
     }
 
-    public User getCurrentOwner() {
-        return currentOwner;
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public Z getZone() {
+        return zone;
     }
 
     @Override
     public String toString() {
-        return "TakeoverFeed{"
-                + "type=" + StringUtil.printable(getType())
-                + ", time=" + StringUtil.printable(getTime())
-                + ", zone=" + zone
-                + ", latitude=" + latitude
-                + ", longitude=" + longitude
-                + ", currentOwner=" + currentOwner
-                + '}';
+        return String.format(
+                "TakeoverFeed[%s, assists=%s, previousOwner=%s, currentOwner=%s, longitude=%f, latitude=%f, zone=%s]",
+                innerToString(), Arrays.toString(assists), previousOwner, currentOwner, longitude, latitude, zone);
     }
 }

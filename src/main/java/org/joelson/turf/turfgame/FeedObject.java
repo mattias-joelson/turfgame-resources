@@ -1,8 +1,8 @@
-package org.joelson.mattias.turfgame.apiv4;
+package org.joelson.turf.turfgame;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.joelson.mattias.turfgame.util.StringUtil;
+import org.joelson.turf.util.StringUtil;
 
 import javax.annotation.Nonnull;
 
@@ -13,8 +13,9 @@ public abstract class FeedObject {
 
     @JsonCreator
     public FeedObject(
-            @Nonnull @JsonProperty("type") String type,
-            @Nonnull @JsonProperty("time") String time) {
+            @Nonnull @JsonProperty(value = "type", required = true) String type,
+            @Nonnull @JsonProperty(value = "time", required = true) String time
+    ) {
         this.time = StringUtil.requireNotNullAndNotEmpty(time);
     }
 
@@ -22,5 +23,9 @@ public abstract class FeedObject {
 
     public final String getTime() {
         return time;
+    }
+
+    protected final String innerToString() {
+        return String.format("type=%s, time=%s", StringUtil.printable(getType()), StringUtil.printable(time));
     }
 }

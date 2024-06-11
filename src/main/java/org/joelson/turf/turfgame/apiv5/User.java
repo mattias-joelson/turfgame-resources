@@ -6,7 +6,7 @@ import org.joelson.turf.util.StringUtil;
 
 import javax.annotation.Nonnull;
 
-public class User {
+public class User implements org.joelson.turf.turfgame.User {
 
     private final int id;
     private final String name;

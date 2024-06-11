@@ -7,7 +7,7 @@ import org.joelson.turf.util.StringUtil;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class Region {
+public class Region implements org.joelson.turf.turfgame.Region {
 
     private final int id;
     private final String name;

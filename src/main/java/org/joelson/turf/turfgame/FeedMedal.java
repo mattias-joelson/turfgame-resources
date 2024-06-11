@@ -1,35 +1,36 @@
-package org.joelson.mattias.turfgame.apiv4;
+package org.joelson.turf.turfgame;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.joelson.mattias.turfgame.util.StringUtil;
+import org.joelson.turf.util.StringUtil;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
 
-public final class MedalFeed extends FeedObject {
+public abstract class FeedMedal<U extends User> extends FeedObject {
 
-    private final User user;
+    private final U user;
     private final int medal;
 
     @JsonCreator
-    public MedalFeed(
-            @Nonnull @JsonProperty("type") String type,
-            @Nonnull @JsonProperty("time") String time,
-            @Nonnull @JsonProperty("user") User user,
-            @JsonProperty("medal") int medal
+    public FeedMedal(
+            @Nonnull @JsonProperty(value = "type", required = true) String type,
+            @Nonnull @JsonProperty(value = "time", required = true) String time,
+            @Nonnull @JsonProperty(value = "user", required = true) U user,
+            @JsonProperty(value = "medal", required = true) int medal
     ) {
         super(type, time);
         this.user = Objects.requireNonNull(user);
         this.medal = medal;
-        if (!getType().equals(type)) {
-            throw new RuntimeException("Illegal type " + type);
-        }
     }
 
     @Override
     public String getType() {
         return "medal";
+    }
+
+    public U getUser() {
+        return user;
     }
 
     public int getMedal() {
@@ -38,11 +39,6 @@ public final class MedalFeed extends FeedObject {
 
     @Override
     public String toString() {
-        return "MedalFeed{"
-                + "type=" + StringUtil.printable(getType())
-                + ", time=" + StringUtil.printable(getTime())
-                + ", user=" + user
-                + ", medal=" + medal
-                + '}';
+        return String.format("FeedMedal[%s, user=%s, medal=%d]", innerToString(), user, medal);
     }
 }

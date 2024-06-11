@@ -7,8 +7,7 @@ import org.joelson.turf.util.StringUtil;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-// TODO fix API
-public class Zone {
+public class Zone implements org.joelson.turf.turfgame.Zone {
 
     private final String name;
     private final int id;

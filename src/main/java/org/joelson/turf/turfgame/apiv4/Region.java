@@ -7,8 +7,7 @@ import org.joelson.turf.util.StringUtil;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-// TODO fix
-public final class Region {
+public final class Region implements org.joelson.turf.turfgame.Region {
 
     private final String country;
     private final String name;

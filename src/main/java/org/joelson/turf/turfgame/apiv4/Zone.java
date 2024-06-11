@@ -4,8 +4,10 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.joelson.turf.util.StringUtil;
 
-// TODO fix
-public final class Zone {
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+public final class Zone implements org.joelson.turf.turfgame.Zone {
 
     private final String name;
     private final int id;

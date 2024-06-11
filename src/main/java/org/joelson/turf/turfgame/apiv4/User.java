@@ -6,8 +6,7 @@ import org.joelson.turf.util.StringUtil;
 
 import java.util.Arrays;
 
-// TODO fix
-public class User {
+public class User implements org.joelson.turf.turfgame.User {
 
     private final String name;
     private final int id;

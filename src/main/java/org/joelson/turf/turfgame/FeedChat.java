@@ -1,43 +1,38 @@
-package org.joelson.mattias.turfgame.apiv4;
+package org.joelson.turf.turfgame;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-//import com.sun.istack.Nullable;
-import org.joelson.mattias.turfgame.util.StringUtil;
+import org.joelson.turf.util.StringUtil;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import java.util.Objects;
 
-public final class ChatFeed extends FeedObject {
+public abstract class FeedChat<R extends Region, U extends User> extends FeedObject {
 
     @Nullable
     private final String country;
     @Nullable
-    private final Region region;
+    private final R region;
     @Nonnull
-    private final User sender;
+    private final U sender;
     @Nonnull
     private final String message;
 
     @JsonCreator
-    public ChatFeed(
-            @Nonnull @JsonProperty("type") String type,
-            @Nonnull @JsonProperty("time") String time,
+    public FeedChat(
+            @Nonnull @JsonProperty(value = "type", required = true) String type,
+            @Nonnull @JsonProperty(value = "time", required = true) String time,
             @Nullable @JsonProperty("country") String country,
-            @Nullable @JsonProperty("region") Region region,
-            @Nonnull @JsonProperty("sender") User sender,
-            @Nonnull @JsonProperty("message") String message
+            @Nullable @JsonProperty("region") R region,
+            @Nonnull @JsonProperty(value = "sender", required = true) U sender,
+            @Nonnull @JsonProperty(value = "message", required = true) String message
     ) {
         super(type, time);
         this.country = country;
         this.region = region;
         this.sender = Objects.requireNonNull(sender);
         this.message = StringUtil.requireNotNullAndNotEmpty(message);
-        if (!getType().equals(type)) {
-            throw new RuntimeException("Illegal type " + type);
-        }
     }
 
     @Override
@@ -50,11 +45,11 @@ public final class ChatFeed extends FeedObject {
         return country;
     }
 
-    public Region getRegion() {
+    public R getRegion() {
         return region;
     }
 
-    public User getSender() {
+    public U getSender() {
         return sender;
     }
 
@@ -64,13 +59,7 @@ public final class ChatFeed extends FeedObject {
 
     @Override
     public String toString() {
-        return "ChatFeed{"
-                + "type=" + StringUtil.printable(getType())
-                + ", time=" + StringUtil.printable(getTime())
-                + ", country=" + StringUtil.printable(message)
-                + ", region=" + region
-                + ", sender=" + sender
-                + ", message=" + StringUtil.printable(message)
-                + '}';
+        return String.format("FeedChat[%s, country=%s, region=%s, sender=%s, message=%s]",
+                innerToString(), StringUtil.printable(country), region, sender, StringUtil.printable(message));
     }
 }

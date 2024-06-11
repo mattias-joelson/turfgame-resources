@@ -59,7 +59,8 @@ public abstract class FeedChat<R extends Region, U extends User> extends FeedObj
 
     @Override
     public String toString() {
-        return String.format("FeedChat[%s, country=%s, region=%s, sender=%s, message=%s]",
-                innerToString(), StringUtil.printable(country), region, sender, StringUtil.printable(message));
+        return String.format("FeedChat[%s%s%s, sender=%s, message=%s]", innerToString(),
+                StringUtil.printable(country, ", country="), StringUtil.printable(region, ", region="), sender,
+                StringUtil.printable(message));
     }
 }

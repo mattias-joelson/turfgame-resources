@@ -90,6 +90,12 @@ public abstract class FeedsReader {
         for (JsonNode fileNode : fileNodes) {
             if (feedNodes.contains(fileNode)) {
                 System.out.println("    Already contains node " + fileNode);
+            } else {
+                feedNodes.add(fileNode);
+                String type = fileNode.get("type").asText();
+                FeedObject feedObject = JacksonUtil.treeToValue(fileNode, getJSONClass(type));
+                System.out.println(" ->  " + feedObject);
+                //String s = feedObject.toString();
             }
         }
     }

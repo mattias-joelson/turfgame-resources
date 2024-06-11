@@ -11,8 +11,8 @@ public class Area {
     private final String name;
 
     public Area(
-            @Nonnull @JsonProperty("id") int id,
-            @Nonnull @JsonProperty("name") String name
+            @JsonProperty(value = "id", required = true) int id,
+            @Nonnull @JsonProperty(value = "name", required = true) String name
     ) {
         this.id = id;
         this.name = StringUtil.requireNotNullAndNotTrimmedEmpty(name);
@@ -24,5 +24,10 @@ public class Area {
 
     public String getName() {
         return name;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Area[id=%d, name=%s]", id, StringUtil.printable(name));
     }
 }

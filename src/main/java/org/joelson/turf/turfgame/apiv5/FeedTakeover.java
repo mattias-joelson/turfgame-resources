@@ -12,13 +12,13 @@ public class FeedTakeover extends org.joelson.turf.turfgame.FeedTakeover<User, Z
     public FeedTakeover(
             @Nonnull @JsonProperty(value = "type", required = true) String type,
             @Nonnull @JsonProperty(value = "time", required = true) String time,
-            @Nullable @JsonProperty("assists") User[] assists,
+            @Nonnull @JsonProperty(value = "zone", required = true) Zone zone,
+            @JsonProperty(value = "latitude", required = true) double latitude,
+            @JsonProperty(value = "longitude", required = true) double longitude,
             @Nullable @JsonProperty("previousOwner") User previousOwner,
             @Nonnull @JsonProperty(value = "currentOwner", required = true) User currentOwner,
-            @JsonProperty(value = "longitude", required = true) double longitude,
-            @JsonProperty(value = "latitude", required = true) double latitude,
-            @Nonnull @JsonProperty(value = "zone", required = true) Zone zone
+            @Nullable @JsonProperty("assists") User[] assists
     ) {
-        super(type, time, assists, previousOwner, currentOwner, longitude, latitude, zone);
+        super(type, time, zone, latitude, longitude, previousOwner, currentOwner, assists);
     }
 }

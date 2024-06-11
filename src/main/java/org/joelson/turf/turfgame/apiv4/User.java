@@ -4,64 +4,66 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.joelson.turf.util.StringUtil;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Arrays;
 
 public class User implements org.joelson.turf.turfgame.User {
 
-    private final String name;
     private final int id;
+    private final String name;
     private final String country;
     private final Region region;
-    private final int uniqueZonesTaken;
-    private final int pointsPerHour;
-    private final int rank;
-    private final int totalPoints;
-    private final int taken;
     private final int points;
     private final int place;
-    private final int blocktime;
+    private final int[] zoneIds;
+    private final int pointsPerHour;
+    private final int rank;
     private final int[] medals;
-    private final int[] zones;
+    private final int totalPoints;
+    private final int blocktime;
+    private final int taken;
+    private final int uniqueZonesTaken;
 
     @JsonCreator
     public User(
-            @JsonProperty("name") String name,
-            @JsonProperty("id") int id,
-            @JsonProperty("country") String country,
-            @JsonProperty("region") Region region,
-            @JsonProperty("uniqueZonesTaken") int uniqueZonesTaken,
-            @JsonProperty("pointsPerHour") int pointsPerHour,
-            @JsonProperty("rank") int rank,
-            @JsonProperty("totalPoints") int totalPoints,
-            @JsonProperty("taken") int taken,
+            @JsonProperty(value = "id", required = true) int id,
+            @Nonnull @JsonProperty(value = "name", required = true) String name,
+            @Nullable @JsonProperty("country") String country,
+            @Nullable @JsonProperty("region") Region region,
             @JsonProperty("points") int points,
             @JsonProperty("place") int place,
+            @Nullable @JsonProperty("zones") int[] zoneIds,
+            @JsonProperty("pointsPerHour") int pointsPerHour,
+            @JsonProperty("rank") int rank,
+            @Nullable @JsonProperty("medals") int[] medals,
+            @JsonProperty("totalPoints") int totalPoints,
             @JsonProperty("blocktime") int blocktime,
-            @JsonProperty("medals") int[] medals,
-            @JsonProperty("zones") int[] zones
+            @JsonProperty("taken") int taken,
+            @JsonProperty("uniqueZonesTaken") int uniqueZonesTaken
     ) {
-        this.name = name;
         this.id = id;
+        this.name = StringUtil.requireNotNullAndNotTrimmedEmpty(name);
         this.country = country;
         this.region = region;
-        this.uniqueZonesTaken = uniqueZonesTaken;
-        this.pointsPerHour = pointsPerHour;
-        this.rank = rank;
-        this.totalPoints = totalPoints;
-        this.taken = taken;
         this.points = points;
         this.place = place;
-        this.blocktime = blocktime;
+        this.zoneIds = zoneIds;
+        this.pointsPerHour = pointsPerHour;
+        this.rank = rank;
         this.medals = medals;
-        this.zones = zones;
-    }
-
-    public String getName() {
-        return name;
+        this.totalPoints = totalPoints;
+        this.blocktime = blocktime;
+        this.taken = taken;
+        this.uniqueZonesTaken = uniqueZonesTaken;
     }
 
     public int getId() {
         return id;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public String getCountry() {
@@ -72,8 +74,16 @@ public class User implements org.joelson.turf.turfgame.User {
         return region;
     }
 
-    public int getUniqueZonesTaken() {
-        return uniqueZonesTaken;
+    public int getPoints() {
+        return points;
+    }
+
+    public int getPlace() {
+        return place;
+    }
+
+    public int[] getZoneIds() {
+        return zoneIds;
     }
 
     public int getPointsPerHour() {
@@ -84,51 +94,38 @@ public class User implements org.joelson.turf.turfgame.User {
         return rank;
     }
 
+    public int[] getMedals() {
+        return medals;
+    }
+
     public int getTotalPoints() {
         return totalPoints;
-    }
-
-    public int getTaken() {
-        return taken;
-    }
-
-    public int getPoints() {
-        return points;
-    }
-
-    public int getPlace() {
-        return place;
     }
 
     public int getBlocktime() {
         return blocktime;
     }
 
-    public int[] getMedals() {
-        return medals;
+    public int getTaken() {
+        return taken;
     }
 
-    public int[] getZones() {
-        return zones;
+    public int getUniqueZonesTaken() {
+        return uniqueZonesTaken;
     }
 
     @Override
     public String toString() {
-        return "User{"
-                + "name=" + StringUtil.printable(name)
-                + ", id=" + id
-                + ", country=" + StringUtil.printable(country)
-                + ", region=" + region
-                + ", uniqueZonesTaken=" + uniqueZonesTaken
-                + ", pointsPerHour=" + pointsPerHour
-                + ", rank=" + rank
-                + ", totalPoints=" + totalPoints
-                + ", taken=" + taken
-                + ", points=" + points
-                + ", place=" + place
-                + ", blocktime=" + blocktime
-                + ", medals=" + Arrays.toString(medals)
-                + ", zones=" + Arrays.toString(zones)
-                + '}';
+        return String.format("User=[id=%d, name=%s%s%s%s]", id, StringUtil.printable(name),
+                StringUtil.printable(country, ", country="), StringUtil.printable(region, ", region="),
+                (zoneIds != null) ? statisticsToString() : "");
+    }
+
+    private String statisticsToString() {
+        return String.format(
+                ", points=%d, place=%d, zones=%s, pointsPerHour=%d, rank=%d, meadals=%s, totalPoints=%d, "
+                        + "blocktime=%d, taken=%d, uniqueZonesTaken=%d",
+                points, place, Arrays.toString(zoneIds), pointsPerHour, rank, Arrays.toString(medals), totalPoints,
+                blocktime, taken, uniqueZonesTaken);
     }
 }

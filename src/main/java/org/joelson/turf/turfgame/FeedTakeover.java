@@ -69,7 +69,7 @@ public abstract class FeedTakeover<U extends User, Z extends Zone> extends FeedO
 
     @Override
     public String toString() {
-        return String.format("TakeoverFeed[%s, zone=%s, latitude=%f, longitude=%f%s, currentOwner=%s%s]",
+        return String.format("FeedTakeover[%s, zone=%s, latitude=%f, longitude=%f%s, currentOwner=%s%s]",
                 innerToString(), zone, latitude, longitude, StringUtil.printable(previousOwner, ", previousOwner="),
                 currentOwner, StringUtil.printable(assists, ", assists="));
     }

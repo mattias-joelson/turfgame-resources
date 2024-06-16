@@ -15,7 +15,7 @@ public class FeedsReader extends org.joelson.turf.turfgame.util.FeedsReader {
             System.out.printf("Usage:\n\t%s feed_file1.json ...%n", FeedsReader.class.getName());
             return;
         }
-        new FeedsReader().readFiles(args);
+        new FeedsReader().printUniqueNodes(args);
     }
 
     @Override

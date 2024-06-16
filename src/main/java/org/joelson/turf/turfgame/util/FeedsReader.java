@@ -13,47 +13,53 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.function.Consumer;
 
 public abstract class FeedsReader {
 
-    private static List<JsonNode> readFeedFile(Path feedPath) {
+    private static List<JsonNode> readNodeFile(Path path) {
         String content = null;
         try {
-            content = Files.readString(feedPath);
+            content = Files.readString(path);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return readJsonNodes(feedPath, content);
-    }
-
-    private static List<JsonNode> readJsonNodes(Path path, String content) {
         System.out.println("*** " + path);
         List<JsonNode> nodes = Arrays.asList(JacksonUtil.readValue(content, JsonNode[].class));
         nodes.sort(new FeedNodeComparator());
         return nodes;
     }
 
-    protected void readFiles(String[] filenames) throws IOException {
+    protected void printUniqueNodes(String[] filenames) {
         SortedSet<JsonNode> feedNodes = new TreeSet<>(new FeedNodeComparator());
         for (String filename : filenames) {
-            FilesUtil.forEachFile(Path.of(filename), true, path -> readFeedNodes(feedNodes, readFeedFile(path)));
+            handleNodeFiles(Path.of(filename), node -> handleNode(feedNodes, node));
         }
     }
 
-    private void readFeedNodes(SortedSet<JsonNode> feedNodes, List<JsonNode> fileNodes) {
-        for (JsonNode fileNode : fileNodes) {
-            if (feedNodes.contains(fileNode)) {
-                System.out.println("    Already contains node " + fileNode);
-            } else {
-                feedNodes.add(fileNode);
-                String type = fileNode.get("type").asText();
-                FeedObject feedObject = JacksonUtil.treeToValue(fileNode, getJSONClass(type));
-                if (!feedObject.getType().equals(type)) {
-                    throw new RuntimeException("Illegal type " + type + " for " + feedObject);
-                }
-                System.out.println(" ->  " + feedObject);
-                //String s = feedObject.toString();
+    private void handleNodeFiles(Path path, Consumer<JsonNode> forEachNode) {
+        try {
+            FilesUtil.forEachFile(path, true, p -> handleNodes(forEachNode, readNodeFile(p)));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void handleNodes(Consumer<JsonNode> forEachNode, List<JsonNode> jsonNodes) {
+        jsonNodes.forEach(forEachNode);
+    }
+
+    private void handleNode(SortedSet<JsonNode> uniqueNodes, JsonNode node) {
+        if (uniqueNodes.contains(node)) {
+            System.out.println("    Already contains node " + node);
+        } else {
+            uniqueNodes.add(node);
+            String type = node.get("type").asText();
+            FeedObject feedObject = JacksonUtil.treeToValue(node, getJSONClass(type));
+            if (!feedObject.getType().equals(type)) {
+                throw new RuntimeException("Illegal type " + type + " for " + feedObject);
             }
+            System.out.println(" ->  " + feedObject);
         }
     }
 

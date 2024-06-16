@@ -5,9 +5,7 @@ import org.joelson.turf.turfgame.FeedObject;
 import org.joelson.turf.util.FilesUtil;
 import org.joelson.turf.util.JacksonUtil;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -17,34 +15,18 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 public abstract class FeedsReader {
 
-    private static List<JsonNode> readFeedFile(Path feedPath) throws IOException {
-        return readJsonNodes(feedPath.toString(), Files.readString(feedPath));
-    }
-
-    private static List<JsonNode> readZipEntry(Path feedPath, ZipFile zipFile, ZipEntry zipEntry) {
-        System.out.println("  * Reading " + zipEntry.getName());
+    private static List<JsonNode> readFeedFile(Path feedPath) {
         try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(zipFile.getInputStream(zipEntry)));
-            List<String> rows = new ArrayList<>();
-            String row;
-            while ((row = reader.readLine()) != null) {
-                rows.add(row);
-            }
-            String content = String.join("\n", rows);
-            return readJsonNodes(feedPath + " -> " + zipEntry.getName(), content);
+            return readJsonNodes(feedPath, Files.readString(feedPath));
         } catch (IOException e) {
-            e.printStackTrace();
-            System.exit(-1);
-            return Collections.emptyList();
+            throw new RuntimeException(e);
         }
     }
 
-    private static List<JsonNode> readJsonNodes(String path, String content) {
+    private static List<JsonNode> readJsonNodes(Path path, String content) {
         if (content.isEmpty() || content.startsWith("<html>")) {
             System.err.println("--- File " + path + " contains no data!");
             return Collections.emptyList();
@@ -57,23 +39,7 @@ public abstract class FeedsReader {
     protected void readFiles(String[] filenames) throws IOException {
         SortedSet<JsonNode> feedNodes = new TreeSet<>(new FeedNodeComparator());
         for (String filename : filenames) {
-            readPath(Path.of(filename), feedNodes);
-        }
-    }
-
-    private void readPath(Path feedPath, SortedSet<JsonNode> feedNodes) throws IOException {
-        System.out.println("*** Reading " + feedPath);
-        if (Files.isDirectory(feedPath)) {
-            for (Path file : Files.list(feedPath).toList()) {
-                readPath(file, feedNodes);
-            }
-        } else if (FilesUtil.isZipFile(feedPath)) {
-            try (ZipFile zipFile = new ZipFile(feedPath.toFile())) {
-                zipFile.stream().forEach(
-                        zipEntry -> readFeedNodes(feedNodes, readZipEntry(feedPath, zipFile, zipEntry)));
-            }
-        } else {
-            readFeedNodes(feedNodes, readFeedFile(feedPath));
+            FilesUtil.forEachFile(Path.of(filename), true, path -> readFeedNodes(feedNodes, readFeedFile(path)));
         }
     }
 

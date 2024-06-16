@@ -2,6 +2,7 @@ package org.joelson.turf.turfgame.apiv4util;
 
 import org.joelson.turf.turfgame.apiv4.Zone;
 import org.joelson.turf.turfgame.apiv4.Zones;
+import org.joelson.turf.util.FilesUtil;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -21,12 +22,20 @@ public final class ZonesFind {
         }
         String zoneName = args[0];
         for (int i = 1; i < args.length; i += 1) {
-            String fileName = args[i];
-            String json = Files.readString(Path.of(fileName));
-            List<Zone> zones = Zones.fromJSON(json);
-            Zone zone = zones.stream().filter(z -> z.getName().equals(zoneName)).findFirst().orElse(null);
-            System.out.printf("%s: %s%n", fileName, toString(zone));
+            FilesUtil.forEachFile(Path.of(args[i]), true, path -> readFile(path, zoneName));
         }
+    }
+
+    private static void readFile(Path path, String zoneName) {
+        String json = null;
+        try {
+            json = Files.readString(path);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        List<Zone> zones = Zones.fromJSON(json);
+        Zone zone = zones.stream().filter(z -> z.getName().equals(zoneName)).findFirst().orElse(null);
+        System.out.printf("%s: %s%n", path, toString(zone));
     }
 
     private static String toString(Zone zone) {

@@ -4,20 +4,15 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.joelson.turf.util.FilesUtil;
 import org.joelson.turf.util.JacksonUtil;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 public class FeedsIntervalReader {
 
@@ -28,15 +23,7 @@ public class FeedsIntervalReader {
         }
         SortedSet<FeedInterval> feedNodes = new TreeSet<>(new FeedIntervalComparator());
         for (String filename : args) {
-            System.out.println("*** Reading " + filename);
-            Path feedPath = Path.of(filename);
-            if (FilesUtil.isZipFile(feedPath)) {
-                ZipFile zipFile = new ZipFile(feedPath.toFile());
-                zipFile.stream()
-                        .forEach(zipEntry -> readFeedNodes(feedNodes, readZipEntry(feedPath, zipFile, zipEntry)));
-            } else {
-                readFeedNodes(feedNodes, readFeedFile(feedPath));
-            }
+            FilesUtil.forEachFile(Path.of(filename), true, path -> readFeedNodes(feedNodes, readFeedFile(path)));
         }
         feedNodes.stream().forEach(feedInterval
                 -> System.out.printf("%s: %s - %s%n", feedInterval.type, feedInterval.start, feedInterval.end));
@@ -50,14 +37,6 @@ public class FeedsIntervalReader {
         String nodeType = fileNodes.get(0).get("type").asText();
         if (nodeType.equals("takeover")) {
             type = FeedType.TAKEOVER;
-//            boolean assists = false;
-//            for (JsonNode fileNode : fileNodes) {
-//                if (fileNode.get("assists") != null) {
-//                    assists = true;
-//                    break;
-//                }
-//            }
-//            System.out.println("TAKE assists=" + assists);
         } else if (nodeType.equals("zone")) {
             type = FeedType.ZONE;
         }
@@ -87,22 +66,11 @@ public class FeedsIntervalReader {
         return new FeedInterval(interval1.type, start, end);
     }
 
-    private static List<JsonNode> readFeedFile(Path feedPath) throws IOException {
-        return readJsonNodes(feedPath.toString(), Files.readString(feedPath));
-    }
-
-    private static List<JsonNode> readZipEntry(Path feedPath, ZipFile zipFile, ZipEntry zipEntry) {
-//        System.out.println("  * Reading " + zipEntry.getName());
+    private static List<JsonNode> readFeedFile(Path feedPath) {
         try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(zipFile.getInputStream(zipEntry)));
-            List<String> rows = new ArrayList<>();
-            String row;
-            while ((row = reader.readLine()) != null) {
-                rows.add(row);
-            }
-            String content = String.join("\n", rows);
-            return readJsonNodes(feedPath + " -> " + zipEntry.getName(), content);
-        } catch (Exception e) {
+            System.out.println("*** Reading " + feedPath);
+            return readJsonNodes(feedPath.toString(), Files.readString(feedPath));
+        } catch (IOException e) {
             e.printStackTrace();
             return Collections.emptyList();
         }
@@ -110,7 +78,6 @@ public class FeedsIntervalReader {
 
     private static List<JsonNode> readJsonNodes(String path, String content) {
         if (content.isEmpty() || content.startsWith("<html>")) {
-//            System.err.println("--- File " + path + " contains no data!");
             return Collections.emptyList();
         }
         return Arrays.asList(JacksonUtil.readValue(content, JsonNode[].class));

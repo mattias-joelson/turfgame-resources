@@ -17,14 +17,19 @@ import java.util.function.Consumer;
 
 public abstract class FeedsReader {
 
-    private static List<JsonNode> readNodeFile(Path path) {
+    private static String readFile(Path path, Consumer<Path> forEachPath) {
         String content = null;
         try {
             content = Files.readString(path);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        System.out.println("*** " + path);
+        forEachPath.accept(path);
+        return content;
+    }
+
+    private static List<JsonNode> readNodeFile(Path path) {
+        String content = readFile(path, p -> System.out.println("*** " + p));
         List<JsonNode> nodes = Arrays.asList(JacksonUtil.readValue(content, JsonNode[].class));
         nodes.sort(new FeedNodeComparator());
         return nodes;
@@ -61,6 +66,28 @@ public abstract class FeedsReader {
             }
             System.out.println(" ->  " + feedObject);
         }
+    }
+
+    public void handleFeedObjectFile(Path path, Consumer<Path> forEachPath, Consumer<FeedObject> forEachFeedObject) {
+        try {
+            FilesUtil.forEachFile(path, true, p -> handleFeedObjects(readFile(p, forEachPath), forEachFeedObject));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void handleFeedObjects(String content, Consumer<FeedObject> forEachFeedObject) {
+        List<JsonNode> nodes = Arrays.asList(JacksonUtil.readValue(content, JsonNode[].class));
+        nodes.forEach(node -> handleFeedObject(node, forEachFeedObject));
+    }
+
+    private void handleFeedObject(JsonNode node, Consumer<FeedObject> forEachFeedObject) {
+        String type = node.get("type").asText();
+        FeedObject feedObject = JacksonUtil.treeToValue(node, getJSONClass(type));
+        if (!feedObject.getType().equals(type)) {
+            throw new RuntimeException("Illegal type " + type + " for " + feedObject);
+        }
+        forEachFeedObject.accept(feedObject);
     }
 
     protected abstract Class<? extends FeedObject> getJSONClass(String type);

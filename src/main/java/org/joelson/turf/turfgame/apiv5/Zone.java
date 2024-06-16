@@ -7,11 +7,10 @@ import org.joelson.turf.util.StringUtil;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-// TODO fix API
-public class Zone {
+public class Zone implements org.joelson.turf.turfgame.Zone {
 
-    private final String name;
     private final int id;
+    private final String name;
     private final Type type;
     private final Region region;
     private final double latitude;
@@ -20,39 +19,47 @@ public class Zone {
     private final int takeoverPoints;
     private final int pointsPerHour;
     private final int totalTakeovers;
+    private final User previousOwner;
+    private final User currentOwner;
+    private final String dateLastTaken;
 
     @JsonCreator
     public Zone(
-            @Nonnull @JsonProperty("name") String name,
-            @JsonProperty("id") int id,
-            @Nonnull @JsonProperty("type") Type type,
-            @Nonnull @JsonProperty("region") Region region,
-            @JsonProperty("latitude") double latitude,
-            @JsonProperty("longitude") double longitude,
-            @Nullable @JsonProperty("dateCreated") String dateCreated,
-            @JsonProperty("takeoverPoints") int takeoverPoints,
-            @JsonProperty("pointsPerHour") int pointsPerHour,
-            @JsonProperty("totalTakeovers") int totalTakeovers
+            @JsonProperty(value = "id", required = true) int id,
+            @Nonnull @JsonProperty(value = "name", required = true) String name,
+            @Nullable @JsonProperty("type") Type type,
+            @Nullable @JsonProperty("region") Region region,
+            @JsonProperty(value = "latitude", required = true) double latitude,
+            @JsonProperty(value = "longitude", required = true) double longitude,
+            @Nonnull @JsonProperty(value = "dateCreated", required = true) String dateCreated,
+            @JsonProperty(value = "takeoverPoints", required = true) int takeoverPoints,
+            @JsonProperty(value = "pointsPerHour", required = true) int pointsPerHour,
+            @JsonProperty(value = "totalTakeovers", required = true) int totalTakeovers,
+            @Nullable @JsonProperty("previousOwner") User previousOwner,
+            @Nullable @JsonProperty("currentOwner") User currentOwner,
+            @Nullable @JsonProperty("dateLastTaken") String dateLastTaken
     ) {
-        this.name = StringUtil.requireNotNullAndNotTrimmedEmpty(name);
         this.id = id;
+        this.name = StringUtil.requireNotNullAndNotTrimmedEmpty(name);
         this.type = type;
         this.region = region;
         this.latitude = latitude;
         this.longitude = longitude;
-        // this.dateCreated = StringUtil.requireNotNullAndNotTrimmedEmpty(dateCreated);
-        this.dateCreated = StringUtil.requireNullOrNonEmpty(dateCreated);
+        this.dateCreated = StringUtil.requireNotNullAndNotTrimmedEmpty(dateCreated);
         this.takeoverPoints = takeoverPoints;
         this.pointsPerHour = pointsPerHour;
         this.totalTakeovers = totalTakeovers;
-    }
-
-    public String getName() {
-        return name;
+        this.previousOwner = previousOwner;
+        this.currentOwner = currentOwner;
+        this.dateLastTaken = dateLastTaken;
     }
 
     public int getId() {
         return id;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public Type getType() {
@@ -85,5 +92,29 @@ public class Zone {
 
     public int getTotalTakeovers() {
         return totalTakeovers;
+    }
+
+    public User getPreviousOwner() {
+        return previousOwner;
+    }
+
+    public User getCurrentOwner() {
+        return currentOwner;
+    }
+
+    public String getDateLastTaken() {
+        return dateLastTaken;
+    }
+
+    @Override
+    public String toString() {
+        return String.format(
+                "Zone[id=%d, name=%s%s, region=%s, latitude=%f, longitude=%f, dateCreated=%s, takeoverPoints=%d, "
+                        + "pointsPerHour=%d, totalTakeovers=%d%s%s%s",
+                id, StringUtil.printable(name), StringUtil.printable(type, ", type="), region, latitude, longitude,
+                StringUtil.printable(dateCreated), takeoverPoints, pointsPerHour, totalTakeovers,
+                StringUtil.printable(previousOwner, ", previousOwner="),
+                StringUtil.printable(currentOwner, ", currentOwner="),
+                StringUtil.printable(dateLastTaken, ", dateLastTaken="));
     }
 }

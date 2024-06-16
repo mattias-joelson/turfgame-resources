@@ -1,6 +1,7 @@
 package org.joelson.turf.turfgame.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.joelson.turf.util.FilesUtil;
 import org.joelson.turf.util.JacksonUtil;
 
 import java.io.IOException;
@@ -16,12 +17,18 @@ public class FeedsTimeTypeReader {
         }
         for (String filename : args) {
             System.out.println("*** Reading " + filename);
-            readFeedFile(Path.of(filename));
+            FilesUtil.forEachFile(Path.of(filename), true, FeedsTimeTypeReader::readFeedFile);
         }
     }
 
-    private static void readFeedFile(Path feedPath) throws IOException {
-        for (JsonNode node : JacksonUtil.readValue(Files.readString(feedPath), JsonNode[].class)) {
+    private static void readFeedFile(Path feedPath) {
+        String content = null;
+        try {
+            content = Files.readString(feedPath);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        for (JsonNode node : JacksonUtil.readValue(content, JsonNode[].class)) {
             System.out.println("    " + node.get("time") + " - " + node.get("type"));
         }
     }

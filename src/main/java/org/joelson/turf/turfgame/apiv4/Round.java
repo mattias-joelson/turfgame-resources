@@ -2,8 +2,10 @@ package org.joelson.turf.turfgame.apiv4;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.joelson.turf.util.StringUtil;
 
-// TODO fix
+import javax.annotation.Nonnull;
+
 public class Round {
 
     private final String name;
@@ -11,8 +13,9 @@ public class Round {
 
     @JsonCreator
     private Round(
-            @JsonProperty("name") String name,
-            @JsonProperty("start") String start) {
+            @Nonnull @JsonProperty(value = "name", required = true) String name,
+            @Nonnull @JsonProperty(value = "start", required = true) String start
+    ) {
         this.name = name;
         this.start = start;
     }
@@ -27,9 +30,6 @@ public class Round {
 
     @Override
     public String toString() {
-        return "Round{" +
-                "name='" + name + '\'' +
-                ", start='" + start + '\'' +
-                '}';
+        return String.format("Round[name=%s, start=%s]", StringUtil.printable(name), StringUtil.printable(start));
     }
 }

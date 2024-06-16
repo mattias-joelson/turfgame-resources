@@ -2,11 +2,11 @@ package org.joelson.turf.turfgame.apiv4util;
 
 import org.joelson.turf.turfgame.apiv4.Zone;
 import org.joelson.turf.turfgame.apiv4.Zones;
+import org.joelson.turf.util.FilesUtil;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.List;
 
@@ -18,25 +18,29 @@ public class ZonesDate {
         }
 
         for (String filename : args) {
-            findLastCreateDate(filename);
+            FilesUtil.forEachFile(Path.of(filename), true, ZonesDate::findLastCreateDate);
         }
     }
 
-    private static void findLastCreateDate(String filename) throws IOException {
-        Path path = Paths.get(filename);
-        String json = Files.readString(path);
+    private static void findLastCreateDate(Path path) {
+        String json = null;
+        try {
+            json = Files.readString(path);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         List<Zone> zones = Zones.fromJSON(json);
-        //findSingleLastDateCreated(filename, zones);
-        findLast10DateCreated(filename, zones);
+        //findSingleLastDateCreated(path, zones);
+        findLast10DateCreated(path, zones);
     }
 
-    private static void findLast10DateCreated(String filename, List<Zone> zones) {
-        System.out.println(filename + ':');
+    private static void findLast10DateCreated(Path path, List<Zone> zones) {
+        System.out.println(path.toString() + ':');
         zones.stream().map(Zone::getDateCreated).sorted(Comparator.reverseOrder()).limit(25)
                 .forEach(System.out::println);
     }
 
-    private static void findSingleLastDateCreated(String filename, List<Zone> zones) {
+    private static void findSingleLastDateCreated(Path path, List<Zone> zones) {
         String createDate = "";
         for (Zone zone : zones) {
             if (createDate == null) {
@@ -55,6 +59,6 @@ public class ZonesDate {
                 createDate = zone.getDateCreated();
             }
         }
-        System.out.printf("%s: %s%n", filename, createDate);
+        System.out.printf("%s: %s%n", path, createDate);
     }
 }

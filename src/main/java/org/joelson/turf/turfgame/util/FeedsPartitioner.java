@@ -10,12 +10,25 @@ import java.nio.file.Path;
 public class FeedsPartitioner {
 
     public static void main(String[] args) throws IOException {
-        if (args.length != 2) {
-            System.out.printf("Usage:%n\t%s [version] [last date]", FeedsPartitioner.class.getName());
+        String version = null;
+        String server = null;
+        String until = null;
+        for (String arg : args) {
+            if (arg.startsWith("-version=")) {
+                version = arg.substring(9);
+            } else if (arg.startsWith("-server=")) {
+                server = arg.substring(8);
+            } else if (arg.startsWith("-until=")) {
+                until = arg.substring(7);
+            } else {
+                System.out.printf("Unknown option \"%s\"", arg);
+            }
+        }
+        if (args.length != 3 || version == null || server == null || until == null) {
+            System.out.printf("Usage:%n\t%s -version=v4 -server=win -until=2024-06-16", FeedsPartitioner.class.getName());
             System.exit(-1);
         }
-        String version = args[0];
-        String date = args[1];
+        String date = until;
 
         Path partitionDirectory = Path.of(".", "partition");
         if (Files.exists(partitionDirectory)) {
@@ -40,7 +53,7 @@ public class FeedsPartitioner {
                 .map(FeedsPartitioner::getDate).sorted().findFirst().orElseThrow();
         System.out.println("firstDate: " + firstDate);
 
-        Path finalPartition = Path.of(".", "feeds_" + version + '_' + firstDate + ".win");
+        Path finalPartition = Path.of(".", "feeds_" + version + '_' + firstDate + "." + server);
         System.out.printf("<move %s to %s>%n", partitionDirectory, finalPartition);
         Files.move(partitionDirectory, finalPartition);
         System.out.printf("archive:%n\t7z a %s %s%n", finalPartition.getFileName() + ".zip", finalPartition);

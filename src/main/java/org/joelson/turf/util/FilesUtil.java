@@ -11,7 +11,9 @@ import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.Comparator;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 public final class FilesUtil {
 
@@ -63,13 +65,21 @@ public final class FilesUtil {
     }
 
     public static void forEachFile(Path path, boolean readZipFiles, Consumer<Path> pathConsumer) throws IOException {
+        forEachFile(path, readZipFiles, Comparator.comparing(Path::toString), pathConsumer);
+    }
+
+    public static void forEachFile(
+            Path path, boolean readZipFiles, Comparator<Path> pathComparator, Consumer<Path> pathConsumer)
+            throws IOException {
         if (Files.isDirectory(path)) {
-            for (Path child : Files.list(path).toList()) {
-                forEachFile(child, readZipFiles, pathConsumer);
+            try (Stream<Path> paths = Files.list(path)) {
+                for (Path child : paths.sorted(pathComparator).toList()) {
+                    forEachFile(child, readZipFiles, pathComparator, pathConsumer);
+                }
             }
         } else if (readZipFiles && isZipFile(path)) {
             try (FileSystem fs = FileSystems.newFileSystem(path)) {
-                forEachFile(fs.getPath("/"), readZipFiles, pathConsumer);
+                forEachFile(fs.getPath("/"), true, pathComparator, pathConsumer);
             }
         } else {
             pathConsumer.accept(path);

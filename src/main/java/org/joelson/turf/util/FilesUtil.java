@@ -48,8 +48,8 @@ public final class FilesUtil {
     public static boolean isZipFile(Path path) {
         try (InputStream in = Files.newInputStream(path)) {
             byte[] header = new byte[4];
-            in.read(header);
-            if (header[0] == 0x50 && header[1] == 0x4B) {
+            int read = in.read(header);
+            if (read == header.length && header[0] == 0x50 && header[1] == 0x4B) {
                 if ((header[2] == 0x03 && header[3] == 0x04)
                         || (header[2] == 0x05 && header[3] == 0x06)
                         || (header[2] == 0x07 && header[3] == 0x08)) {

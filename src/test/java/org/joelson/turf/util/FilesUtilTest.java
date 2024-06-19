@@ -27,7 +27,7 @@ class FilesUtilTest {
     void forEachFileTest() throws IOException {
         Path zipFilePath = pathOfResource("complex.zip");
         PathFileCounter counter = new PathFileCounter();
-        FilesUtil.forEachFile(zipFilePath, true, counter::countPath);
+        FilesUtil.forEachFile(zipFilePath, true, Path::compareTo, counter::countPath);
         assertEquals(12, counter.noPaths);
         assertEquals(18999, counter.contentHashCode);
     }

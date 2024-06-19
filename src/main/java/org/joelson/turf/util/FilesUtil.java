@@ -64,10 +64,6 @@ public final class FilesUtil {
         return false;
     }
 
-    public static void forEachFile(Path path, boolean readZipFiles, Consumer<Path> pathConsumer) throws IOException {
-        forEachFile(path, readZipFiles, Comparator.comparing(Path::toString), pathConsumer);
-    }
-
     public static void forEachFile(
             Path path, boolean readZipFiles, Comparator<Path> pathComparator, Consumer<Path> pathConsumer)
             throws IOException {

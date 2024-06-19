@@ -23,7 +23,8 @@ public class FeedsIntervalReader {
         }
         SortedSet<FeedInterval> feedNodes = new TreeSet<>(new FeedIntervalComparator());
         for (String filename : args) {
-            FilesUtil.forEachFile(Path.of(filename), true, path -> readFeedNodes(feedNodes, readFeedFile(path)));
+            FilesUtil.forEachFile(Path.of(filename), true, new FeedsPathComparator(),
+                    path -> readFeedNodes(feedNodes, readFeedFile(path)));
         }
         feedNodes.stream().forEach(feedInterval
                 -> System.out.printf("%s: %s - %s%n", feedInterval.type, feedInterval.start, feedInterval.end));

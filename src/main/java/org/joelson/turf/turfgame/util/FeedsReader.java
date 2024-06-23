@@ -18,7 +18,7 @@ import java.util.function.Consumer;
 public abstract class FeedsReader {
 
     private static String readFile(Path path, Consumer<Path> forEachPath) {
-        String content = null;
+        String content;
         try {
             content = Files.readString(path);
         } catch (IOException e) {
@@ -44,14 +44,15 @@ public abstract class FeedsReader {
 
     private void handleNodeFiles(Path path, Consumer<JsonNode> forEachNode) {
         try {
-            FilesUtil.forEachFile(path, true, p -> handleNodes(forEachNode, readNodeFile(p)));
+            FilesUtil.forEachFile(path, true, new FeedsPathComparator(),
+                    p -> handleNodes(forEachNode, readNodeFile(p)));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     private void handleNodes(Consumer<JsonNode> forEachNode, List<JsonNode> jsonNodes) {
-        jsonNodes.forEach(forEachNode);
+        jsonNodes.reversed().forEach(forEachNode);
     }
 
     private void handleNode(SortedSet<JsonNode> uniqueNodes, JsonNode node) {
@@ -69,16 +70,40 @@ public abstract class FeedsReader {
     }
 
     public void handleFeedObjectFile(Path path, Consumer<Path> forEachPath, Consumer<FeedObject> forEachFeedObject) {
+        handleFeedObjectFile(path, new FeedsPathComparator(), forEachPath, forEachFeedObject);
+    }
+
+    public void handleFeedObjectFile(Path path, Comparator<Path> comparePaths, Consumer<Path> forEachPath, Consumer<FeedObject> forEachFeedObject) {
         try {
-            FilesUtil.forEachFile(path, true, p -> handleFeedObjects(readFile(p, forEachPath), forEachFeedObject));
+            FilesUtil.forEachFile(path, true, comparePaths,
+                    p -> handleFeedObjects(readFile(p, forEachPath), forEachFeedObject));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     public void handleFeedObjects(String content, Consumer<FeedObject> forEachFeedObject) {
-        List<JsonNode> nodes = Arrays.asList(JacksonUtil.readValue(content, JsonNode[].class));
-        nodes.forEach(node -> handleFeedObject(node, forEachFeedObject));
+        List<JsonNode> nodes = Arrays.asList(JacksonUtil.readValue(content, JsonNode[].class)).reversed();
+        if (!nodes.isEmpty()) {
+            String time = null;
+            for (JsonNode node : nodes) {
+                String nodeTime = getJsonNodeTime(node);
+                if (time == null || time.compareTo(nodeTime) <= 0) {
+                    time = nodeTime;
+                } else {
+                    throw new IllegalArgumentException("Node with time " + nodeTime + " is not after " + time + ": " + node);
+                }
+                handleFeedObject(node, forEachFeedObject);
+            }
+        }
+    }
+
+    private static String getJsonNodeTime(JsonNode node) {
+        JsonNode timeNode = node.get("time");
+        if (timeNode == null) {
+            throw new IllegalArgumentException("Node lacks attribute time: " + node);
+        }
+        return timeNode.asText();
     }
 
     private void handleFeedObject(JsonNode node, Consumer<FeedObject> forEachFeedObject) {

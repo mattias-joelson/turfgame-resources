@@ -17,7 +17,8 @@ public class FeedsTimeTypeReader {
         }
         for (String filename : args) {
             System.out.println("*** Reading " + filename);
-            FilesUtil.forEachFile(Path.of(filename), true, FeedsTimeTypeReader::readFeedFile);
+            FilesUtil.forEachFile(Path.of(filename), true, new FeedsPathComparator(),
+                    FeedsTimeTypeReader::readFeedFile);
         }
     }
 

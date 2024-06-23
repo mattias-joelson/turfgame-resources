@@ -2,6 +2,7 @@ package org.joelson.turf.turfgame.apiv4util;
 
 import org.joelson.turf.turfgame.apiv4.Zone;
 import org.joelson.turf.turfgame.apiv4.Zones;
+import org.joelson.turf.turfgame.util.FeedsPathComparator;
 import org.joelson.turf.util.FilesUtil;
 
 import java.io.IOException;
@@ -22,12 +23,12 @@ public final class ZonesFind {
         }
         String zoneName = args[0];
         for (int i = 1; i < args.length; i += 1) {
-            FilesUtil.forEachFile(Path.of(args[i]), true, path -> readFile(path, zoneName));
+            FilesUtil.forEachFile(Path.of(args[i]), true, new FeedsPathComparator(), path -> readFile(path, zoneName));
         }
     }
 
     private static void readFile(Path path, String zoneName) {
-        String json = null;
+        String json;
         try {
             json = Files.readString(path);
         } catch (IOException e) {

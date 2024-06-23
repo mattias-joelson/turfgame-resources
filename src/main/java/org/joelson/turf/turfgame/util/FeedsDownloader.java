@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -17,8 +18,9 @@ import java.time.format.DateTimeFormatter;
 public class FeedsDownloader {
 
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
+    private static Path logPath;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         if (args.length != 1) {
             System.out.printf("Usage:%n\t%s feedsRequest", FeedsDownloader.class);
             return;
@@ -26,7 +28,11 @@ public class FeedsDownloader {
         handleFeeds(args[0]);
     }
 
-    public static void handleFeeds(String feedsRequest) {
+    public static void handleFeeds(String feedsRequest) throws IOException {
+        logPath = Files.createTempFile("turfgame-feedsdownloader-", ".txt");
+        System.out.println(logPath);
+        log("Created log file " + logPath);
+
         Instant lastTakeEntry = null;
         Instant lastMedalChatEntry = null;
         Instant lastZoneEntry = null;
@@ -41,25 +47,40 @@ public class FeedsDownloader {
     }
 
     private static Instant getFeed(String feedsRequest, String feed, String filenamePattern, Instant since) {
+        String json;
         try {
-            String json = getFeedsJSON(feedsRequest, feed, since);
-            if (json.equals("[]")) {
-                log("No data for " + feed + " since " + since);
-                return since;
-            }
-            Instant lastEntryTime = getLastEntryTime(json);
-            if (lastEntryTime == null) {
-                log("JSON: " + json);
-                log("lastEntryTime is null");
-            }
-            Path file = getFilePath(filenamePattern, lastEntryTime);
-            Files.writeString(file, json, StandardCharsets.UTF_8);
-            log("Downloaded " + file + " at " + Instant.now());
-            return Instant.from(lastEntryTime).minusSeconds(1);
-        } catch (Throwable e) {
-            log(Instant.now() + ": " + e);
-            return null;
+            json = getFeedsJSON(feedsRequest, feed, since);
+        } catch (IOException e) {
+            log(String.format("%s: Unable to get JSON - %s", Instant.now(), e));
+            return since;
         }
+        if (json.equals("[]")) {
+            log("No data for " + feed + " since " + since);
+            return since;
+        }
+        Instant lastEntryTime = getLastEntryTime(json);
+        if (lastEntryTime == null) {
+            log("JSON: " + json);
+            log("lastEntryTime is null");
+        }
+        Path file = null;
+        try {
+            file = getFilePath(filenamePattern, lastEntryTime);
+            Files.writeString(file, json, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            log(String.format("%s: Unable to store to %s - %s", Instant.now(), file, e));
+            Path tempFile = null;
+            try {
+                tempFile = Files.createTempFile("feed_download", ".json");
+                Files.writeString(tempFile, json, StandardCharsets.UTF_8);
+            } catch (IOException ex) {
+                log(String.format("%s: Unable to store to %s - %s", Instant.now(), tempFile, e));
+                log(json);
+            }
+            return since;
+        }
+        log("Downloaded " + file + " at " + Instant.now());
+        return (lastEntryTime == null) ? null : Instant.from(lastEntryTime).minusSeconds(1);
     }
 
     private static String getFeedsJSON(String feedsRequest, String feed, Instant since) throws IOException {
@@ -104,6 +125,16 @@ public class FeedsDownloader {
 
     private static void waitBetweenFeeds() {
         Instant until = Instant.now().plusSeconds(5);
+        waitUntil(until);
+    }
+
+    private static void waitUntilNext() {
+        Instant until = Instant.now().plusSeconds(5 * 60);
+        log("Sleeping until " + until);
+        waitUntil(until);
+    }
+
+    private static void waitUntil(Instant until) {
         while (Instant.now().isBefore(until)) {
             try {
                 Thread.sleep(1000);
@@ -113,19 +144,13 @@ public class FeedsDownloader {
         }
     }
 
-    private static void waitUntilNext() {
-        Instant until = Instant.now().plusSeconds(5 * 60);
-        log("Sleeping until " + until);
-        while (Instant.now().isBefore(until)) {
-            try {
-                Thread.sleep(10000);
-            } catch (InterruptedException e) {
-                // ignore
-            }
-        }
-    }
-
     private static void log(String msg) {
-        System.out.printf("[%s] %s%n", Thread.currentThread().getName(), msg);
+        String s = String.format("[%s] %s%n", Thread.currentThread().getName(), msg);
+        System.out.printf(s);
+        try {
+            Files.writeString(logPath, s, StandardOpenOption.APPEND);
+        } catch (IOException e) {
+            System.out.printf("[%s] Unable to log to file %s - %s%n", Thread.currentThread().getName(), logPath, e);
+        }
     }
 }

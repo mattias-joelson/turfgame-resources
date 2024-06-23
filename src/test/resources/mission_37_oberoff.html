@@ -1,0 +1,954 @@
+
+
+
+<html>
+ <meta http-equiv='Content-Type' content='text/html;' charset='utf-8'/>
+ <script src='https://code.jquery.com/jquery-3.3.1.js'></script>
+ <script type='text/javascript' src='AjaxClass.js?random=" . uniqid() . "'></script>
+ <script type='text/javascript' src='MissionsClass.js?random=" . uniqid() . "'></script>
+ <script type='text/javascript' src='https://momentjs.com/downloads/moment-with-locales.min.js'></script>
+
+ <script  language='javascript' type='text/javascript'>
+  	function getLocalDate(utcDate) {
+		return moment.utc(utcDate).local().format('YYYY-MM-DD HH:mm:ss');
+	}
+	
+    function onOkClick(userid) {
+  	    if (userid === undefined) userid = '';
+		var missionSelect = document.getElementById('missionid'); 
+		var missionid = missionSelect.options[missionSelect.selectedIndex].value;
+		var promodeOption = '';
+		var missionPage = 'mission.php';
+
+		if (missionid == 45 || missionid == 48)
+          missionPage = 'storymission.php';
+		
+		if (promode.checked) promodeOption = '&promode';
+		
+		var newLocation = missionPage + '?missionid=' + missionid + '&userid=' + userid + promodeOption;
+		window.location.href = newLocation;
+	}
+	
+	$(document).ready(function() {
+        $('.master.main').css('height', ($(window).height() - $('.header').outerHeight(true) - 20));
+        $('.pane.zone').css('height', $('.leftPane').outerHeight(true) - $('.pane.user').outerHeight(true));
+    });
+
+    $(window).resize(function() {
+        $('.master.main').css('height', ($(window).height() - $('.header').outerHeight(true) - 20));
+        $('.pane.zone').css('height', $('.leftPane').outerHeight(true) - $('.pane.user').outerHeight(true));
+    });
+ </script>
+
+  <head>
+    <link rel='stylesheet' type='text/css' href='alphamission.css'>
+	<title>Mission: Järfälla med skruvad mersmak</title>
+  </head>
+  <body>
+   <div class='mainPane'>
+    <div class='master header'>
+     <div class='selectionBox'>
+       <table>
+         <tr>
+           <td >
+             <label for='missionid' class='selectionBox'>Mission:</label>
+           </td>
+           <td>
+             <select class='selectionBox' name='missionid' id='missionid' onchange='onOkClick(userid.value)'>";
+
+              <option value='2' >Bokstavsrally Västerås</option>
+              <option value='3' >Bokstavsrally Göteborg</option>
+              <option value='4' >Bokstavsrally på Kungsholmen</option>
+              <option value='5' >Ume 101</option>
+              <option value='6' >Etthundraelva runt älva</option>
+              <option value='7' >100 ören i Örebro</option>
+              <option value='8' >Bokstavsrally Kalmar</option>
+              <option value='9' >Sjöodjursjakt i Östersund</option>
+              <option value='10' >Kors och tvärs i Uppsala</option>
+              <option value='11' >123 möllor i Malmö</option>
+              <option value='12' >Gretzky vs Enköping</option>
+              <option value='13' >Bokstavsrally i Eskilstuna</option>
+              <option value='14' >Nittio ålar på land</option>
+              <option value='15' >Köpings Bokstavsjakt</option>
+              <option value='16' >Linköpings bökiga bokstäver</option>
+              <option value='17' >Korsstygn i Borås</option>
+              <option value='20' >Jönköpings bokstavsjakt</option>
+              <option value='23' >Skövdes Bokstavsjakt</option>
+              <option value='24' >Helsingsborgs Helgalna Bokstavsrally</option>
+              <option value='25' >Skene gate upp å gate ner i Norrköping</option>
+              <option value='26' >107 Halmbockar i Gävle</option>
+              <option value='32' >Partilles bokstavsslakt</option>
+              <option value='38' >Halka hit och dit i Hallsta</option>
+              <option value='47' >Sala är Silver, turfa är Guld</option>
+              <option value='52' >Traminatrix</option>
+              <option value='45' >Holger Nilssons underbara resa</option>
+              <option value='48' >Gurktest</option>
+              <option value='22' >Åtta misslyckade kringlor i Södertälje</option>
+              <option value='27' >Oturligt många varv i lund</option>
+              <option value='28' >18 gurkspiraler i Västerås</option>
+              <option value='29' >Två solar skiner i Karlstadtrakten</option>
+              <option value='30' >22 årsringar i björkarnas stad</option>
+              <option value='31' >24 varv runt Uppsala</option>
+              <option value='33' >Runt runt i Sumpan och Solna</option>
+              <option value='34' >Snurrar söder om söder</option>
+              <option value='35' >23 kex i Örebro</option>
+              <option value='36' >Runt hela Hisingen</option>
+              <option value='37' selected='true'>Järfälla med skruvad mersmak</option>
+              <option value='39' >Över Enköpingsån om och om igen</option>
+              <option value='40' >Från Sjukhuset till Lusthuset</option>
+              <option value='41' >19 båtvarv i Mariehamn</option>
+              <option value='42' >21 Varv i Kalmar</option>
+              <option value='43' >Borlänges kupolsnurr</option>
+              <option value='44' >Falun runt</option>
+              <option value='46' >Eskilstunasnurren</option>
+              <option value='49' >Bockhornet</option>
+              <option value='50' >15 trinda varv runt bergen</option>
+              <option value='56' >Varv på varv i Varvberg</option>
+              <option value='57' >Norra Öland runt</option>
+              <option value='58' >Södra Öland runt</option>
+              <option value='51' >Gurkflipper</option>
+              <option value='53' >Umeflipper</option>
+              <option value='54' >Uppflipper</option>
+              <option value='55' >Kexflipper</option>             </select>
+             <input class='selectionBox' type='button' value='OK' onclick='return onOkClick();' style='width:80px; '>
+          </td>
+         </tr>
+         <tr>
+           <td>
+             <label for='userid'>Turfalias:</label></td>
+           <td>
+             <input type='text' name='userid' id='userid' onkeydown='if (event.keyCode == 13) return onOkClick(this.value);'  value='Oberoff' autocomplete='on'>
+             <input type='button' value='OK' onclick='return onOkClick(userid.value);' style='width:60px; height:20px;'>
+             <input type='button' value='Reset' onclick='return onOkClick();' style='width:60px; height:20px;'>
+             <input type='checkbox' id='promode' name='promode' value='promode' >
+             <label for='promode'>Pro mode!</label>
+             
+          </td>
+         </tr>
+       </table></td><td>
+     </div>
+    </div> <!-- master header -->
+    <div class='master main'>
+       <div class='leftPane'>
+
+    <div class='pane user'>
+        
+   <table class='miscTable'>
+     <thead>
+       <tr>
+         <th align='right'>Zones</th><th align='left'>Turfer</th><th align='left'>Next zone</th>
+       </tr>
+     </thead>
+         <tr > 
+           <td align='right'><img width='16' height='16' src='/images/medal-1.png'></td><td align='left'><a href='mission.php?missionid=37&userid=peterspirea'>peterspirea</a></td><td align='left'>Gold Medal!</td>
+         </tr>
+         <tr > 
+           <td align='right'><img width='16' height='16' src='/images/medal-2.png'></td><td align='left'><a href='mission.php?missionid=37&userid=DaHunter'>DaHunter</a></td><td align='left'>Silver Medal!</td>
+         </tr>
+         <tr > 
+           <td align='right'><img width='16' height='16' src='/images/medal-3.png'></td><td align='left'><a href='mission.php?missionid=37&userid=GoSt'>GoSt</a></td><td align='left'>Bronze Medal!</td>
+         </tr>
+         <tr > 
+           <td align='right'>181</td><td align='left'><a href='mission.php?missionid=37&userid=Oberoff'>Oberoff</a></td><td align='left'><a href='zone.php?zoneid=29156'>Turbinturf</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>167</td><td align='left'><a href='mission.php?missionid=37&userid=4Eken'>4Eken</a></td><td align='left'><a href='zone.php?zoneid=94806'>GrowingRoad</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>46</td><td align='left'><a href='mission.php?missionid=37&userid=Changrila'>Changrila</a></td><td align='left'><a href='zone.php?zoneid=23320'>Häggskogen</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>45</td><td align='left'><a href='mission.php?missionid=37&userid=VNV_Legion'>VNV_Legion</a></td><td align='left'><a href='zone.php?zoneid=138045'>Barkarby</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>41</td><td align='left'><a href='mission.php?missionid=37&userid=eweone'>eweone</a></td><td align='left'><a href='zone.php?zoneid=117742'>Björkkärret</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>18</td><td align='left'><a href='mission.php?missionid=37&userid=Sikcud'>Sikcud</a></td><td align='left'><a href='zone.php?zoneid=115437'>Kuppavreten</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>18</td><td align='left'><a href='mission.php?missionid=37&userid=Mobius'>Mobius</a></td><td align='left'><a href='zone.php?zoneid=115437'>Kuppavreten</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>17</td><td align='left'><a href='mission.php?missionid=37&userid=maZmo'>maZmo</a></td><td align='left'><a href='zone.php?zoneid=56616'>Brasklappen</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>12</td><td align='left'><a href='mission.php?missionid=37&userid=BambamGranit'>BambamGranit</a></td><td align='left'><a href='zone.php?zoneid=8915'>Vraket</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>12</td><td align='left'><a href='mission.php?missionid=37&userid=GoSt'>GoSt</a></td><td align='left'><a href='zone.php?zoneid=8915'>Vraket</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>12</td><td align='left'><a href='mission.php?missionid=37&userid=Cyklonen'>Cyklonen</a></td><td align='left'><a href='zone.php?zoneid=8915'>Vraket</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>9</td><td align='left'><a href='mission.php?missionid=37&userid=peterspirea'>peterspirea</a></td><td align='left'><a href='zone.php?zoneid=11121'>FemKnop</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>8</td><td align='left'><a href='mission.php?missionid=37&userid=Pebbles'>Pebbles</a></td><td align='left'><a href='zone.php?zoneid=21123'>Strandliden</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>8</td><td align='left'><a href='mission.php?missionid=37&userid=topten'>topten</a></td><td align='left'><a href='zone.php?zoneid=21123'>Strandliden</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>7</td><td align='left'><a href='mission.php?missionid=37&userid=obiwankanobi'>obiwankanobi</a></td><td align='left'><a href='zone.php?zoneid=295'>Bonanza2015</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>6</td><td align='left'><a href='mission.php?missionid=37&userid=airwolf'>airwolf</a></td><td align='left'><a href='zone.php?zoneid=23311'>Mässingen</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>5</td><td align='left'><a href='mission.php?missionid=37&userid=lerizo'>lerizo</a></td><td align='left'><a href='zone.php?zoneid=7136'>Norrland</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>5</td><td align='left'><a href='mission.php?missionid=37&userid=gå-for-it'>gå-for-it</a></td><td align='left'><a href='zone.php?zoneid=7136'>Norrland</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>5</td><td align='left'><a href='mission.php?missionid=37&userid=DaHunter'>DaHunter</a></td><td align='left'><a href='zone.php?zoneid=7136'>Norrland</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>5</td><td align='left'><a href='mission.php?missionid=37&userid=ZoneSlayer99'>ZoneSlayer99</a></td><td align='left'><a href='zone.php?zoneid=7136'>Norrland</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>4</td><td align='left'><a href='mission.php?missionid=37&userid=VanguarD'>VanguarD</a></td><td align='left'><a href='zone.php?zoneid=63989'>Skattevinsten</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>4</td><td align='left'><a href='mission.php?missionid=37&userid=TRIZmaster'>TRIZmaster</a></td><td align='left'><a href='zone.php?zoneid=63989'>Skattevinsten</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>4</td><td align='left'><a href='mission.php?missionid=37&userid=capri'>capri</a></td><td align='left'><a href='zone.php?zoneid=63989'>Skattevinsten</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>4</td><td align='left'><a href='mission.php?missionid=37&userid=magnusn'>magnusn</a></td><td align='left'><a href='zone.php?zoneid=63989'>Skattevinsten</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>3</td><td align='left'><a href='mission.php?missionid=37&userid=Lillmaggan'>Lillmaggan</a></td><td align='left'><a href='zone.php?zoneid=96298'>Gränsvärde</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>3</td><td align='left'><a href='mission.php?missionid=37&userid=MrRed'>MrRed</a></td><td align='left'><a href='zone.php?zoneid=96298'>Gränsvärde</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>3</td><td align='left'><a href='mission.php?missionid=37&userid=deppen'>deppen</a></td><td align='left'><a href='zone.php?zoneid=96298'>Gränsvärde</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>3</td><td align='left'><a href='mission.php?missionid=37&userid=Leifons'>Leifons</a></td><td align='left'><a href='zone.php?zoneid=96298'>Gränsvärde</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>3</td><td align='left'><a href='mission.php?missionid=37&userid=clalin'>clalin</a></td><td align='left'><a href='zone.php?zoneid=96298'>Gränsvärde</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>3</td><td align='left'><a href='mission.php?missionid=37&userid=pappaS'>pappaS</a></td><td align='left'><a href='zone.php?zoneid=96298'>Gränsvärde</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>2</td><td align='left'><a href='mission.php?missionid=37&userid=Rauke'>Rauke</a></td><td align='left'><a href='zone.php?zoneid=11602'>Spångagravar</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>2</td><td align='left'><a href='mission.php?missionid=37&userid=Limegrön'>Limegrön</a></td><td align='left'><a href='zone.php?zoneid=11602'>Spångagravar</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>2</td><td align='left'><a href='mission.php?missionid=37&userid=Tyr'>Tyr</a></td><td align='left'><a href='zone.php?zoneid=11602'>Spångagravar</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>2</td><td align='left'><a href='mission.php?missionid=37&userid=KSV'>KSV</a></td><td align='left'><a href='zone.php?zoneid=11602'>Spångagravar</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>2</td><td align='left'><a href='mission.php?missionid=37&userid=AnnSch'>AnnSch</a></td><td align='left'><a href='zone.php?zoneid=11602'>Spångagravar</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>2</td><td align='left'><a href='mission.php?missionid=37&userid=AVE'>AVE</a></td><td align='left'><a href='zone.php?zoneid=11602'>Spångagravar</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>2</td><td align='left'><a href='mission.php?missionid=37&userid=SUPERIOЯ'>SUPERIOЯ</a></td><td align='left'><a href='zone.php?zoneid=11602'>Spångagravar</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>2</td><td align='left'><a href='mission.php?missionid=37&userid=kakmonstret66'>kakmonstret66</a></td><td align='left'><a href='zone.php?zoneid=11602'>Spångagravar</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>2</td><td align='left'><a href='mission.php?missionid=37&userid=Taigatromel'>Taigatromel</a></td><td align='left'><a href='zone.php?zoneid=11602'>Spångagravar</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>2</td><td align='left'><a href='mission.php?missionid=37&userid=rojter'>rojter</a></td><td align='left'><a href='zone.php?zoneid=11602'>Spångagravar</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>2</td><td align='left'><a href='mission.php?missionid=37&userid=RiddervanMyyl'>RiddervanMyyl</a></td><td align='left'><a href='zone.php?zoneid=11602'>Spångagravar</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>2</td><td align='left'><a href='mission.php?missionid=37&userid=mallan92'>mallan92</a></td><td align='left'><a href='zone.php?zoneid=11602'>Spångagravar</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>2</td><td align='left'><a href='mission.php?missionid=37&userid=sumo'>sumo</a></td><td align='left'><a href='zone.php?zoneid=11602'>Spångagravar</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>2</td><td align='left'><a href='mission.php?missionid=37&userid=spawngame'>spawngame</a></td><td align='left'><a href='zone.php?zoneid=11602'>Spångagravar</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>2</td><td align='left'><a href='mission.php?missionid=37&userid=WinMem'>WinMem</a></td><td align='left'><a href='zone.php?zoneid=11602'>Spångagravar</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>2</td><td align='left'><a href='mission.php?missionid=37&userid=RikerBiker'>RikerBiker</a></td><td align='left'><a href='zone.php?zoneid=11602'>Spångagravar</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>2</td><td align='left'><a href='mission.php?missionid=37&userid=Heva'>Heva</a></td><td align='left'><a href='zone.php?zoneid=11602'>Spångagravar</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=Yenx'>Yenx</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=IkeaApan'>IkeaApan</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=Getengullfia'>Getengullfia</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=19Ovechkin'>19Ovechkin</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=nalbergoo'>nalbergoo</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=Bullfest'>Bullfest</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=Lagavulin8'>Lagavulin8</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=ZepLeddelin'>ZepLeddelin</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=Giftorm'>Giftorm</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=HerrGårman'>HerrGårman</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=iTurf'>iTurf</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=radagast'>radagast</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=Arantes'>Arantes</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=Kladde'>Kladde</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=Colossus'>Colossus</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=TheCat'>TheCat</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=VÄDUREN'>VÄDUREN</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=yxa'>yxa</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=Ragearn'>Ragearn</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=Zuma'>Zuma</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=JonasfromHell'>JonasfromHell</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=MRXCOOL'>MRXCOOL</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=BirgittaS'>BirgittaS</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=yes'>yes</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=Blaumeise'>Blaumeise</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=Ghostturfen'>Ghostturfen</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=Vilse!'>Vilse!</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=Kevindebruine'>Kevindebruine</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=Agape'>Agape</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=Mr_Bean'>Mr_Bean</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=TRECKER'>TRECKER</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=Freze'>Freze</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=EvilEye'>EvilEye</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=molex'>molex</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=-{Alè}-'>-{Alè}-</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=Mr.Danki'>Mr.Danki</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=gingerbreadman'>gingerbreadman</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=Jopt'>Jopt</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=alfaturfen'>alfaturfen</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=Mechakhan'>Mechakhan</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=sidde'>sidde</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=Tarak68'>Tarak68</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=pancosmic'>pancosmic</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=fågelmat'>fågelmat</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=ReggaeHasse'>ReggaeHasse</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=hoxturf'>hoxturf</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=söndermarken'>söndermarken</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=sagovic'>sagovic</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=bubblan'>bubblan</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=kentwall'>kentwall</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=HANK_HACKMAN'>HANK_HACKMAN</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=ToFo'>ToFo</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=SunYour'>SunYour</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=Jockatim'>Jockatim</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=thelinkan'>thelinkan</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=frameworks'>frameworks</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=makrillen71'>makrillen71</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=VincentVega'>VincentVega</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=WombaWomba'>WombaWomba</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=Hansdsf'>Hansdsf</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=JENZA'>JENZA</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=Junioren'>Junioren</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=FarmAnka'>FarmAnka</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=matse55'>matse55</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=bjorn444'>bjorn444</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=Bizkit'>Bizkit</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=Zoomerturfarn'>Zoomerturfarn</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=rabbit_rail'>rabbit_rail</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=HåkBråkan'>HåkBråkan</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=Ozze70'>Ozze70</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=w@lle'>w@lle</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=mescalin'>mescalin</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=TSV'>TSV</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=Helldeman'>Helldeman</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=K-2SO'>K-2SO</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=LBz'>LBz</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=mowog'>mowog</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=Foppstar'>Foppstar</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=Albert10'>Albert10</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=floramcml'>floramcml</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=trollbunden'>trollbunden</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=Turferian'>Turferian</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=perelius2'>perelius2</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=LadyNinja'>LadyNinja</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=Lenakjell'>Lenakjell</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=cillamansson'>cillamansson</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         <tr > 
+           <td align='right'>1</td><td align='left'><a href='mission.php?missionid=37&userid=Jordbrokillen'>Jordbrokillen</a></td><td align='left'><a href='zone.php?zoneid=22831'>Rälsberga</a></td>
+         </tr>
+         </table>    </div> <!-- pane user -->
+
+    <div class='pane zone'>
+        
+   <table class='miscTable'>
+     <thead>
+       <tr>
+         <th align='right'>Pos</th><th align='left'>Zone</th><th></th>
+       </tr>
+     </thead>
+             <tr id='z182' onmouseover='missions.changeZoneSlider(182); missions.onZoneSliderChanged();'> 
+               <td align='right'>182</td><td>Turbinturf</td><td><a href='zone.php?zoneid=29156'>info</a></td>
+             </tr>
+             <tr id='z183' onmouseover='missions.changeZoneSlider(183); missions.onZoneSliderChanged();'> 
+               <td align='right'>183</td><td>TheCoalField</td><td><a href='zone.php?zoneid=42936'>info</a></td>
+             </tr>
+             <tr id='z184' onmouseover='missions.changeZoneSlider(184); missions.onZoneSliderChanged();'> 
+               <td align='right'>184</td><td>Ulvsätra</td><td><a href='zone.php?zoneid=21417'>info</a></td>
+             </tr>
+             <tr id='z185' onmouseover='missions.changeZoneSlider(185); missions.onZoneSliderChanged();'> 
+               <td align='right'>185</td><td>ToTheOverlake</td><td><a href='zone.php?zoneid=38260'>info</a></td>
+             </tr>
+             <tr id='z186' onmouseover='missions.changeZoneSlider(186); missions.onZoneSliderChanged();'> 
+               <td align='right'>186</td><td>SäbySkog</td><td><a href='zone.php?zoneid=31322'>info</a></td>
+             </tr>
+             <tr id='z187' onmouseover='missions.changeZoneSlider(187); missions.onZoneSliderChanged();'> 
+               <td align='right'>187</td><td>Fältknäppen</td><td><a href='zone.php?zoneid=96607'>info</a></td>
+             </tr>
+             <tr id='z188' onmouseover='missions.changeZoneSlider(188); missions.onZoneSliderChanged();'> 
+               <td align='right'>188</td><td>BillyZone</td><td><a href='zone.php?zoneid=1615'>info</a></td>
+             </tr>
+             <tr id='z189' onmouseover='missions.changeZoneSlider(189); missions.onZoneSliderChanged();'> 
+               <td align='right'>189</td><td>Söderhöjden</td><td><a href='zone.php?zoneid=62030'>info</a></td>
+             </tr>
+             <tr id='z190' onmouseover='missions.changeZoneSlider(190); missions.onZoneSliderChanged();'> 
+               <td align='right'>190</td><td>JakanSyd</td><td><a href='zone.php?zoneid=22832'>info</a></td>
+             </tr>
+             <tr id='z191' onmouseover='missions.changeZoneSlider(191); missions.onZoneSliderChanged();'> 
+               <td align='right'>191</td><td>HässelVilla</td><td><a href='zone.php?zoneid=36440'>info</a></td>
+             </tr>
+             <tr id='z192' onmouseover='missions.changeZoneSlider(192); missions.onZoneSliderChanged();'> 
+               <td align='right'>192</td><td>Droppgläntan</td><td><a href='zone.php?zoneid=22842'>info</a></td>
+             </tr>
+             <tr id='z193' onmouseover='missions.changeZoneSlider(193); missions.onZoneSliderChanged();'> 
+               <td align='right'>193</td><td>SiriusStuff</td><td><a href='zone.php?zoneid=139101'>info</a></td>
+             </tr>
+             <tr id='z194' onmouseover='missions.changeZoneSlider(194); missions.onZoneSliderChanged();'> 
+               <td align='right'>194</td><td>Neptuni</td><td><a href='zone.php?zoneid=22841'>info</a></td>
+             </tr>
+             <tr id='z195' onmouseover='missions.changeZoneSlider(195); missions.onZoneSliderChanged();'> 
+               <td align='right'>195</td><td>YesPåGränsen</td><td><a href='zone.php?zoneid=150254'>info</a></td>
+             </tr>
+             <tr id='z196' onmouseover='missions.changeZoneSlider(196); missions.onZoneSliderChanged();'> 
+               <td align='right'>196</td><td>Vitplistern</td><td><a href='zone.php?zoneid=36438'>info</a></td>
+             </tr>
+             <tr id='z197' onmouseover='missions.changeZoneSlider(197); missions.onZoneSliderChanged();'> 
+               <td align='right'>197</td><td>Kvickroten</td><td><a href='zone.php?zoneid=91990'>info</a></td>
+             </tr>
+             <tr id='z198' onmouseover='missions.changeZoneSlider(198); missions.onZoneSliderChanged();'> 
+               <td align='right'>198</td><td>HässelbyGreen</td><td><a href='zone.php?zoneid=7154'>info</a></td>
+             </tr>
+             <tr id='z199' onmouseover='missions.changeZoneSlider(199); missions.onZoneSliderChanged();'> 
+               <td align='right'>199</td><td>Nyaland</td><td><a href='zone.php?zoneid=115479'>info</a></td>
+             </tr>
+             <tr id='z200' onmouseover='missions.changeZoneSlider(200); missions.onZoneSliderChanged();'> 
+               <td align='right'>200</td><td>Tröskeln</td><td><a href='zone.php?zoneid=34565'>info</a></td>
+             </tr>
+             <tr id='z201' onmouseover='missions.changeZoneSlider(201); missions.onZoneSliderChanged();'> 
+               <td align='right'>201</td><td>Polygonia</td><td><a href='zone.php?zoneid=34560'>info</a></td>
+             </tr>
+             <tr id='z202' onmouseover='missions.changeZoneSlider(202); missions.onZoneSliderChanged();'> 
+               <td align='right'>202</td><td>MacBikers</td><td><a href='zone.php?zoneid=38265'>info</a></td>
+             </tr>
+             <tr id='z203' onmouseover='missions.changeZoneSlider(203); missions.onZoneSliderChanged();'> 
+               <td align='right'>203</td><td>Ormberget</td><td><a href='zone.php?zoneid=117569'>info</a></td>
+             </tr>
+             <tr id='z204' onmouseover='missions.changeZoneSlider(204); missions.onZoneSliderChanged();'> 
+               <td align='right'>204</td><td>Factoryforest</td><td><a href='zone.php?zoneid=38262'>info</a></td>
+             </tr>
+             <tr id='z205' onmouseover='missions.changeZoneSlider(205); missions.onZoneSliderChanged();'> 
+               <td align='right'>205</td><td>Slampetorre</td><td><a href='zone.php?zoneid=38264'>info</a></td>
+             </tr>
+             <tr id='z206' onmouseover='missions.changeZoneSlider(206); missions.onZoneSliderChanged();'> 
+               <td align='right'>206</td><td>FilarPåNamnet</td><td><a href='zone.php?zoneid=150166'>info</a></td>
+             </tr>
+             <tr id='z207' onmouseover='missions.changeZoneSlider(207); missions.onZoneSliderChanged();'> 
+               <td align='right'>207</td><td>Emaljerat</td><td><a href='zone.php?zoneid=21418'>info</a></td>
+             </tr>
+             <tr id='z208' onmouseover='missions.changeZoneSlider(208); missions.onZoneSliderChanged();'> 
+               <td align='right'>208</td><td>Polhemmet</td><td><a href='zone.php?zoneid=21413'>info</a></td>
+             </tr>
+             <tr id='z209' onmouseover='missions.changeZoneSlider(209); missions.onZoneSliderChanged();'> 
+               <td align='right'>209</td><td>SäbyRoad</td><td><a href='zone.php?zoneid=119629'>info</a></td>
+             </tr>
+             <tr id='z210' onmouseover='missions.changeZoneSlider(210); missions.onZoneSliderChanged();'> 
+               <td align='right'>210</td><td>BrantaBacken</td><td><a href='zone.php?zoneid=25365'>info</a></td>
+             </tr>
+             <tr id='z211' onmouseover='missions.changeZoneSlider(211); missions.onZoneSliderChanged();'> 
+               <td align='right'>211</td><td>Viktunneln</td><td><a href='zone.php?zoneid=22849'>info</a></td>
+             </tr>
+             <tr id='z212' onmouseover='missions.changeZoneSlider(212); missions.onZoneSliderChanged();'> 
+               <td align='right'>212</td><td>BackTrick</td><td><a href='zone.php?zoneid=7173'>info</a></td>
+             </tr>
+             <tr id='z213' onmouseover='missions.changeZoneSlider(213); missions.onZoneSliderChanged();'> 
+               <td align='right'>213</td><td>Blomknugen</td><td><a href='zone.php?zoneid=130793'>info</a></td>
+             </tr>
+             <tr id='z214' onmouseover='missions.changeZoneSlider(214); missions.onZoneSliderChanged();'> 
+               <td align='right'>214</td><td>ÄppelPäppel</td><td><a href='zone.php?zoneid=34566'>info</a></td>
+             </tr>
+             <tr id='z215' onmouseover='missions.changeZoneSlider(215); missions.onZoneSliderChanged();'> 
+               <td align='right'>215</td><td>Banankontakt</td><td><a href='zone.php?zoneid=34567'>info</a></td>
+             </tr>
+             <tr id='z216' onmouseover='missions.changeZoneSlider(216); missions.onZoneSliderChanged();'> 
+               <td align='right'>216</td><td>BayLakeZon</td><td><a href='zone.php?zoneid=7024'>info</a></td>
+             </tr>
+             <tr id='z217' onmouseover='missions.changeZoneSlider(217); missions.onZoneSliderChanged();'> 
+               <td align='right'>217</td><td>Rävkullen</td><td><a href='zone.php?zoneid=34559'>info</a></td>
+             </tr>
+             <tr id='z218' onmouseover='missions.changeZoneSlider(218); missions.onZoneSliderChanged();'> 
+               <td align='right'>218</td><td>Coldhell</td><td><a href='zone.php?zoneid=3107'>info</a></td>
+             </tr>
+             <tr id='z219' onmouseover='missions.changeZoneSlider(219); missions.onZoneSliderChanged();'> 
+               <td align='right'>219</td><td>Duckdammen</td><td><a href='zone.php?zoneid=37568'>info</a></td>
+             </tr>
+             <tr id='z220' onmouseover='missions.changeZoneSlider(220); missions.onZoneSliderChanged();'> 
+               <td align='right'>220</td><td>Snövit</td><td><a href='zone.php?zoneid=21414'>info</a></td>
+             </tr>
+             <tr id='z221' onmouseover='missions.changeZoneSlider(221); missions.onZoneSliderChanged();'> 
+               <td align='right'>221</td><td>Vindgränden</td><td><a href='zone.php?zoneid=21411'>info</a></td>
+             </tr>
+             <tr id='z222' onmouseover='missions.changeZoneSlider(222); missions.onZoneSliderChanged();'> 
+               <td align='right'>222</td><td>TrainTheDog</td><td><a href='zone.php?zoneid=42829'>info</a></td>
+             </tr>
+             <tr id='z223' onmouseover='missions.changeZoneSlider(223); missions.onZoneSliderChanged();'> 
+               <td align='right'>223</td><td>SäbyTunnel</td><td><a href='zone.php?zoneid=25367'>info</a></td>
+             </tr>
+             <tr id='z224' onmouseover='missions.changeZoneSlider(224); missions.onZoneSliderChanged();'> 
+               <td align='right'>224</td><td>Hajpool</td><td><a href='zone.php?zoneid=22834'>info</a></td>
+             </tr>
+             <tr id='z225' onmouseover='missions.changeZoneSlider(225); missions.onZoneSliderChanged();'> 
+               <td align='right'>225</td><td>SödraSidan</td><td><a href='zone.php?zoneid=25372'>info</a></td>
+             </tr>
+             <tr id='z226' onmouseover='missions.changeZoneSlider(226); missions.onZoneSliderChanged();'> 
+               <td align='right'>226</td><td>OrmensGolf</td><td><a href='zone.php?zoneid=13649'>info</a></td>
+             </tr>
+             <tr id='z227' onmouseover='missions.changeZoneSlider(227); missions.onZoneSliderChanged();'> 
+               <td align='right'>227</td><td>Backlura</td><td><a href='zone.php?zoneid=36439'>info</a></td>
+             </tr>
+             <tr id='z228' onmouseover='missions.changeZoneSlider(228); missions.onZoneSliderChanged();'> 
+               <td align='right'>228</td><td>Lövsta</td><td><a href='zone.php?zoneid=22839'>info</a></td>
+             </tr>
+             <tr id='z229' onmouseover='missions.changeZoneSlider(229); missions.onZoneSliderChanged();'> 
+               <td align='right'>229</td><td>FarmerStreet</td><td><a href='zone.php?zoneid=7029'>info</a></td>
+             </tr>
+             <tr id='z230' onmouseover='missions.changeZoneSlider(230); missions.onZoneSliderChanged();'> 
+               <td align='right'>230</td><td>StråtVassare</td><td><a href='zone.php?zoneid=34557'>info</a></td>
+             </tr>
+             <tr id='z231' onmouseover='missions.changeZoneSlider(231); missions.onZoneSliderChanged();'> 
+               <td align='right'>231</td><td>Vinterlyra</td><td><a href='zone.php?zoneid=28653'>info</a></td>
+             </tr>
+             <tr id='z232' onmouseover='missions.changeZoneSlider(232); missions.onZoneSliderChanged();'> 
+               <td align='right'>232</td><td>AysuOchEbrah</td><td><a href='zone.php?zoneid=76635'>info</a></td>
+             </tr>
+             <tr id='z233' onmouseover='missions.changeZoneSlider(233); missions.onZoneSliderChanged();'> 
+               <td align='right'>233</td><td>RealColdhell</td><td><a href='zone.php?zoneid=37567'>info</a></td>
+             </tr>
+             <tr id='z234' onmouseover='missions.changeZoneSlider(234); missions.onZoneSliderChanged();'> 
+               <td align='right'>234</td><td>FableView</td><td><a href='zone.php?zoneid=29154'>info</a></td>
+             </tr>
+             <tr id='z235' onmouseover='missions.changeZoneSlider(235); missions.onZoneSliderChanged();'> 
+               <td align='right'>235</td><td>Vindpust</td><td><a href='zone.php?zoneid=38151'>info</a></td>
+             </tr>
+             <tr id='z236' onmouseover='missions.changeZoneSlider(236); missions.onZoneSliderChanged();'> 
+               <td align='right'>236</td><td>VäderOchVind</td><td><a href='zone.php?zoneid=27677'>info</a></td>
+             </tr>
+             <tr id='z237' onmouseover='missions.changeZoneSlider(237); missions.onZoneSliderChanged();'> 
+               <td align='right'>237</td><td>Kolboda</td><td><a href='zone.php?zoneid=117570'>info</a></td>
+             </tr>
+             <tr id='z238' onmouseover='missions.changeZoneSlider(238); missions.onZoneSliderChanged();'> 
+               <td align='right'>238</td><td>Däckelvägen</td><td><a href='zone.php?zoneid=42830'>info</a></td>
+             </tr>
+             <tr id='z239' onmouseover='missions.changeZoneSlider(239); missions.onZoneSliderChanged();'> 
+               <td align='right'>239</td><td>Brandstazon</td><td><a href='zone.php?zoneid=78450'>info</a></td>
+             </tr>
+             <tr id='z240' onmouseover='missions.changeZoneSlider(240); missions.onZoneSliderChanged();'> 
+               <td align='right'>240</td><td>Folkunion</td><td><a href='zone.php?zoneid=78451'>info</a></td>
+             </tr>
+             <tr id='z241' onmouseover='missions.changeZoneSlider(241); missions.onZoneSliderChanged();'> 
+               <td align='right'>241</td><td>Snapphanen</td><td><a href='zone.php?zoneid=27362'>info</a></td>
+             </tr>
+             <tr id='z242' onmouseover='missions.changeZoneSlider(242); missions.onZoneSliderChanged();'> 
+               <td align='right'>242</td><td>NorraSidan</td><td><a href='zone.php?zoneid=25373'>info</a></td>
+             </tr>
+             <tr id='z243' onmouseover='missions.changeZoneSlider(243); missions.onZoneSliderChanged();'> 
+               <td align='right'>243</td><td>GripandyVy</td><td><a href='zone.php?zoneid=94122'>info</a></td>
+             </tr>
+             <tr id='z244' onmouseover='missions.changeZoneSlider(244); missions.onZoneSliderChanged();'> 
+               <td align='right'>244</td><td>BayLakeGolf</td><td><a href='zone.php?zoneid=7025'>info</a></td>
+             </tr>
+             <tr id='z245' onmouseover='missions.changeZoneSlider(245); missions.onZoneSliderChanged();'> 
+               <td align='right'>245</td><td>Bolltrakter</td><td><a href='zone.php?zoneid=28144'>info</a></td>
+             </tr>
+             <tr id='z246' onmouseover='missions.changeZoneSlider(246); missions.onZoneSliderChanged();'> 
+               <td align='right'>246</td><td>LateNight</td><td><a href='zone.php?zoneid=56597'>info</a></td>
+             </tr>
+             <tr id='z247' onmouseover='missions.changeZoneSlider(247); missions.onZoneSliderChanged();'> 
+               <td align='right'>247</td><td>Kallhäll</td><td><a href='zone.php?zoneid=137560'>info</a></td>
+             </tr>
+             <tr id='z248' onmouseover='missions.changeZoneSlider(248); missions.onZoneSliderChanged();'> 
+               <td align='right'>248</td><td>LegendaryZone</td><td><a href='zone.php?zoneid=38152'>info</a></td>
+             </tr>
+             <tr id='z249' onmouseover='missions.changeZoneSlider(249); missions.onZoneSliderChanged();'> 
+               <td align='right'>249</td><td>Passadzonen</td><td><a href='zone.php?zoneid=21412'>info</a></td>
+             </tr>
+             <tr id='z250' onmouseover='missions.changeZoneSlider(250); missions.onZoneSliderChanged();'> 
+               <td align='right'>250</td><td>Tvåspann</td><td><a href='zone.php?zoneid=11252'>info</a></td>
+             </tr>
+             <tr id='z251' onmouseover='missions.changeZoneSlider(251); missions.onZoneSliderChanged();'> 
+               <td align='right'>251</td><td>Birgittas</td><td><a href='zone.php?zoneid=27396'>info</a></td>
+             </tr>
+             <tr id='z252' onmouseover='missions.changeZoneSlider(252); missions.onZoneSliderChanged();'> 
+               <td align='right'>252</td><td>Dackestigen</td><td><a href='zone.php?zoneid=25368'>info</a></td>
+             </tr>
+             <tr id='z253' onmouseover='missions.changeZoneSlider(253); missions.onZoneSliderChanged();'> 
+               <td align='right'>253</td><td>HighwayMen</td><td><a href='zone.php?zoneid=7036'>info</a></td>
+             </tr>
+             <tr id='z254' onmouseover='missions.changeZoneSlider(254); missions.onZoneSliderChanged();'> 
+               <td align='right'>254</td><td>Bruttozon</td><td><a href='zone.php?zoneid=22836'>info</a></td>
+             </tr>
+             <tr id='z255' onmouseover='missions.changeZoneSlider(255); missions.onZoneSliderChanged();'> 
+               <td align='right'>255</td><td>Grodparken</td><td><a href='zone.php?zoneid=120678'>info</a></td>
+             </tr>
+             <tr id='z256' onmouseover='missions.changeZoneSlider(256); missions.onZoneSliderChanged();'> 
+               <td align='right'>256</td><td>DoWellOne</td><td><a href='zone.php?zoneid=138495'>info</a></td>
+             </tr>
+             <tr id='z257' onmouseover='missions.changeZoneSlider(257); missions.onZoneSliderChanged();'> 
+               <td align='right'>257</td><td>FalseColdhell</td><td><a href='zone.php?zoneid=80683'>info</a></td>
+             </tr>
+             <tr id='z258' onmouseover='missions.changeZoneSlider(258); missions.onZoneSliderChanged();'> 
+               <td align='right'>258</td><td>KallKollo</td><td><a href='zone.php?zoneid=21416'>info</a></td>
+             </tr>
+             <tr id='z259' onmouseover='missions.changeZoneSlider(259); missions.onZoneSliderChanged();'> 
+               <td align='right'>259</td><td>Berghems</td><td><a href='zone.php?zoneid=27680'>info</a></td>
+             </tr>
+             <tr id='z260' onmouseover='missions.changeZoneSlider(260); missions.onZoneSliderChanged();'> 
+               <td align='right'>260</td><td>SnelHest</td><td><a href='zone.php?zoneid=27682'>info</a></td>
+             </tr>
+             <tr id='z261' onmouseover='missions.changeZoneSlider(261); missions.onZoneSliderChanged();'> 
+               <td align='right'>261</td><td>Aspnäskyrkan</td><td><a href='zone.php?zoneid=27812'>info</a></td>
+             </tr>
+             <tr id='z262' onmouseover='missions.changeZoneSlider(262); missions.onZoneSliderChanged();'> 
+               <td align='right'>262</td><td>TurIAspnäs</td><td><a href='zone.php?zoneid=27811'>info</a></td>
+             </tr>
+             <tr id='z263' onmouseover='missions.changeZoneSlider(263); missions.onZoneSliderChanged();'> 
+               <td align='right'>263</td><td>Dackebacke</td><td><a href='zone.php?zoneid=27364'>info</a></td>
+             </tr>
+             <tr id='z264' onmouseover='missions.changeZoneSlider(264); missions.onZoneSliderChanged();'> 
+               <td align='right'>264</td><td>Friheten</td><td><a href='zone.php?zoneid=117567'>info</a></td>
+             </tr>
+             <tr id='z265' onmouseover='missions.changeZoneSlider(265); missions.onZoneSliderChanged();'> 
+               <td align='right'>265</td><td>Vasaknorren</td><td><a href='zone.php?zoneid=22835'>info</a></td>
+             </tr>
+             <tr id='z266' onmouseover='missions.changeZoneSlider(266); missions.onZoneSliderChanged();'> 
+               <td align='right'>266</td><td>AllotmentZone</td><td><a href='zone.php?zoneid=7034'>info</a></td>
+             </tr>
+             <tr id='z267' onmouseover='missions.changeZoneSlider(267); missions.onZoneSliderChanged();'> 
+               <td align='right'>267</td><td>Stableslope</td><td><a href='zone.php?zoneid=34553'>info</a></td>
+             </tr>
+             <tr id='z268' onmouseover='missions.changeZoneSlider(268); missions.onZoneSliderChanged();'> 
+               <td align='right'>268</td><td>DragonHill</td><td><a href='zone.php?zoneid=34546'>info</a></td>
+             </tr>
+             <tr id='z269' onmouseover='missions.changeZoneSlider(269); missions.onZoneSliderChanged();'> 
+               <td align='right'>269</td><td>HemmansHill</td><td><a href='zone.php?zoneid=27815'>info</a></td>
+             </tr>
+             <tr id='z270' onmouseover='missions.changeZoneSlider(270); missions.onZoneSliderChanged();'> 
+               <td align='right'>270</td><td>Förmiddag</td><td><a href='zone.php?zoneid=56596'>info</a></td>
+             </tr>
+             <tr id='z271' onmouseover='missions.changeZoneSlider(271); missions.onZoneSliderChanged();'> 
+               <td align='right'>271</td><td>JacobWest</td><td><a href='zone.php?zoneid=7037'>info</a></td>
+             </tr>
+             <tr id='z272' onmouseover='missions.changeZoneSlider(272); missions.onZoneSliderChanged();'> 
+               <td align='right'>272</td><td>MuuMuuLand</td><td><a href='zone.php?zoneid=21415'>info</a></td>
+             </tr>
+             <tr id='z273' onmouseover='missions.changeZoneSlider(273); missions.onZoneSliderChanged();'> 
+               <td align='right'>273</td><td>Fårmjölk</td><td><a href='zone.php?zoneid=76634'>info</a></td>
+             </tr>
+             <tr id='z274' onmouseover='missions.changeZoneSlider(274); missions.onZoneSliderChanged();'> 
+               <td align='right'>274</td><td>HickoryZone</td><td><a href='zone.php?zoneid=21410'>info</a></td>
+             </tr>
+             <tr id='z275' onmouseover='missions.changeZoneSlider(275); missions.onZoneSliderChanged();'> 
+               <td align='right'>275</td><td>Gymnastics</td><td><a href='zone.php?zoneid=7041'>info</a></td>
+             </tr>
+             <tr id='z276' onmouseover='missions.changeZoneSlider(276); missions.onZoneSliderChanged();'> 
+               <td align='right'>276</td><td>Jakanpark</td><td><a href='zone.php?zoneid=1231'>info</a></td>
+             </tr>
+             <tr id='z277' onmouseover='missions.changeZoneSlider(277); missions.onZoneSliderChanged();'> 
+               <td align='right'>277</td><td>PoolZone</td><td><a href='zone.php?zoneid=7023'>info</a></td>
+             </tr>
+             <tr id='z278' onmouseover='missions.changeZoneSlider(278); missions.onZoneSliderChanged();'> 
+               <td align='right'>278</td><td>Frihöjden</td><td><a href='zone.php?zoneid=27814'>info</a></td>
+             </tr>
+             <tr id='z279' onmouseover='missions.changeZoneSlider(279); missions.onZoneSliderChanged();'> 
+               <td align='right'>279</td><td>JärfällaSport</td><td><a href='zone.php?zoneid=7032'>info</a></td>
+             </tr>
+             <tr id='z280' onmouseover='missions.changeZoneSlider(280); missions.onZoneSliderChanged();'> 
+               <td align='right'>280</td><td>NotGolfJakob</td><td><a href='zone.php?zoneid=27391'>info</a></td>
+             </tr>
+             <tr id='z281' onmouseover='missions.changeZoneSlider(281); missions.onZoneSliderChanged();'> 
+               <td align='right'>281</td><td>AprilApril</td><td><a href='zone.php?zoneid=34539'>info</a></td>
+             </tr>
+             <tr id='z282' onmouseover='missions.changeZoneSlider(282); missions.onZoneSliderChanged();'> 
+               <td align='right'>282</td><td>Kärrkilen</td><td><a href='zone.php?zoneid=30841'>info</a></td>
+             </tr>
+             <tr id='z283' onmouseover='missions.changeZoneSlider(283); missions.onZoneSliderChanged();'> 
+               <td align='right'>283</td><td>VidgadeVyer</td><td><a href='zone.php?zoneid=38266'>info</a></td>
+             </tr>
+             <tr id='z284' onmouseover='missions.changeZoneSlider(284); missions.onZoneSliderChanged();'> 
+               <td align='right'>284</td><td>GråaHästen</td><td><a href='zone.php?zoneid=27678'>info</a></td>
+             </tr>
+             <tr id='z285' onmouseover='missions.changeZoneSlider(285); missions.onZoneSliderChanged();'> 
+               <td align='right'>285</td><td>LillaGråaHäst</td><td><a href='zone.php?zoneid=27679'>info</a></td>
+             </tr>
+             <tr id='z286' onmouseover='missions.changeZoneSlider(286); missions.onZoneSliderChanged();'> 
+               <td align='right'>286</td><td>VidTvåavSex</td><td><a href='zone.php?zoneid=27847'>info</a></td>
+             </tr>
+             <tr id='z287' onmouseover='missions.changeZoneSlider(287); missions.onZoneSliderChanged();'> 
+               <td align='right'>287</td><td>Riddarplatsen</td><td><a href='zone.php?zoneid=27810'>info</a></td>
+             </tr>
+             <tr id='z288' onmouseover='missions.changeZoneSlider(288); missions.onZoneSliderChanged();'> 
+               <td align='right'>288</td><td>Vasan</td><td><a href='zone.php?zoneid=62031'>info</a></td>
+             </tr>
+             <tr id='z289' onmouseover='missions.changeZoneSlider(289); missions.onZoneSliderChanged();'> 
+               <td align='right'>289</td><td>Jacobzone</td><td><a href='zone.php?zoneid=335'>info</a></td>
+             </tr>
+             <tr id='z290' onmouseover='missions.changeZoneSlider(290); missions.onZoneSliderChanged();'> 
+               <td align='right'>290</td><td>ViksjöStairs</td><td><a href='zone.php?zoneid=34545'>info</a></td>
+             </tr>
+             <tr id='z291' onmouseover='missions.changeZoneSlider(291); missions.onZoneSliderChanged();'> 
+               <td align='right'>291</td><td>MerVinter</td><td><a href='zone.php?zoneid=44194'>info</a></td>
+             </tr>
+             <tr id='z292' onmouseover='missions.changeZoneSlider(292); missions.onZoneSliderChanged();'> 
+               <td align='right'>292</td><td>ForrestRoad</td><td><a href='zone.php?zoneid=7039'>info</a></td>
+             </tr>
+             <tr id='z293' onmouseover='missions.changeZoneSlider(293); missions.onZoneSliderChanged();'> 
+               <td align='right'>293</td><td>JakobsTrail</td><td><a href='zone.php?zoneid=44191'>info</a></td>
+             </tr>
+             <tr id='z294' onmouseover='missions.changeZoneSlider(294); missions.onZoneSliderChanged();'> 
+               <td align='right'>294</td><td>SpursRoad</td><td><a href='zone.php?zoneid=11253'>info</a></td>
+             </tr>
+             <tr id='z295' onmouseover='missions.changeZoneSlider(295); missions.onZoneSliderChanged();'> 
+               <td align='right'>295</td><td>Ekedal</td><td><a href='zone.php?zoneid=57183'>info</a></td>
+             </tr>
+             <tr id='z296' onmouseover='missions.changeZoneSlider(296); missions.onZoneSliderChanged();'> 
+               <td align='right'>296</td><td>JakanPerrong</td><td><a href='zone.php?zoneid=64015'>info</a></td>
+             </tr>
+             <tr id='z297' onmouseover='missions.changeZoneSlider(297); missions.onZoneSliderChanged();'> 
+               <td align='right'>297</td><td>KalenderZone</td><td><a href='zone.php?zoneid=27387'>info</a></td>
+             </tr>
+             <tr id='z298' onmouseover='missions.changeZoneSlider(298); missions.onZoneSliderChanged();'> 
+               <td align='right'>298</td><td>ViksjöKvarn</td><td><a href='zone.php?zoneid=117566'>info</a></td>
+             </tr>
+             <tr id='z299' onmouseover='missions.changeZoneSlider(299); missions.onZoneSliderChanged();'> 
+               <td align='right'>299</td><td>Vinkelbacken</td><td><a href='zone.php?zoneid=44193'>info</a></td>
+             </tr>
+             <tr id='z300' onmouseover='missions.changeZoneSlider(300); missions.onZoneSliderChanged();'> 
+               <td align='right'>300</td><td>JakobsGrove</td><td><a href='zone.php?zoneid=44192'>info</a></td>
+             </tr>
+             <tr id='z301' onmouseover='missions.changeZoneSlider(301); missions.onZoneSliderChanged();'> 
+               <td align='right'>301</td><td>Runestone</td><td><a href='zone.php?zoneid=7022'>info</a></td>
+             </tr>
+             <tr id='z302' onmouseover='missions.changeZoneSlider(302); missions.onZoneSliderChanged();'> 
+               <td align='right'>302</td><td>Vibblaby</td><td><a href='zone.php?zoneid=27377'>info</a></td>
+             </tr>
+    </table>
+        </div> <!-- pane zone -->
+           </div> <!-- leftPane -->
+
+    <div class='mapPane'>
+        <div id='map'>
+        </div>
+        <div class='zoneSliderDiv'>
+            <input type='range' id='zoneSlider' class='zoneSlider' value='0' min='0' max='302'>
+        </div>
+    </div> <!-- master main -->
+  </div> <!-- mainPane -->
+
+    <script src='https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyAZHBN86oqGPVhZfFECCCpybGGk-Kn6yqk'></script>
+    <script type='text/javascript' src='markerwithlabel_packed.js'></script>
+    <script  language='javascript' type='text/javascript'>
+var missions;
+
+function initPage() {
+  missions = new MissionsClass();
+  missions.initMap(37, 182, 'satellite', 4);
+}
+
+  google.maps.event.addDomListener(window, 'load', initPage);
+    </script>
+  </body>
+</html>
+
+

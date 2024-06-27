@@ -4,8 +4,9 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
+  <groupId>org.joelson.turf</groupId>
   <artifactId>resources</artifactId>
-  <version>1.0.1</version>
+  <version>1.1.0</version>
   <packaging>jar</packaging>
 
   <dependencies>
@@ -14,20 +15,43 @@
       <artifactId>jackson-databind</artifactId>
       <version>${com.fasterxml.jackson.core.version}</version>
     </dependency>
+    <dependency>
+      <groupId>com.google.code.findbugs</groupId>
+      <artifactId>jsr305</artifactId>
+      <version>${com.google.code.findbugs.jsr305.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <version>${org.junit.jupiter.junit-jupiter-api.version}</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
-  <parent>
-    <groupId>org.joelson.turf</groupId>
-    <artifactId>parent</artifactId>
-    <version>0.1-SNAPSHOT</version>
-  </parent>
-
   <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <com.fasterxml.jackson.core.version>2.17.1</com.fasterxml.jackson.core.version>
+    <com.google.code.findbugs.jsr305.version>3.0.2</com.google.code.findbugs.jsr305.version>
+    <org.junit.jupiter.junit-jupiter-api.version>5.10.2</org.junit.jupiter.junit-jupiter-api.version>
   </properties>
 
   <build>
     <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.7.0</version>
+        <configuration>
+          <encoding>UTF-8</encoding>
+          <release>21</release>
+          <showWarnings>true</showWarnings>
+          <showDeprecation>true</showDeprecation>
+          <failOnWarning>true</failOnWarning>
+          <failOnError>true</failOnError>
+          <compilerArgs>
+            <arg>-Xlint:all</arg>
+          </compilerArgs>
+        </configuration>
+      </plugin>
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <executions>
@@ -50,4 +74,3 @@
   <name>turf-resources</name>
 
 </project>
-

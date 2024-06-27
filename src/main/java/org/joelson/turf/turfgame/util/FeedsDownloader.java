@@ -54,11 +54,17 @@ public class FeedsDownloader {
             log(String.format("%s: Unable to get JSON - %s", Instant.now(), e));
             return since;
         }
-        if (json.equals("[]")) {
+        if ("[]".equals(json)) {
             log("No data for " + feed + " since " + since);
             return since;
         }
-        Instant lastEntryTime = getLastEntryTime(json);
+        Instant lastEntryTime;
+        try {
+            lastEntryTime = getLastEntryTime(json);
+        } catch (Exception e) {
+            log("Unable to retrieve time from JSON: " + e);
+            lastEntryTime = null;
+        }
         if (lastEntryTime == null) {
             log("JSON: " + json);
             log("lastEntryTime is null");

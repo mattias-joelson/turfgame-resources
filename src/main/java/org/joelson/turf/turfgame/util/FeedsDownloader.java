@@ -21,72 +21,81 @@ public class FeedsDownloader {
     private static Path logPath;
 
     public static void main(String[] args) throws IOException {
-        if (args.length != 1) {
-            System.out.printf("Usage:%n\t%s feedsRequest", FeedsDownloader.class);
+        if (args.length != 2) {
+            System.out.printf("Usage:%n\t%s feedsRequest feedVersion", FeedsDownloader.class);
             return;
         }
-        handleFeeds(args[0]);
+        handleFeeds(args[0], args[1]);
     }
 
-    public static void handleFeeds(String feedsRequest) throws IOException {
-        logPath = Files.createTempFile("turfgame-feedsdownloader-", ".txt");
-        System.out.println(logPath);
-        log("Created log file " + logPath);
+    public static void handleFeeds(String feedsRequest, String version) {
+        try {
+            logPath = Files.createTempFile(String.format("turfgame-feedsdownloader-%s-", version), ".txt");
+            System.out.println(logPath);
+            log("Created log file " + logPath);
 
-        Instant lastTakeEntry = null;
-        Instant lastMedalChatEntry = null;
-        Instant lastZoneEntry = null;
-        while (true) {
-            lastTakeEntry = getFeed(feedsRequest, "takeover", "feeds_takeover_%s.%sjson", lastTakeEntry);
-            waitBetweenFeeds();
-            lastMedalChatEntry = getFeed(feedsRequest, "medal+chat", "feeds_medal_chat_%s.%sjson", lastMedalChatEntry);
-            waitBetweenFeeds();
-            lastZoneEntry = getFeed(feedsRequest, "zone", "feeds_zone_%s.%sjson", lastZoneEntry);
-            waitUntilNext();
+            Instant lastTakeEntry = null;
+            Instant lastMedalChatEntry = null;
+            Instant lastZoneEntry = null;
+            while (true) {
+                lastTakeEntry = getFeed(feedsRequest, "takeover", "feeds_takeover_%s.%sjson", lastTakeEntry);
+                waitBetweenFeeds();
+                lastMedalChatEntry = getFeed(feedsRequest, "medal+chat", "feeds_medal_chat_%s.%sjson",
+                        lastMedalChatEntry);
+                waitBetweenFeeds();
+                lastZoneEntry = getFeed(feedsRequest, "zone", "feeds_zone_%s.%sjson", lastZoneEntry);
+                waitUntilNext();
+            }
+        } catch (Throwable e) {
+            log(String.format("Exception in handleFeeds(\"%s\", \"%s\") - %s", feedsRequest, version, e));
         }
     }
 
     private static Instant getFeed(String feedsRequest, String feed, String filenamePattern, Instant since) {
-        String json;
-        try {
-            json = getFeedsJSON(feedsRequest, feed, since);
-        } catch (IOException e) {
-            log(String.format("%s: Unable to get JSON - %s", Instant.now(), e));
-            return since;
-        }
-        if ("[]".equals(json)) {
-            log("No data for " + feed + " since " + since);
-            return since;
-        }
-        Instant lastEntryTime;
-        try {
-            lastEntryTime = getLastEntryTime(json);
-        } catch (Exception e) {
-            log("Unable to retrieve time from JSON: " + e);
-            lastEntryTime = null;
-        }
-        if (lastEntryTime == null) {
-            log("JSON: " + json);
-            log("lastEntryTime is null");
-        }
+        String json = null;
+        Instant lastEntryTime = null;
         Path file = null;
         try {
-            file = getFilePath(filenamePattern, lastEntryTime);
-            Files.writeString(file, json, StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            log(String.format("%s: Unable to store to %s - %s", Instant.now(), file, e));
-            Path tempFile = null;
             try {
-                tempFile = Files.createTempFile("feed_download", ".json");
-                Files.writeString(tempFile, json, StandardCharsets.UTF_8);
-            } catch (IOException ex) {
-                log(String.format("%s: Unable to store to %s - %s", Instant.now(), tempFile, e));
-                log(json);
+                json = getFeedsJSON(feedsRequest, feed, since);
+            } catch (IOException e) {
+                log(String.format("%s: Unable to get JSON - %s", Instant.now(), e));
+                return since;
             }
-            return since;
+            if (json == null || json.equals("[]")) {
+                log("No data for " + feed + " since " + since);
+                return since;
+            }
+            try {
+                lastEntryTime = getLastEntryTime(json);
+            } catch (Exception e) {
+                log("Unable to retrieve time from JSON: " + e);
+            }
+            try {
+                file = getFilePath(filenamePattern, lastEntryTime);
+                Files.writeString(file, json, StandardCharsets.UTF_8);
+                log("Downloaded " + file + " at " + Instant.now());
+            } catch (IOException e) {
+                log(String.format("%s: Unable to store to %s - %s", Instant.now(), file, e));
+                Path tempFile = null;
+                try {
+                    tempFile = Files.createTempFile("feed_download", ".json");
+                    Files.writeString(tempFile, json, StandardCharsets.UTF_8);
+                } catch (IOException ex) {
+                    log(String.format("%s: Unable to store to %s - %s", Instant.now(), tempFile, e));
+                    log(json);
+                }
+                return since;
+            }
+            return (lastEntryTime == null) ? null : Instant.from(lastEntryTime).minusSeconds(1);
+        } catch (Throwable e) {
+            log(String.format("Exception in getFeed(\"%s\", \"%s\", \"%s\", %s) - %s", feedsRequest, feed,
+                    filenamePattern, since, e));
+            log("  json:          " + json);
+            log("  lastEntryTime: " + lastEntryTime);
+            log("  file:          " + file);
+            return null;
         }
-        log("Downloaded " + file + " at " + Instant.now());
-        return (lastEntryTime == null) ? null : Instant.from(lastEntryTime).minusSeconds(1);
     }
 
     private static String getFeedsJSON(String feedsRequest, String feed, Instant since) throws IOException {

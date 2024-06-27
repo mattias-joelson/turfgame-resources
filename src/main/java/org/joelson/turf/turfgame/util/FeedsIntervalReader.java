@@ -16,6 +16,8 @@ import java.util.TreeSet;
 
 public class FeedsIntervalReader {
 
+    private static int fileCount = 0;
+
     public static void main(String[] args) throws IOException {
         if (args.length < 1) {
             System.out.printf("Usage:\n\t%s feed_file1.json ...%n", FeedsIntervalReader.class.getName());
@@ -69,7 +71,10 @@ public class FeedsIntervalReader {
 
     private static List<JsonNode> readFeedFile(Path feedPath) {
         try {
-            System.out.println("*** Reading " + feedPath);
+            if (fileCount % 100 == 0) {
+                System.out.printf("*** Reading %s (%d)%n", feedPath, fileCount);
+            }
+            fileCount += 1;
             return readJsonNodes(feedPath.toString(), Files.readString(feedPath));
         } catch (IOException e) {
             e.printStackTrace();

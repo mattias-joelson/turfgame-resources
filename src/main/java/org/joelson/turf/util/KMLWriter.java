@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
 
-public class KMLWriter extends Writer {
+public final class KMLWriter extends Writer {
 
     private final PrintWriter out;
     private boolean hasFolder;

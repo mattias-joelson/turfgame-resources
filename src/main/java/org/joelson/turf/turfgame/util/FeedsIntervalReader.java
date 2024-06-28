@@ -79,6 +79,10 @@ public class FeedsIntervalReader {
         } catch (IOException e) {
             e.printStackTrace();
             return Collections.emptyList();
+        } catch (RuntimeException e) {
+            System.err.println("Error when parsing nodes in " + feedPath);
+            e.printStackTrace();
+            return Collections.emptyList();
         }
     }
 

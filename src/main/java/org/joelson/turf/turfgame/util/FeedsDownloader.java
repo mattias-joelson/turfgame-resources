@@ -47,7 +47,7 @@ public class FeedsDownloader {
                 waitUntilNext();
             }
         } catch (Throwable e) {
-            log(String.format("Exception in handleFeeds(\"%s\", \"%s\") - %s", feedsRequest, version, e));
+            log("Exception in handleFeeds(\"" + feedsRequest + "\", \"" + version + "\") - " + e);
         }
     }
 
@@ -59,7 +59,7 @@ public class FeedsDownloader {
             try {
                 json = getFeedsJSON(feedsRequest, feed, since);
             } catch (IOException e) {
-                log(String.format("%s: Unable to get JSON - %s", Instant.now(), e));
+                log(Instant.now() + ": Unable to get JSON - " + e);
                 return since;
             }
             if (json == null || json.equals("[]")) {
@@ -76,21 +76,20 @@ public class FeedsDownloader {
                 Files.writeString(file, json, StandardCharsets.UTF_8);
                 log("Downloaded " + file + " at " + Instant.now());
             } catch (IOException e) {
-                log(String.format("%s: Unable to store to %s - %s", Instant.now(), file, e));
+                log(Instant.now() + ": Unable to store to " + file + " - " + e);
                 Path tempFile = null;
                 try {
                     tempFile = Files.createTempFile("feed_download", ".json");
                     Files.writeString(tempFile, json, StandardCharsets.UTF_8);
                 } catch (IOException ex) {
-                    log(String.format("%s: Unable to store to %s - %s", Instant.now(), tempFile, e));
+                    log(Instant.now() + ": Unable to store to " + tempFile + " - " + e);
                     log(json);
                 }
                 return since;
             }
             return (lastEntryTime == null) ? null : Instant.from(lastEntryTime).minusSeconds(1);
         } catch (Throwable e) {
-            log(String.format("Exception in getFeed(\"%s\", \"%s\", \"%s\", %s) - %s", feedsRequest, feed,
-                    filenamePattern, since, e));
+            log("Exception in getFeed(\"" + feedsRequest + "\", \"" + feed + "\", \"" + filenamePattern + "\", " + since + ") - " + e);
             log("  json:          " + json);
             log("  lastEntryTime: " + lastEntryTime);
             log("  file:          " + file);
@@ -134,6 +133,10 @@ public class FeedsDownloader {
     }
 
     private static String toTimeString(Instant instant) {
+        if (instant == null) {
+            instant = Instant.now();
+            log("toTimeString(null) - using instant " + instant);
+        }
         LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, ZoneOffset.UTC);
         return DATE_TIME_FORMATTER.format(localDateTime);
     }
@@ -160,12 +163,13 @@ public class FeedsDownloader {
     }
 
     private static void log(String msg) {
-        String s = String.format("[%s] %s%n", Thread.currentThread().getName(), msg);
-        System.out.printf(s);
+        String s = "[" + Thread.currentThread().getName() + "] " + msg + "\n";
+        System.out.print(s);
         try {
             Files.writeString(logPath, s, StandardOpenOption.APPEND);
         } catch (IOException e) {
-            System.out.printf("[%s] Unable to log to file %s - %s%n", Thread.currentThread().getName(), logPath, e);
+            System.out.println(
+                    "[" + Thread.currentThread().getName() + "] Unable to log to file " + logPath + " - " + e);
         }
     }
 }

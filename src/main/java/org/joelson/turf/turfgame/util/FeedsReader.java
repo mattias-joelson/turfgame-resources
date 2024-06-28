@@ -11,11 +11,19 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.function.Consumer;
 
-public abstract class FeedsReader {
+public class FeedsReader {
+
+    private final Map<String, Class<? extends FeedObject>> typesToHandle;
+
+    public FeedsReader(Map<String, Class<? extends FeedObject>> typesToHandle) {
+        this.typesToHandle = Objects.requireNonNull(typesToHandle);
+    }
 
     private static String readFile(Path path, Consumer<Path> forEachPath) {
         String content;
@@ -33,6 +41,18 @@ public abstract class FeedsReader {
         List<JsonNode> nodes = Arrays.asList(JacksonUtil.readValue(content, JsonNode[].class));
         nodes.sort(new FeedNodeComparator());
         return nodes;
+    }
+
+    public static void printUniqueNodes(Map<String, Class<? extends FeedObject>> typesToHandle, String[] filenames) {
+        new FeedsReader(typesToHandle).printUniqueNodes(filenames);
+    }
+
+    private static String getJsonNodeTime(JsonNode node) {
+        JsonNode timeNode = node.get("time");
+        if (timeNode == null) {
+            throw new IllegalArgumentException("Node lacks attribute time: " + node);
+        }
+        return timeNode.asText();
     }
 
     protected void printUniqueNodes(String[] filenames) {
@@ -61,11 +81,16 @@ public abstract class FeedsReader {
         } else {
             uniqueNodes.add(node);
             String type = node.get("type").asText();
-            FeedObject feedObject = JacksonUtil.treeToValue(node, getJSONClass(type));
-            if (!feedObject.getType().equals(type)) {
-                throw new RuntimeException("Illegal type " + type + " for " + feedObject);
+            Class<? extends FeedObject> feedObjectClass = typesToHandle.get(type);
+            if (feedObjectClass != null) {
+                FeedObject feedObject = JacksonUtil.treeToValue(node, feedObjectClass);
+                if (!feedObject.getType().equals(type)) {
+                    throw new RuntimeException("Illegal type " + type + " for " + feedObject);
+                }
+                System.out.println(" ->  " + feedObject);
+            } else {
+                throw new RuntimeException("Unknown type " + type + " for node " + node);
             }
-            System.out.println(" ->  " + feedObject);
         }
     }
 
@@ -73,7 +98,8 @@ public abstract class FeedsReader {
         handleFeedObjectFile(path, new FeedsPathComparator(), forEachPath, forEachFeedObject);
     }
 
-    public void handleFeedObjectFile(Path path, Comparator<Path> comparePaths, Consumer<Path> forEachPath, Consumer<FeedObject> forEachFeedObject) {
+    public void handleFeedObjectFile(Path path, Comparator<Path> comparePaths, Consumer<Path> forEachPath,
+            Consumer<FeedObject> forEachFeedObject) {
         try {
             FilesUtil.forEachFile(path, true, comparePaths,
                     p -> handleFeedObjects(readFile(p, forEachPath), forEachFeedObject));
@@ -91,31 +117,26 @@ public abstract class FeedsReader {
                 if (time == null || time.compareTo(nodeTime) <= 0) {
                     time = nodeTime;
                 } else {
-                    throw new IllegalArgumentException("Node with time " + nodeTime + " is not after " + time + ": " + node);
+                    throw new IllegalArgumentException(
+                            "Node with time " + nodeTime + " is not after " + time + ": " + node);
                 }
                 handleFeedObject(node, forEachFeedObject);
             }
         }
     }
 
-    private static String getJsonNodeTime(JsonNode node) {
-        JsonNode timeNode = node.get("time");
-        if (timeNode == null) {
-            throw new IllegalArgumentException("Node lacks attribute time: " + node);
-        }
-        return timeNode.asText();
-    }
-
     private void handleFeedObject(JsonNode node, Consumer<FeedObject> forEachFeedObject) {
         String type = node.get("type").asText();
-        FeedObject feedObject = JacksonUtil.treeToValue(node, getJSONClass(type));
+        Class<? extends FeedObject> feedObjectClass = typesToHandle.get(type);
+        if (feedObjectClass == null) {
+            return;
+        }
+        FeedObject feedObject = JacksonUtil.treeToValue(node, feedObjectClass);
         if (!feedObject.getType().equals(type)) {
             throw new RuntimeException("Illegal type " + type + " for " + feedObject);
         }
         forEachFeedObject.accept(feedObject);
     }
-
-    protected abstract Class<? extends FeedObject> getJSONClass(String type);
 
     private static class FeedNodeComparator implements Comparator<JsonNode> {
 

@@ -6,26 +6,28 @@ import org.joelson.turf.turfgame.apiv4.FeedMedal;
 import org.joelson.turf.turfgame.apiv4.FeedTakeover;
 import org.joelson.turf.turfgame.apiv4.FeedZone;
 
-import java.io.IOException;
+import java.util.Map;
 
-public class FeedsReader extends org.joelson.turf.turfgame.util.FeedsReader {
+public final class FeedsReader {
 
-    public static void main(String[] args) throws IOException {
+    private FeedsReader() throws InstantiationException {
+        throw new InstantiationException("Should not be instantiated.");
+    }
+
+    public static void main(String[] args) {
         if (args.length < 1) {
             System.out.printf("Usage:\n\t%s feed_file1.json ...%n", FeedsReader.class.getName());
             return;
         }
-        new FeedsReader().printUniqueNodes(args);
+        org.joelson.turf.turfgame.util.FeedsReader.printUniqueNodes(typesToHandle(), args);
     }
 
-    @Override
-    protected Class<? extends FeedObject> getJSONClass(String type) {
-        return switch (type) {
-            case "chat" -> FeedChat.class;
-            case "medal" -> FeedMedal.class;
-            case "takeover" -> FeedTakeover.class;
-            case "zone" -> FeedZone.class;
-            default -> throw new IllegalArgumentException("Unknown type " + type);
-        };
+    private static Map<String, Class<? extends FeedObject>> typesToHandle() {
+        return Map.of(
+                "chat", FeedChat.class,
+                "medal", FeedMedal.class,
+                "takeover", FeedTakeover.class,
+                "zone", FeedZone.class
+        );
     }
 }

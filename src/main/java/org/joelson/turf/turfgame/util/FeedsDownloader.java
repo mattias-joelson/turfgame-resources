@@ -17,41 +17,71 @@ import java.time.format.DateTimeFormatter;
 
 public class FeedsDownloader {
 
+    private static final String FEEDS_V4_REQUEST = "https://api.turfgame.com/v4/feeds";
+    private static final String FEEDS_V5_REQUEST = "https://api.turfgame.com/unstable/feeds";
+
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
     private static Path logPath;
 
     public static void main(String[] args) throws IOException {
         if (args.length != 2) {
-            System.out.printf("Usage:%n\t%s feedsRequest feedVersion", FeedsDownloader.class);
+            System.out.printf("Usage:%n\t%s feedsv4_dir feedsv5_dir", FeedsDownloader.class);
             return;
         }
-        handleFeeds(args[0], args[1]);
+        Path feedsV4Path = Path.of(args[0]);
+        if (!Files.exists(feedsV4Path) || !Files.isDirectory(feedsV4Path)) {
+            System.out.println("Feeds v4 dir does not exist or is not a directory: " + feedsV4Path);
+            return;
+        }
+        Path feedsV5Path = Path.of(args[1]);
+        if (!Files.exists(feedsV5Path) || !Files.isDirectory(feedsV5Path)) {
+            System.out.println("Feeds v5 dir does not exist or is not a directory: " + feedsV5Path);
+            return;
+        }
+        handleFeeds(feedsV4Path, feedsV5Path);
     }
 
-    public static void handleFeeds(String feedsRequest, String version) {
+    public static void handleFeeds(Path feedsV4Path, Path feedsV5Path) {
         try {
-            logPath = Files.createTempFile(String.format("turfgame-feedsdownloader-%s-", version), ".txt");
+            logPath = Files.createTempFile("turfgame-feedsdownloader-", ".txt");
             System.out.println(logPath);
             log("Created log file " + logPath);
 
-            Instant lastTakeEntry = null;
-            Instant lastMedalChatEntry = null;
-            Instant lastZoneEntry = null;
+            Instant lastV4TakeEntry = null;
+            Instant lastV4MedalChatEntry = null;
+            Instant lastV4ZoneEntry = null;
+            Instant lastV5TakeEntry = null;
+            Instant lastV5MedalChatEntry = null;
+            Instant lastV5ZoneEntry = null;
             while (true) {
-                lastTakeEntry = getFeed(feedsRequest, "takeover", "feeds_takeover_%s.%sjson", lastTakeEntry);
+                Instant nextDownload = Instant.now().plusSeconds(5 * 60);
+                lastV4TakeEntry = getFeed(feedsV4Path, FEEDS_V4_REQUEST, "takeover", "feeds_takeover_%s.%sjson",
+                        lastV4TakeEntry);
                 waitBetweenFeeds();
-                lastMedalChatEntry = getFeed(feedsRequest, "medal+chat", "feeds_medal_chat_%s.%sjson",
-                        lastMedalChatEntry);
+                lastV4MedalChatEntry = getFeed(feedsV4Path, FEEDS_V4_REQUEST, "medal+chat",
+                        "feeds_medal_chat_%s.%sjson", lastV4MedalChatEntry);
                 waitBetweenFeeds();
-                lastZoneEntry = getFeed(feedsRequest, "zone", "feeds_zone_%s.%sjson", lastZoneEntry);
-                waitUntilNext();
+                lastV4ZoneEntry = getFeed(feedsV4Path, FEEDS_V4_REQUEST, "zone", "feeds_zone_%s.%sjson",
+                        lastV4ZoneEntry);
+                waitBetweenFeeds();
+                lastV5TakeEntry = getFeed(feedsV5Path, FEEDS_V5_REQUEST, "takeover", "feeds_takeover_%s.%sjson",
+                        lastV5TakeEntry);
+                waitBetweenFeeds();
+                lastV5MedalChatEntry = getFeed(feedsV5Path, FEEDS_V5_REQUEST, "medal+chat",
+                        "feeds_medal_chat_%s.%sjson", lastV5MedalChatEntry);
+                waitBetweenFeeds();
+                lastV5ZoneEntry = getFeed(feedsV5Path, FEEDS_V5_REQUEST, "zone", "feeds_zone_%s.%sjson",
+                        lastV5ZoneEntry);
+                log("Sleeping until " + nextDownload);
+                waitUntil(nextDownload);
             }
         } catch (Throwable e) {
-            log("Exception in handleFeeds(\"" + feedsRequest + "\", \"" + version + "\") - " + e);
+            log("Exception in handleFeeds(" + feedsV4Path + ", " + feedsV5Path + ") - " + e);
         }
     }
 
-    private static Instant getFeed(String feedsRequest, String feed, String filenamePattern, Instant since) {
+    private static Instant getFeed(
+            Path feedPath, String feedsRequest, String feed, String filenamePattern, Instant since) {
         String json = null;
         Instant lastEntryTime = null;
         Path file = null;
@@ -72,9 +102,9 @@ public class FeedsDownloader {
                 log("Unable to retrieve time from JSON: " + e);
             }
             try {
-                file = getFilePath(filenamePattern, lastEntryTime);
+                file = getFilePath(feedPath, filenamePattern, lastEntryTime);
                 Files.writeString(file, json, StandardCharsets.UTF_8);
-                log("Downloaded " + file + " at " + Instant.now());
+                log("Downloaded " + file);
             } catch (IOException e) {
                 log(Instant.now() + ": Unable to store to " + file + " - " + e);
                 Path tempFile = null;
@@ -89,7 +119,8 @@ public class FeedsDownloader {
             }
             return (lastEntryTime == null) ? null : Instant.from(lastEntryTime).minusSeconds(1);
         } catch (Throwable e) {
-            log("Exception in getFeed(\"" + feedsRequest + "\", \"" + feed + "\", \"" + filenamePattern + "\", " + since + ") - " + e);
+            log("Exception in getFeed(" + feedPath + "\"" + feedsRequest + "\", \"" + feed + "\", \"" + filenamePattern
+                    + "\", " + since + ") - " + e);
             log("  json:          " + json);
             log("  lastEntryTime: " + lastEntryTime);
             log("  file:          " + file);
@@ -117,16 +148,16 @@ public class FeedsDownloader {
         return latest;
     }
 
-    private static Path getFilePath(String filenamePattern, Instant lastEntryTime) throws IOException {
+    private static Path getFilePath(Path feedPath, String filenamePattern, Instant lastEntryTime) throws IOException {
         String timeString = toTimeString(lastEntryTime);
         String name = String.format(filenamePattern, timeString, "");
-        Path filePath = Path.of(".", name);
+        Path filePath = feedPath.resolve(name);
         if (Files.exists(filePath)) {
             String nowString = toTimeString(Instant.now());
             name = String.format(filenamePattern, timeString, nowString + '.');
-            filePath = Path.of(".", name);
+            filePath = feedPath.resolve(name);
             if (Files.exists(filePath)) {
-                filePath = Files.createTempFile(Path.of("."), name.substring(0, name.indexOf(".json") + 1), ".json");
+                filePath = Files.createTempFile(feedPath, name.substring(0, name.indexOf(".json") + 1), ".json");
             }
         }
         return filePath;
@@ -143,12 +174,6 @@ public class FeedsDownloader {
 
     private static void waitBetweenFeeds() {
         Instant until = Instant.now().plusSeconds(5);
-        waitUntil(until);
-    }
-
-    private static void waitUntilNext() {
-        Instant until = Instant.now().plusSeconds(5 * 60);
-        log("Sleeping until " + until);
         waitUntil(until);
     }
 

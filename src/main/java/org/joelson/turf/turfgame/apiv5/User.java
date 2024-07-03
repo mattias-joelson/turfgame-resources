@@ -123,7 +123,7 @@ public class User implements org.joelson.turf.turfgame.User {
 
     private String statisticsToString() {
         return String.format(
-                ", points=%d, place=%d, zones=%s, pointsPerHour=%d, rank=%d, meadals=%s, totalPoints=%d, "
+                ", points=%d, place=%d, zones=%s, pointsPerHour=%d, rank=%d, medals=%s, totalPoints=%d, "
                         + "blocktime=%d, taken=%d, uniqueZonesTaken=%d",
                 points, place, Arrays.toString(zoneIds), pointsPerHour, rank, Arrays.toString(medals), totalPoints,
                 blocktime, taken, uniqueZonesTaken);

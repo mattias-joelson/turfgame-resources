@@ -6,7 +6,7 @@
 
   <groupId>org.joelson.turf</groupId>
   <artifactId>resources</artifactId>
-  <version>1.2.0</version>
+  <version>1.3.0</version>
   <packaging>jar</packaging>
 
   <dependencies>
@@ -21,6 +21,22 @@
       <version>${com.google.code.findbugs.jsr305.version}</version>
     </dependency>
     <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+      <version>${org.apache.logging.log4j.log4j-api.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <version>${org.apache.logging.log4j.log4j-core.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j2-impl</artifactId>
+      <version>${org.apache.logging.log4j.log4j-slf4j2-impl.version}</version>
+    </dependency>
+
+    <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
       <version>${org.junit.jupiter.junit-jupiter-api.version}</version>
@@ -32,6 +48,9 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <com.fasterxml.jackson.core.version>2.17.1</com.fasterxml.jackson.core.version>
     <com.google.code.findbugs.jsr305.version>3.0.2</com.google.code.findbugs.jsr305.version>
+    <org.apache.logging.log4j.log4j-api.version>2.23.1</org.apache.logging.log4j.log4j-api.version>
+    <org.apache.logging.log4j.log4j-core.version>2.23.1</org.apache.logging.log4j.log4j-core.version>
+    <org.apache.logging.log4j.log4j-slf4j2-impl.version>2.23.1</org.apache.logging.log4j.log4j-slf4j2-impl.version>
     <org.junit.jupiter.junit-jupiter-api.version>5.10.2</org.junit.jupiter.junit-jupiter-api.version>
   </properties>
 
@@ -49,6 +68,7 @@
           <failOnError>true</failOnError>
           <compilerArgs>
             <arg>-Xlint:all</arg>
+            <arg>-Xlint:-processing</arg>
           </compilerArgs>
         </configuration>
       </plugin>

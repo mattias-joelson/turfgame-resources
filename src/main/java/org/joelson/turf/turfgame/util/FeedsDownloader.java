@@ -4,16 +4,18 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.joelson.turf.util.JacksonUtil;
 import org.joelson.turf.util.TimeUtil;
 import org.joelson.turf.util.URLReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
 public class FeedsDownloader {
@@ -22,6 +24,7 @@ public class FeedsDownloader {
     private static final String FEEDS_V5_REQUEST = "https://api.turfgame.com/unstable/feeds";
 
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
+    private static final Logger logger = LoggerFactory.getLogger(FeedsDownloader.class);
 
     private static final String FEEDS_V4_PATH_NAME = "feeds_v4";
     private static final String FEEDS_V5_PATH_NAME = "feeds_v5";
@@ -29,7 +32,6 @@ public class FeedsDownloader {
 
     private final Path feedsV4Path;
     private final Path feedsV5Path;
-    private final Path logPath;
 
     public FeedsDownloader(Path feedsPath) throws IOException {
         Objects.requireNonNull(feedsPath, "feedsPath is null");
@@ -39,9 +41,6 @@ public class FeedsDownloader {
         verifyDirectoryExists(feedsPath);
         feedsV4Path = createOrVerifyIsDirectory(feedsPath, FEEDS_V4_PATH_NAME);
         feedsV5Path = createOrVerifyIsDirectory(feedsPath, FEEDS_V5_PATH_NAME);
-        logPath = Files.createTempFile("turfgame-feedsdownloader-", ".txt");
-        System.out.println(logPath);
-        log("Created log file " + logPath);
     }
 
     public static void main(String[] args) throws IOException {
@@ -96,7 +95,7 @@ public class FeedsDownloader {
             Instant lastV5MedalChatEntry = null;
             Instant lastV5ZoneEntry = null;
             while (true) {
-                Instant nextDownload = Instant.now().plusSeconds(5 * 60);
+                Instant nextDownload = Instant.now().plusSeconds(5 * 60).truncatedTo(ChronoUnit.SECONDS);
                 lastV4TakeEntry = getFeed(feedsV4Path, FEEDS_V4_REQUEST, "takeover", "feeds_takeover_%s.%sjson",
                         lastV4TakeEntry);
                 waitBetweenFeeds();
@@ -114,11 +113,11 @@ public class FeedsDownloader {
                 waitBetweenFeeds();
                 lastV5ZoneEntry = getFeed(feedsV5Path, FEEDS_V5_REQUEST, "zone", "feeds_zone_%s.%sjson",
                         lastV5ZoneEntry);
-                log("Sleeping until " + nextDownload);
+                logger.info("Sleeping until {}", nextDownload);
                 waitUntil(nextDownload);
             }
         } catch (Throwable e) {
-            log("Exception in handleFeeds(" + feedsV4Path + ", " + feedsV5Path + ") - " + e);
+            logger.error("Exception in downloadsFeeds(feedsV4Path: {}, feedsV5Path: {}) :", feedsV4Path, feedsV5Path, e);
         }
     }
 
@@ -130,41 +129,41 @@ public class FeedsDownloader {
             try {
                 json = getFeedsJSON(feedsRequest, feed, since);
             } catch (IOException e) {
-                log(Instant.now() + ": Unable to get JSON - " + e);
-                return since;
+                logger.error("Unable to get JSON: ", e);
+                return null;
             }
             if (json == null || json.equals("[]")) {
-                log("No data for " + feed + " since " + since);
-                return since;
+                logger.error("No data for {} since {}.", feed, since);
+                return null;
             }
             try {
                 lastEntryTime = getLastEntryTime(json);
             } catch (Exception e) {
-                log("Unable to retrieve time from JSON: " + e);
+                logger.error("Unable to retrieve time from JSON: ", e);
             }
             try {
                 file = getFilePath(feedPath, filenamePattern, lastEntryTime);
                 Files.writeString(file, json, StandardCharsets.UTF_8);
-                log("Downloaded " + file);
+                logger.info("Downloaded {}", file);
             } catch (IOException e) {
-                log(Instant.now() + ": Unable to store to " + file + " - " + e);
+                logger.error(": Unable to store to {}:", file, e);
                 Path tempFile = null;
                 try {
                     tempFile = Files.createTempFile("feed_download", ".json");
                     Files.writeString(tempFile, json, StandardCharsets.UTF_8);
+                    logger.info("Stored {}", tempFile);
                 } catch (IOException ex) {
-                    log(Instant.now() + ": Unable to store to " + tempFile + " - " + e);
-                    log(json);
+                    logger.error("Unable to store to {}:", tempFile, e);
+                    logger.error("json: {}", json);
                 }
                 return since;
             }
             return (lastEntryTime == null) ? null : Instant.from(lastEntryTime).minusSeconds(1);
         } catch (Throwable e) {
-            log("Exception in getFeed(" + feedPath + "\"" + feedsRequest + "\", \"" + feed + "\", \"" + filenamePattern
-                    + "\", " + since + ") - " + e);
-            log("  json:          " + json);
-            log("  lastEntryTime: " + lastEntryTime);
-            log("  file:          " + file);
+            logger.error("Exception in getFeed({}\"{}\", \"{}\", \"{}\", {}): ", feedPath, feedsRequest, feed, filenamePattern, since, e);
+            logger.error("  json:          {}", json);
+            logger.error("  lastEntryTime: {}", lastEntryTime);
+            logger.error("  file:          {}", file);
             return null;
         }
     }
@@ -207,20 +206,9 @@ public class FeedsDownloader {
     private String toTimeString(Instant instant) {
         if (instant == null) {
             instant = Instant.now();
-            log("toTimeString(null) - using instant " + instant);
+            logger.info("toTimeString(null) - using instant {}", instant);
         }
         LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, ZoneOffset.UTC);
         return DATE_TIME_FORMATTER.format(localDateTime);
-    }
-
-    private void log(String msg) {
-        String s = "[" + Thread.currentThread().getName() + "] " + msg + "\n";
-        System.out.print(s);
-        try {
-            Files.writeString(logPath, s, StandardOpenOption.APPEND);
-        } catch (IOException e) {
-            System.out.println(
-                    "[" + Thread.currentThread().getName() + "] Unable to log to file " + logPath + " - " + e);
-        }
     }
 }

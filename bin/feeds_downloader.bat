@@ -12,6 +12,7 @@ echo log file:   %log_file%
 
 @echo on
 :loop
+cd %feeds_dir%
 echo %date% %time% [feeds_startup] starting FeedsDownloader >> %feeds_dir%\%log_file%
 call java -cp %jar_file% org.joelson.turf.turfgame.util.FeedsDownloader %feeds_dir%
 echo %date% %time% [feeds_startup]   errorlevel: %errorlevel% >> %feeds_dir%\%log_file%

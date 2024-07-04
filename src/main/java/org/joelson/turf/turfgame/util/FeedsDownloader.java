@@ -117,11 +117,13 @@ public class FeedsDownloader {
                 waitUntil(nextDownload);
             }
         } catch (Throwable e) {
-            logger.error("Exception in downloadsFeeds(feedsV4Path: {}, feedsV5Path: {}) :", feedsV4Path, feedsV5Path, e);
+            logger.error("Exception in downloadsFeeds(feedsV4Path: \"{}\", feedsV5Path: \"{}\") :", feedsV4Path, feedsV5Path, e);
+            System.exit(-1);
         }
     }
 
     private Instant getFeed(Path feedPath, String feedsRequest, String feed, String filenamePattern, Instant since) {
+        String logQuantifier = String.format("%s (%s)", feed, (FEEDS_V4_REQUEST.equals(feedsRequest)) ? "v4" : "v5");
         String json = null;
         Instant lastEntryTime = null;
         Path file = null;
@@ -129,41 +131,46 @@ public class FeedsDownloader {
             try {
                 json = getFeedsJSON(feedsRequest, feed, since);
             } catch (IOException e) {
-                logger.error("Unable to get JSON: ", e);
+                logger.error("{} Unable to get JSON: ", logQuantifier, e);
                 return null;
             }
             if (json == null || json.equals("[]")) {
-                logger.error("No data for {} since {}.", feed, since);
+                if (since != null) {
+                    logger.error("{} No data since {}.", logQuantifier, since);
+                } else {
+                    logger.error("{} No data.", logQuantifier);
+                }
                 return null;
             }
             try {
                 lastEntryTime = getLastEntryTime(json);
             } catch (Exception e) {
-                logger.error("Unable to retrieve time from JSON: ", e);
+                logger.error("{} Unable to retrieve time from JSON: ", logQuantifier, e);
+                logger.error("{} json: {}", logQuantifier, json);
             }
             try {
                 file = getFilePath(feedPath, filenamePattern, lastEntryTime);
                 Files.writeString(file, json, StandardCharsets.UTF_8);
                 logger.info("Downloaded {}", file);
             } catch (IOException e) {
-                logger.error(": Unable to store to {}:", file, e);
+                logger.error("{} Unable to store to {}:", logQuantifier, file, e);
                 Path tempFile = null;
                 try {
-                    tempFile = Files.createTempFile("feed_download", ".json");
+                    tempFile = Files.createTempFile(feedPath, "feed_download", ".json");
                     Files.writeString(tempFile, json, StandardCharsets.UTF_8);
                     logger.info("Stored {}", tempFile);
                 } catch (IOException ex) {
-                    logger.error("Unable to store to {}:", tempFile, e);
-                    logger.error("json: {}", json);
+                    logger.error("{} Unable to store to {}:", logQuantifier, tempFile, ex);
+                    logger.error("{} json: {}", logQuantifier, json);
                 }
                 return since;
             }
             return (lastEntryTime == null) ? null : Instant.from(lastEntryTime).minusSeconds(1);
         } catch (Throwable e) {
-            logger.error("Exception in getFeed({}\"{}\", \"{}\", \"{}\", {}): ", feedPath, feedsRequest, feed, filenamePattern, since, e);
-            logger.error("  json:          {}", json);
-            logger.error("  lastEntryTime: {}", lastEntryTime);
-            logger.error("  file:          {}", file);
+            logger.error("Exception in getFeed(\"{}\", \"{}\", \"{}\", \"{}\", {}): ", feedPath, feedsRequest, feed, filenamePattern, since, e);
+            logger.error("{} json:          {}", logQuantifier, json);
+            logger.error("{} lastEntryTime: {}", logQuantifier, lastEntryTime);
+            logger.error("{} file:          {}", logQuantifier, file);
             return null;
         }
     }
@@ -206,7 +213,7 @@ public class FeedsDownloader {
     private String toTimeString(Instant instant) {
         if (instant == null) {
             instant = Instant.now();
-            logger.info("toTimeString(null) - using instant {}", instant);
+            logger.debug("toTimeString(null) - using instant {}", instant);
         }
         LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, ZoneOffset.UTC);
         return DATE_TIME_FORMATTER.format(localDateTime);

@@ -4,7 +4,7 @@ SETLOCAL
 
 set jar_file="c:\Users\mattias\.m2\repository\org\joelson\turf\resources\1.3-SNAPSHOT\resources-1.3-SNAPSHOT-jar-with-dependencies.jar"
 set feeds_dir="c:\Users\mattias\src\turfgame_feeds"
-set log_file="feeds_startup_log.txt"
+set log_file="feeds_startup.log"
 
 echo jar file:   %jar_file%
 echo feeds dir:  %feeds_dir%

@@ -14,6 +14,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 public class FeedsDownloader {
 
@@ -21,16 +22,33 @@ public class FeedsDownloader {
     private static final String FEEDS_V5_REQUEST = "https://api.turfgame.com/unstable/feeds";
 
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
-    public static final String FEEDS_V4_PATH_NAME = "feeds_v4";
-    public static final String FEEDS_V5_PATH_NAME = "feeds_v5";
-    public static final int ERROR_EXIT_STATUS = 1;
-    private static Path logPath;
+
+    private static final String FEEDS_V4_PATH_NAME = "feeds_v4";
+    private static final String FEEDS_V5_PATH_NAME = "feeds_v5";
+    private static final int ERROR_EXIT_STATUS = 1;
+
+    private final Path feedsV4Path;
+    private final Path feedsV5Path;
+    private final Path logPath;
+
+    public FeedsDownloader(Path feedsPath) throws IOException {
+        Objects.requireNonNull(feedsPath, "feedsPath is null");
+        if (!Files.exists(feedsPath)) {
+            exitWithError("Feeds dir does not exist: " + feedsPath);
+        }
+        verifyDirectoryExists(feedsPath);
+        feedsV4Path = createOrVerifyIsDirectory(feedsPath, FEEDS_V4_PATH_NAME);
+        feedsV5Path = createOrVerifyIsDirectory(feedsPath, FEEDS_V5_PATH_NAME);
+        logPath = Files.createTempFile("turfgame-feedsdownloader-", ".txt");
+        System.out.println(logPath);
+        log("Created log file " + logPath);
+    }
 
     public static void main(String[] args) throws IOException {
         if (args.length != ERROR_EXIT_STATUS) {
             exitWithError(String.format("Usage:%n\t%s feeds_dir", FeedsDownloader.class));
         }
-        handleFeeds(Path.of(args[0]));
+        new FeedsDownloader(Path.of(args[0])).downloadFeeds();
     }
 
     private static void exitWithError(String format) {
@@ -44,28 +62,33 @@ public class FeedsDownloader {
         }
     }
 
-    private static Path createOrVerifyIsDirectory(Path feedsPath, String subDirectory) throws IOException {
-        Path feedsV4Path = feedsPath.resolve(subDirectory);
-        if (Files.exists(feedsV4Path)) {
-            verifyDirectoryExists(feedsV4Path);
-            return feedsV4Path;
+    private static Path createOrVerifyIsDirectory(Path feedsPath, String subPath) throws IOException {
+        Path feedsSubPath = feedsPath.resolve(subPath);
+        if (Files.exists(feedsSubPath)) {
+            verifyDirectoryExists(feedsSubPath);
+            return feedsSubPath;
         } else {
-            return Files.createDirectories(feedsV4Path);
+            return Files.createDirectories(feedsSubPath);
         }
     }
 
-    public static void handleFeeds(Path feedsPath) throws IOException {
-        if (!Files.exists(feedsPath)) {
-            exitWithError("Feeds dir does not exist: " + feedsPath);
-        }
-        verifyDirectoryExists(feedsPath);
-        Path feedsV4Path = createOrVerifyIsDirectory(feedsPath, FEEDS_V4_PATH_NAME);
-        Path feedsV5Path = createOrVerifyIsDirectory(feedsPath, FEEDS_V5_PATH_NAME);
-        try {
-            logPath = Files.createTempFile("turfgame-feedsdownloader-", ".txt");
-            System.out.println(logPath);
-            log("Created log file " + logPath);
+    private static void waitBetweenFeeds() {
+        Instant until = Instant.now().plusSeconds(5);
+        waitUntil(until);
+    }
 
+    private static void waitUntil(Instant until) {
+        while (Instant.now().isBefore(until)) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                // ignore
+            }
+        }
+    }
+
+    public void downloadFeeds() {
+        try {
             Instant lastV4TakeEntry = null;
             Instant lastV4MedalChatEntry = null;
             Instant lastV4ZoneEntry = null;
@@ -99,8 +122,7 @@ public class FeedsDownloader {
         }
     }
 
-    private static Instant getFeed(
-            Path feedPath, String feedsRequest, String feed, String filenamePattern, Instant since) {
+    private Instant getFeed(Path feedPath, String feedsRequest, String feed, String filenamePattern, Instant since) {
         String json = null;
         Instant lastEntryTime = null;
         Path file = null;
@@ -147,7 +169,7 @@ public class FeedsDownloader {
         }
     }
 
-    private static String getFeedsJSON(String feedsRequest, String feed, Instant since) throws IOException {
+    private String getFeedsJSON(String feedsRequest, String feed, Instant since) throws IOException {
         String afterDate = "";
         if (since != null) {
             afterDate = "?afterDate=" + TimeUtil.turfAPITimestampFormatter(since);
@@ -155,7 +177,7 @@ public class FeedsDownloader {
         return URLReader.getRequest(feedsRequest + '/' + feed + afterDate);
     }
 
-    private static Instant getLastEntryTime(String json) {
+    private Instant getLastEntryTime(String json) {
         Instant latest = null;
         for (JsonNode node : JacksonUtil.readValue(json, JsonNode[].class)) {
             String timeStamp = node.get("time").asText();
@@ -167,7 +189,7 @@ public class FeedsDownloader {
         return latest;
     }
 
-    private static Path getFilePath(Path feedPath, String filenamePattern, Instant lastEntryTime) throws IOException {
+    private Path getFilePath(Path feedPath, String filenamePattern, Instant lastEntryTime) throws IOException {
         String timeString = toTimeString(lastEntryTime);
         String name = String.format(filenamePattern, timeString, "");
         Path filePath = feedPath.resolve(name);
@@ -182,7 +204,7 @@ public class FeedsDownloader {
         return filePath;
     }
 
-    private static String toTimeString(Instant instant) {
+    private String toTimeString(Instant instant) {
         if (instant == null) {
             instant = Instant.now();
             log("toTimeString(null) - using instant " + instant);
@@ -191,22 +213,7 @@ public class FeedsDownloader {
         return DATE_TIME_FORMATTER.format(localDateTime);
     }
 
-    private static void waitBetweenFeeds() {
-        Instant until = Instant.now().plusSeconds(5);
-        waitUntil(until);
-    }
-
-    private static void waitUntil(Instant until) {
-        while (Instant.now().isBefore(until)) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                // ignore
-            }
-        }
-    }
-
-    private static void log(String msg) {
+    private void log(String msg) {
         String s = "[" + Thread.currentThread().getName() + "] " + msg + "\n";
         System.out.print(s);
         try {

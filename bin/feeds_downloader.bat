@@ -2,21 +2,20 @@
 
 SETLOCAL
 
-set jar_file="c:\Users\eljol\.m2\repository\org\joelson\turf\resources\1.2.0\resources-1.2.0-jar-with-dependencies.jar"
-set feed_v4_dir="c:\Users\eljol\src\turfgame_feedsv4"
-set feed_v5_dir="c:\Users\eljol\src\turfgame_feedsv5"
-set log_file="c:\Users\eljol\AppData\Local\Temp\feeds_startup_log.txt"
+set jar_file="c:\Users\mattias\.m2\repository\org\joelson\turf\resources\1.3-SNAPSHOT\resources-1.3-SNAPSHOT-jar-with-dependencies.jar"
+set feeds_dir="c:\Users\mattias\src\turfgame_feeds"
+set log_file="feeds_startup.log"
 
-echo jar file:     %jar_file%
-echo feed v4 dir:  %feed_v4_dir%
-echo feed v5 dir:  %feed_v5_dir%
-echo log file:     %log_file%
+echo jar file:   %jar_file%
+echo feeds dir:  %feeds_dir%
+echo log file:   %log_file%
 
 @echo on
 :loop
-echo "%date% %time% [feeds_startup] starting FeedsDownloader" >> %log_file%
-call java -cp %jar_file% org.joelson.turf.turfgame.util.FeedsDownloader %feed_v4_dir% %feed_v5_dir%
-echo "%date% %time% [feeds_startup]   errorlevel: %errorlevel%" >> %log_file%
+cd %feeds_dir%
+echo %date% %time% [feeds_startup] starting FeedsDownloader >> %feeds_dir%\%log_file%
+call java -cp %jar_file% org.joelson.turf.turfgame.util.FeedsDownloader %feeds_dir%
+echo %date% %time% [feeds_startup]   errorlevel: %errorlevel% >> %feeds_dir%\%log_file%
 goto loop
 
 ENDLOCAL

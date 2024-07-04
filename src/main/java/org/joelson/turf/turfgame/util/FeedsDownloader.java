@@ -21,27 +21,46 @@ public class FeedsDownloader {
     private static final String FEEDS_V5_REQUEST = "https://api.turfgame.com/unstable/feeds";
 
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
+    public static final String FEEDS_V4_PATH_NAME = "feeds_v4";
+    public static final String FEEDS_V5_PATH_NAME = "feeds_v5";
+    public static final int ERROR_EXIT_STATUS = 1;
     private static Path logPath;
 
     public static void main(String[] args) throws IOException {
-        if (args.length != 2) {
-            System.out.printf("Usage:%n\t%s feedsv4_dir feedsv5_dir", FeedsDownloader.class);
-            return;
+        if (args.length != ERROR_EXIT_STATUS) {
+            exitWithError(String.format("Usage:%n\t%s feeds_dir", FeedsDownloader.class));
         }
-        Path feedsV4Path = Path.of(args[0]);
-        if (!Files.exists(feedsV4Path) || !Files.isDirectory(feedsV4Path)) {
-            System.out.println("Feeds v4 dir does not exist or is not a directory: " + feedsV4Path);
-            return;
-        }
-        Path feedsV5Path = Path.of(args[1]);
-        if (!Files.exists(feedsV5Path) || !Files.isDirectory(feedsV5Path)) {
-            System.out.println("Feeds v5 dir does not exist or is not a directory: " + feedsV5Path);
-            return;
-        }
-        handleFeeds(feedsV4Path, feedsV5Path);
+        handleFeeds(Path.of(args[0]));
     }
 
-    public static void handleFeeds(Path feedsV4Path, Path feedsV5Path) {
+    private static void exitWithError(String format) {
+        System.err.println(format);
+        System.exit(ERROR_EXIT_STATUS);
+    }
+
+    private static void verifyDirectoryExists(Path feedsPath) {
+        if (!Files.isDirectory(feedsPath)) {
+            exitWithError("Feeds dir is not a directory: " + feedsPath);
+        }
+    }
+
+    private static Path createOrVerifyIsDirectory(Path feedsPath, String subDirectory) throws IOException {
+        Path feedsV4Path = feedsPath.resolve(subDirectory);
+        if (Files.exists(feedsV4Path)) {
+            verifyDirectoryExists(feedsV4Path);
+            return feedsV4Path;
+        } else {
+            return Files.createDirectories(feedsV4Path);
+        }
+    }
+
+    public static void handleFeeds(Path feedsPath) throws IOException {
+        if (!Files.exists(feedsPath)) {
+            exitWithError("Feeds dir does not exist: " + feedsPath);
+        }
+        verifyDirectoryExists(feedsPath);
+        Path feedsV4Path = createOrVerifyIsDirectory(feedsPath, FEEDS_V4_PATH_NAME);
+        Path feedsV5Path = createOrVerifyIsDirectory(feedsPath, FEEDS_V5_PATH_NAME);
         try {
             logPath = Files.createTempFile("turfgame-feedsdownloader-", ".txt");
             System.out.println(logPath);

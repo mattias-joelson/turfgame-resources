@@ -50,8 +50,8 @@ public class FeedsDownloader {
         new FeedsDownloader(Path.of(args[0])).downloadFeeds();
     }
 
-    private static void exitWithError(String format) {
-        System.err.println(format);
+    private static void exitWithError(String msg) {
+        logger.error(msg);
         System.exit(ERROR_EXIT_STATUS);
     }
 

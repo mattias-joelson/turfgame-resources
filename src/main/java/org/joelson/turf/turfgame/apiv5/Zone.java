@@ -31,7 +31,7 @@ public class Zone implements org.joelson.turf.turfgame.Zone {
             @Nullable @JsonProperty("region") Region region,
             @JsonProperty(value = "latitude", required = true) double latitude,
             @JsonProperty(value = "longitude", required = true) double longitude,
-            @Nonnull @JsonProperty(value = "dateCreated", required = true) String dateCreated,
+            @Nullable @JsonProperty(value = "dateCreated") String dateCreated,
             @JsonProperty(value = "takeoverPoints", required = true) int takeoverPoints,
             @JsonProperty(value = "pointsPerHour", required = true) int pointsPerHour,
             @JsonProperty(value = "totalTakeovers", required = true) int totalTakeovers,
@@ -45,7 +45,7 @@ public class Zone implements org.joelson.turf.turfgame.Zone {
         this.region = region;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.dateCreated = StringUtil.requireNotNullAndNotTrimmedEmpty(dateCreated);
+        this.dateCreated = dateCreated;
         this.takeoverPoints = takeoverPoints;
         this.pointsPerHour = pointsPerHour;
         this.totalTakeovers = totalTakeovers;

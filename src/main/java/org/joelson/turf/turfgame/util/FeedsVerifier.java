@@ -49,12 +49,12 @@ public class FeedsVerifier {
                 "zone", org.joelson.turf.turfgame.apiv5.FeedZone.class));
     }
 
-    private static void logEveryPath(Path path) {
+    private static void rememberPath(Path path) {
         lastPath = path;
         lastFeedObject = null;
     }
 
-    private static void logEveryFeedObject(FeedObject feedObject) {
+    private static void rememberFeedObject(FeedObject feedObject) {
         lastFeedObject = feedObject;
     }
 
@@ -64,7 +64,7 @@ public class FeedsVerifier {
         lastFeedObject = null;
         FeedsReader feedsReader = new FeedsReader(chat);
         try {
-            feedsReader.handleFeedObjectFile(path, FeedsVerifier::logEveryPath, FeedsVerifier::logEveryFeedObject);
+            feedsReader.handleFeedObjectFile(path, FeedsVerifier::rememberPath, FeedsVerifier::rememberFeedObject);
         } catch (Exception e) {
             System.err.printf("Error handling %s:%n", path);
             System.err.printf("  lastPath: %s%n", lastPath);

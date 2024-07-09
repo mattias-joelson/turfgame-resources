@@ -36,17 +36,17 @@ public class FeedsVerifier {
     }
 
     private static void verifyV4Zip(Path path) {
-        verifyZip("v4", path, Map.of("chat", org.joelson.turf.turfgame.apiv4.FeedChat.class, "medal",
-                org.joelson.turf.turfgame.apiv4.FeedMedal.class, "takeover",
-                org.joelson.turf.turfgame.apiv4.FeedTakeover.class, "zone",
-                org.joelson.turf.turfgame.apiv4.FeedZone.class));
+        verifyZip("v4", path, Map.of("chat", org.joelson.turf.turfgame.apiv4.FeedChat.class,
+                "medal", org.joelson.turf.turfgame.apiv4.FeedMedal.class,
+                "takeover", org.joelson.turf.turfgame.apiv4.FeedTakeover.class,
+                "zone", org.joelson.turf.turfgame.apiv4.FeedZone.class));
     }
 
     private static void verifyV5Zip(Path path) {
-        verifyZip("v5", path, Map.of("chat", org.joelson.turf.turfgame.apiv5.FeedChat.class, "medal",
-                org.joelson.turf.turfgame.apiv5.FeedMedal.class, "takeover",
-                org.joelson.turf.turfgame.apiv5.FeedTakeover.class, "zone",
-                org.joelson.turf.turfgame.apiv5.FeedZone.class));
+        verifyZip("v5", path, Map.of("chat", org.joelson.turf.turfgame.apiv5.FeedChat.class,
+                "medal", org.joelson.turf.turfgame.apiv5.FeedMedal.class,
+                "takeover", org.joelson.turf.turfgame.apiv5.FeedTakeover.class,
+                "zone", org.joelson.turf.turfgame.apiv5.FeedZone.class));
     }
 
     private static void logEveryPath(Path path) {

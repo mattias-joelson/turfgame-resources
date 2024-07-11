@@ -121,11 +121,22 @@ public class FeedsReader {
             String time = null;
             for (JsonNode node : nodes) {
                 String nodeTime = getJsonNodeTime(node);
-                if (time == null || time.compareTo(nodeTime) <= 0) {
+                if (time == null) {
                     time = nodeTime;
+                } else if (!reversed) {
+                    if (time.compareTo(nodeTime) <= 0) {
+                        time = nodeTime;
+                    } else {
+                        throw new IllegalArgumentException(
+                                "Node with time " + nodeTime + " is not after " + time + ": " + node);
+                    }
                 } else {
-                    throw new IllegalArgumentException(
-                            "Node with time " + nodeTime + " is not after " + time + ": " + node);
+                    if (time.compareTo(nodeTime) >= 0) {
+                        time = nodeTime;
+                    } else {
+                        throw new IllegalArgumentException(
+                                "Node with time " + nodeTime + " is not before " + time + ": " + node);
+                    }
                 }
                 handleFeedObject(node, forEachFeedObject);
             }

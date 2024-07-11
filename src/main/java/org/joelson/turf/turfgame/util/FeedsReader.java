@@ -20,9 +20,15 @@ import java.util.function.Consumer;
 public class FeedsReader {
 
     private final Map<String, Class<? extends FeedObject>> typesToHandle;
+    private final boolean reversed;
 
     public FeedsReader(Map<String, Class<? extends FeedObject>> typesToHandle) {
+        this(typesToHandle, false);
+    }
+
+    public FeedsReader(Map<String, Class<? extends FeedObject>> typesToHandle, boolean reversed) {
         this.typesToHandle = Objects.requireNonNull(typesToHandle);
+        this.reversed = reversed;
     }
 
     private static String readFile(Path path, Consumer<Path> forEachPath) {
@@ -95,7 +101,8 @@ public class FeedsReader {
     }
 
     public void handleFeedObjectFile(Path path, Consumer<Path> forEachPath, Consumer<FeedObject> forEachFeedObject) {
-        handleFeedObjectFile(path, new FeedsPathComparator(), forEachPath, forEachFeedObject);
+        Comparator<Path> pathComparator = (reversed) ? new FeedsPathComparator().reversed() : new FeedsPathComparator();
+        handleFeedObjectFile(path, pathComparator, forEachPath, forEachFeedObject);
     }
 
     public void handleFeedObjectFile(Path path, Comparator<Path> comparePaths, Consumer<Path> forEachPath,
@@ -109,7 +116,7 @@ public class FeedsReader {
     }
 
     public void handleFeedObjects(String content, Consumer<FeedObject> forEachFeedObject) {
-        List<JsonNode> nodes = Arrays.asList(JacksonUtil.readValue(content, JsonNode[].class)).reversed();
+        List<JsonNode> nodes = getJsonNodes(content);
         if (!nodes.isEmpty()) {
             String time = null;
             for (JsonNode node : nodes) {
@@ -123,6 +130,11 @@ public class FeedsReader {
                 handleFeedObject(node, forEachFeedObject);
             }
         }
+    }
+
+    private List<JsonNode> getJsonNodes(String content) {
+        List<JsonNode> nodes = Arrays.asList(JacksonUtil.readValue(content, JsonNode[].class));
+        return (reversed) ? nodes : nodes.reversed();
     }
 
     private void handleFeedObject(JsonNode node, Consumer<FeedObject> forEachFeedObject) {

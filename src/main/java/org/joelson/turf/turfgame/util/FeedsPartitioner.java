@@ -10,11 +10,14 @@ import java.nio.file.Path;
 public class FeedsPartitioner {
 
     public static void main(String[] args) throws IOException {
+        String feedpath = null;
         String version = null;
         String server = null;
         String until = null;
         for (String arg : args) {
-            if (arg.startsWith("-version=")) {
+            if (arg.startsWith("-feedpath=")) {
+                feedpath = arg.substring(10);
+            } else if (arg.startsWith("-version=")) {
                 version = arg.substring(9);
             } else if (arg.startsWith("-server=")) {
                 server = arg.substring(8);
@@ -24,13 +27,13 @@ public class FeedsPartitioner {
                 System.out.printf("Unknown option \"%s\"", arg);
             }
         }
-        if (args.length != 3 || version == null || server == null || until == null) {
-            System.out.printf("Usage:%n\t%s -version=v4 -server=win -until=2024-06-16", FeedsPartitioner.class.getName());
+        if (args.length != 4 || feedpath == null || version == null || server == null || until == null) {
+            System.out.printf("Usage:%n\t%s -feedpath=C:\\feeds\\feeds_v4 -version=v4 -server=win -until=2024-06-16", FeedsPartitioner.class.getName());
             System.exit(-1);
         }
         String date = until;
 
-        Path partitionDirectory = Path.of(".", "partition");
+        Path partitionDirectory = Path.of(feedpath, "partition");
         if (Files.exists(partitionDirectory)) {
             System.out.printf("Can not create directory %s - file exists.", partitionDirectory);
             System.exit(-1);
@@ -39,21 +42,21 @@ public class FeedsPartitioner {
         Files.createDirectory(partitionDirectory);
         System.out.printf("<create directory %s>%n", partitionDirectory);
 
-//        int noFiles = Files.list(Path.of(".")).mapToInt(path -> 1).sum();
+//        int noFiles = Files.list(Path.of(feedpath)).mapToInt(path -> 1).sum();
 //        System.out.println("noFiles: " + noFiles);
 //
-//        noFiles = Files.list(Path.of("."))
+//        noFiles = Files.list(Path.of(feedpath))
 //                .filter(path -> pathNotLarger(date, path))
 //                .mapToInt(path -> 1).sum();
 //        System.out.println("noFiles: " + noFiles);
-        Files.list(Path.of(".")).filter(path -> includeFile(date, path))
+        Files.list(Path.of(feedpath)).filter(path -> includeFile(date, path))
                 .forEach(path -> moveFile(partitionDirectory, path));
 
         String firstDate = Files.list(partitionDirectory).filter(path -> includeFile(date, path))
                 .map(FeedsPartitioner::getDate).sorted().findFirst().orElseThrow();
         System.out.println("firstDate: " + firstDate);
 
-        Path finalPartition = Path.of(".", "feeds_" + version + '_' + firstDate + "." + server);
+        Path finalPartition = Path.of(feedpath, "feeds_" + version + '_' + firstDate + "." + server);
         System.out.printf("<move %s to %s>%n", partitionDirectory, finalPartition);
         Files.move(partitionDirectory, finalPartition);
         System.out.printf("archive:%n\t7z a %s %s%n", finalPartition.getFileName() + ".zip", finalPartition);

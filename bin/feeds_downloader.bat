@@ -2,7 +2,7 @@
 
 SETLOCAL
 
-set jar_file="c:\Users\mattias\.m2\repository\org\joelson\turf\resources\1.3.0\resources-1.3.0-jar-with-dependencies.jar"
+set jar_file="c:\Users\mattias\.m2\repository\org\joelson\turf\resources\1.4.0\resources-1.4.0-jar-with-dependencies.jar"
 set feeds_dir="c:\Users\mattias\src\turfgame_feeds"
 set log_file="feeds_startup.log"
 

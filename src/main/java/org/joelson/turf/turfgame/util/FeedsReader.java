@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.joelson.turf.turfgame.FeedObject;
 import org.joelson.turf.util.FilesUtil;
 import org.joelson.turf.util.JacksonUtil;
+import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -21,13 +22,24 @@ public class FeedsReader {
 
     private final Map<String, Class<? extends FeedObject>> typesToHandle;
     private final boolean reversed;
+    private final FeedContentErrorHandler errorHandler;
 
     public FeedsReader(Map<String, Class<? extends FeedObject>> typesToHandle) {
-        this(typesToHandle, false);
+        this(typesToHandle, new DefaultFeedContentErrorHandler(), true);
     }
 
-    public FeedsReader(Map<String, Class<? extends FeedObject>> typesToHandle, boolean reversed) {
+    public FeedsReader(Map<String, Class<? extends FeedObject>> typesToHandle, Logger errorHandlerLogger) {
+        this(typesToHandle, new DefaultFeedContentErrorHandler(errorHandlerLogger), true);
+    }
+
+    public FeedsReader(Map<String, Class<? extends FeedObject>> typesToHandle, FeedContentErrorHandler errorHandler) {
+        this(typesToHandle, errorHandler, true);
+    }
+
+    public FeedsReader(Map<String, Class<? extends FeedObject>> typesToHandle, FeedContentErrorHandler errorHandler,
+            boolean reversed) {
         this.typesToHandle = Objects.requireNonNull(typesToHandle);
+        this.errorHandler = errorHandler;
         this.reversed = reversed;
     }
 
@@ -109,14 +121,14 @@ public class FeedsReader {
             Consumer<FeedObject> forEachFeedObject) {
         try {
             FilesUtil.forEachFile(path, true, comparePaths,
-                    p -> handleFeedObjects(readFile(p, forEachPath), forEachFeedObject));
+                    p -> handleFeedObjects(p, readFile(p, forEachPath), forEachFeedObject));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void handleFeedObjects(String content, Consumer<FeedObject> forEachFeedObject) {
-        List<JsonNode> nodes = getJsonNodes(content);
+    public void handleFeedObjects(Path path, String content, Consumer<FeedObject> forEachFeedObject) {
+        List<JsonNode> nodes = getJsonNodes(path, content);
         if (!nodes.isEmpty()) {
             String time = null;
             for (JsonNode node : nodes) {
@@ -143,9 +155,16 @@ public class FeedsReader {
         }
     }
 
-    private List<JsonNode> getJsonNodes(String content) {
-        List<JsonNode> nodes = Arrays.asList(JacksonUtil.readValue(content, JsonNode[].class));
-        return (reversed) ? nodes : nodes.reversed();
+    private List<JsonNode> getJsonNodes(Path path, String content) {
+        try {
+            List<JsonNode> nodes = Arrays.asList(JacksonUtil.readValue(content, JsonNode[].class));
+            return (reversed) ? nodes : nodes.reversed();
+        } catch (RuntimeException e) {
+            if (errorHandler != null) {
+                return errorHandler.handleErrorContent(path, content, e);
+            }
+            throw e;
+        }
     }
 
     private void handleFeedObject(JsonNode node, Consumer<FeedObject> forEachFeedObject) {

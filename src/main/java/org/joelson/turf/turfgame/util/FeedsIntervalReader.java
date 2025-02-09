@@ -3,10 +3,12 @@ package org.joelson.turf.turfgame.util;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.joelson.turf.util.FilesUtil;
 import org.joelson.turf.util.JacksonUtil;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -17,6 +19,9 @@ import java.util.TreeSet;
 public class FeedsIntervalReader {
 
     private static int fileCount = 0;
+    private static int filesWithError = 0;
+    private static FeedContentErrorHandler errorHandler
+            = new DefaultFeedContentErrorHandler(LoggerFactory.getLogger(FeedsIntervalReader.class));
 
     public static void main(String[] args) throws IOException {
         if (args.length < 1) {
@@ -30,6 +35,9 @@ public class FeedsIntervalReader {
         }
         feedNodes.stream().forEach(feedInterval
                 -> System.out.printf("%s: %s - %s%n", feedInterval.type, feedInterval.start, feedInterval.end));
+        if (filesWithError > 0) {
+            System.out.println("Files with errors: " + filesWithError);
+        }
     }
 
     private static void readFeedNodes(SortedSet<FeedInterval> feedIntervals, List<JsonNode> fileNodes) {
@@ -75,22 +83,29 @@ public class FeedsIntervalReader {
                 System.out.printf("*** Reading %s (%d)%n", feedPath, fileCount);
             }
             fileCount += 1;
-            return readJsonNodes(feedPath.toString(), Files.readString(feedPath));
+            return readJsonNodes(feedPath, Files.readString(feedPath));
         } catch (IOException e) {
+            System.err.println("Error when parsing nodes in " + feedPath);
             e.printStackTrace();
+            System.exit(-1);
             return Collections.emptyList();
         } catch (RuntimeException e) {
             System.err.println("Error when parsing nodes in " + feedPath);
             e.printStackTrace();
+            System.exit(-1);
             return Collections.emptyList();
         }
     }
 
-    private static List<JsonNode> readJsonNodes(String path, String content) {
-        if (content.isEmpty() || content.startsWith("<html>")) {
-            return Collections.emptyList();
+    private static List<JsonNode> readJsonNodes(Path path, String content) {
+//        if (content.isEmpty() || content.startsWith("<html>")) {
+//            return Collections.emptyList();
+//        }
+        try {
+            return Arrays.asList(JacksonUtil.readValue(content, JsonNode[].class));
+        } catch (RuntimeException e) {
+            return errorHandler.handleErrorContent(path, content, e);
         }
-        return Arrays.asList(JacksonUtil.readValue(content, JsonNode[].class));
     }
 
     private enum FeedType {

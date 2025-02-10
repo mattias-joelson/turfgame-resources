@@ -1,7 +1,5 @@
-package org.joelson.turf.turfgame.apiv4util;
+package org.joelson.turf.turfgame.apiv4;
 
-import org.joelson.turf.turfgame.apiv4.Zone;
-import org.joelson.turf.turfgame.apiv4.Zones;
 import org.joelson.turf.turfgame.util.FeedsPathComparator;
 import org.joelson.turf.util.FilesUtil;
 

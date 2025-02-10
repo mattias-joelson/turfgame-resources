@@ -1,48 +1,75 @@
 package org.joelson.turf.turfgame.util;
 
 import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.nio.charset.MalformedInputException;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.zip.ZipException;
 
 public class DefaultFeedContentErrorHandler implements FeedContentErrorHandler {
 
-    private final Logger logger;
+    private final List<Path> errorPaths = new ArrayList<>();
 
-    public DefaultFeedContentErrorHandler() {
-        this(LoggerFactory.getLogger(DefaultFeedContentErrorHandler.class));
-    }
-
-    public DefaultFeedContentErrorHandler(Logger logger) {
-        this.logger = logger;
-    }
-
-    public List<JsonNode> handleErrorContent(Path path, String content, RuntimeException e) throws RuntimeException {
-        Throwable cause = e.getCause();
-        if (cause instanceof MismatchedInputException
+    public void handleErrorContent(Path path, String content, IOException e) {
+        errorPaths.add(path);
+        if (e instanceof MismatchedInputException
                 && content.startsWith("{\"errorMessage\":\"Only one request per second allowed\",\"errorCode\":")) {
-            logger.warn("    Path {} contains error message - only one request per second allowed.", path);
-            return Collections.emptyList();
-        } else if (cause instanceof JsonParseException) {
+            message("Path %s contains error message - only one request per second allowed.", path);
+            return;
+        } else if (e instanceof JsonParseException) {
             if (content.isEmpty()) {
-                logger.warn("    Path {} is empty.", path);
-                return Collections.emptyList();
+                message("Path %s is empty.", path);
+                return;
             } else if (content.charAt(0) == 0 && allZeroes(content)) {
-                logger.warn("    Path {} is contains only zeroes.", path);
-                return Collections.emptyList();
+                message("Path %s is contains only zeroes.", path);
+                return;
             } else if (content.startsWith("<html>")) {
                 if (content.contains("504 Gateway Time-out")) {
-                    logger.warn("    Path {} contains HTML response - 504 Gateway Time-out", path);
-                    return Collections.emptyList();
+                    message("Path %s contains HTML response - 504 Gateway Time-out", path);
+                    return;
                 }
             }
+        } else if (e instanceof ConflictingFeedTypeException cfte) {
+            message("FeedObject of type %s when expecting type %s.", cfte.getType(), cfte.getExpectedType());
+            return;
+        } else if (e instanceof UnknownFeedTypeException ufte) {
+            message("FeedObject of unknown type %s.", ufte.getType());
+            return;
+        } else if (e instanceof NoFeedTypeException)  {
+            message("JSON node lacking type.");
+            return;
+        } else if (e instanceof MalformedInputException) {
+            message("MalformedInputException - Unable to read path %s.", path);
+            return;
+        } else if (e instanceof ZipException) {
+            message("ZipException - Unable to read path %s.", path);
+            return;
         }
-        throw new RuntimeException(e);
+        if (content == null) {
+            message("*** Unhandled exception type %s for path %s lacking content.",
+                    e.getClass().getName(), path);
+        } else {
+            String partOfContent = content.substring(0, 20);
+            message("*** Unhandled exception type %s for path %s having content starting with \"%s\"",
+                    e.getClass().getName(), path, partOfContent);
+        }
+    }
+
+    private void message(String format, Object... args) {
+        message(String.format(format, args));
+    }
+
+    protected void message(String msg) {
+        System.err.println(msg);
+    }
+
+    public List<Path> getErrorPaths() {
+        return Collections.unmodifiableList(errorPaths);
     }
 
     private static boolean allZeroes(String s) {

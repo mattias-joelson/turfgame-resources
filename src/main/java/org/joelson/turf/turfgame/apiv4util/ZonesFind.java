@@ -28,14 +28,15 @@ public final class ZonesFind {
     }
 
     private static void readFile(Path path, String zoneName) {
-        String json = null;
+        List<Zone> zones = null;
         try {
-            json = Files.readString(path);
+            String json = Files.readString(path);
+            zones = Zones.fromJSON(json);
         } catch (IOException e) {
             e.printStackTrace();
+            System.err.println("Exception reading path " + path);
             System.exit(-1);
         }
-        List<Zone> zones = Zones.fromJSON(json);
         Zone zone = zones.stream().filter(z -> z.getName().equals(zoneName)).findFirst().orElse(null);
         System.out.printf("%s: %s%n", path, toString(zone));
     }

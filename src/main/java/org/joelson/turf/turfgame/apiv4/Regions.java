@@ -1,5 +1,6 @@
 package org.joelson.turf.turfgame.apiv4;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.joelson.turf.util.JacksonUtil;
 import org.joelson.turf.util.URLReader;
 
@@ -31,7 +32,11 @@ public final class Regions {
         Files.writeString(Path.of(DEFAULT_REGIONS_FILENAME), getAllRegionsJSON(), StandardCharsets.UTF_8);
     }
 
-    static List<Region> fromJSON(String s) {
-        return Arrays.asList(JacksonUtil.readValue(s, Region[].class));
+    static List<Region> fromJSON(String s) throws RuntimeException {
+        try {
+            return Arrays.asList(JacksonUtil.readValue(s, Region[].class));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

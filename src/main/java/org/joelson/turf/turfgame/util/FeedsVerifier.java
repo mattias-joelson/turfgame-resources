@@ -5,6 +5,7 @@ import org.joelson.turf.turfgame.FeedObject;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -12,6 +13,7 @@ public class FeedsVerifier {
 
     private static Path lastPath;
     private static FeedObject lastFeedObject;
+    private static final DefaultFeedContentErrorHandler errorHandler = new DefaultFeedContentErrorHandler();
 
     public static void main(String[] args) throws IOException {
         if (args.length != 1 || !Files.isDirectory(Path.of(args[0]))) {
@@ -22,6 +24,18 @@ public class FeedsVerifier {
         Path dirPath = Path.of(args[0]);
         try (Stream<Path> files = Files.list(dirPath)) {
             files.forEach(FeedsVerifier::verifyPath);
+        }
+
+        List<Path> errorPaths = errorHandler.getErrorPaths();
+        if (!errorPaths.isEmpty()) {
+            System.err.println("Error in paths: " + errorPaths.size());
+            int max = Math.min(20, errorPaths.size());
+            for (int i = 0; i < max; i += 1) {
+                System.out.println("    " + errorPaths.get(i));
+            }
+            if (errorPaths.size() > 20) {
+                System.err.println("    ...");
+            }
         }
     }
 
@@ -62,14 +76,14 @@ public class FeedsVerifier {
         System.out.printf("--> %s %s%n", version, path);
         lastPath = null;
         lastFeedObject = null;
-        FeedsReader feedsReader = new FeedsReader(types);
+        FeedsReader feedsReader = new FeedsReader(types, errorHandler);
         try {
-            feedsReader.handleFeedObjectFile(path, FeedsVerifier::rememberPath, FeedsVerifier::rememberFeedObject);
+            feedsReader.handleFeedObjectPath(path, FeedsVerifier::rememberPath, FeedsVerifier::rememberFeedObject);
         } catch (Exception e) {
+            e.printStackTrace();
             System.err.printf("Error handling %s:%n", path);
             System.err.printf("  lastPath: %s%n", lastPath);
             System.err.printf("  lastObj:  %s%n", lastFeedObject);
-            e.printStackTrace();
             System.exit(-1);
         }
     }

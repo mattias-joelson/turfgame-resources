@@ -1,5 +1,6 @@
 package org.joelson.turf.turfgame.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.joelson.turf.util.JacksonUtil;
 import org.joelson.turf.util.TimeUtil;
@@ -167,7 +168,7 @@ public class FeedsDownloader {
             }
             try {
                 lastEntryTime = getLastEntryTime(json);
-            } catch (Exception e) {
+            } catch (JsonProcessingException e) {
                 logger.error("{} Unable to retrieve time from JSON: ", logQuantifier, e);
                 logger.error("{} json: {}", logQuantifier, json);
             }
@@ -206,7 +207,7 @@ public class FeedsDownloader {
         return URLReader.getRequest(feedsRequest + '/' + feed + afterDate);
     }
 
-    private Instant getLastEntryTime(String json) {
+    private Instant getLastEntryTime(String json) throws JsonProcessingException {
         Instant latest = null;
         for (JsonNode node : JacksonUtil.readValue(json, JsonNode[].class)) {
             String timeStamp = node.get("time").asText();

@@ -23,13 +23,16 @@ public class FeedsTimeTypeReader {
     }
 
     private static void readFeedFile(Path feedPath) {
-        String content = null;
+        JsonNode[] nodes = null;
         try {
-            content = Files.readString(feedPath);
+            String content = Files.readString(feedPath);
+            nodes = JacksonUtil.readValue(content, JsonNode[].class);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            System.err.println("Exception reading path " + feedPath);
+            System.exit(-1);
         }
-        for (JsonNode node : JacksonUtil.readValue(content, JsonNode[].class)) {
+        for (JsonNode node : nodes) {
             System.out.println("    " + node.get("time") + " - " + node.get("type"));
         }
     }

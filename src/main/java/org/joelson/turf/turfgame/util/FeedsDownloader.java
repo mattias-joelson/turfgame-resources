@@ -13,9 +13,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalField;
+import java.time.temporal.TemporalUnit;
 import java.util.Objects;
 
 public class FeedsDownloader {
@@ -32,22 +36,27 @@ public class FeedsDownloader {
 
     private final Path feedsV4Path;
     private final Path feedsV5Path;
+    private final int timeOffset;
 
-    public FeedsDownloader(Path feedsPath) throws IOException {
+    public FeedsDownloader(Path feedsPath, int timeOffset) throws IOException {
         Objects.requireNonNull(feedsPath, "feedsPath is null");
         if (!Files.exists(feedsPath)) {
             exitWithError("Feeds dir does not exist: " + feedsPath);
         }
+        if (timeOffset < 0 || timeOffset >= 5 * 60) {
+            throw new IllegalArgumentException("Invalid time offset" + timeOffset);
+        }
         verifyDirectoryExists(feedsPath);
         feedsV4Path = createOrVerifyIsDirectory(feedsPath, FEEDS_V4_PATH_NAME);
         feedsV5Path = createOrVerifyIsDirectory(feedsPath, FEEDS_V5_PATH_NAME);
+        this.timeOffset = timeOffset;
     }
 
     public static void main(String[] args) throws IOException {
-        if (args.length != ERROR_EXIT_STATUS) {
-            exitWithError(String.format("Usage:%n\t%s feeds_dir", FeedsDownloader.class));
+        if (args.length != 2) {
+            exitWithError(String.format("Usage:%n\t%s feeds_dir time_offset", FeedsDownloader.class));
         }
-        new FeedsDownloader(Path.of(args[0])).downloadFeeds();
+        new FeedsDownloader(Path.of(args[0]), Integer.valueOf(args[1])).downloadFeeds();
     }
 
     private static void exitWithError(String msg) {
@@ -86,7 +95,24 @@ public class FeedsDownloader {
         }
     }
 
+    private Instant calcFirstDownloadTime() {
+        // truncate down to minutes
+        Instant now = Instant.now().truncatedTo(ChronoUnit.MINUTES);
+        // get minutes
+        int minutes = now.atZone(ZoneId.systemDefault()).getMinute();
+        // mod 5 down
+        Instant mod = now.minusSeconds((minutes % 5) * 60);
+        // add time offset
+        Instant next = mod.plusSeconds(timeOffset);
+        // add 5 minutes until next is after now
+        while (next.isBefore(Instant.now())) {
+            next = next.plusSeconds(5 * 60);
+        }
+        return next;
+    }
+
     public void downloadFeeds() {
+        Instant nextDownload = calcFirstDownloadTime();
         try {
             Instant lastV4TakeEntry = null;
             Instant lastV4MedalChatEntry = null;
@@ -95,7 +121,9 @@ public class FeedsDownloader {
             Instant lastV5MedalChatEntry = null;
             Instant lastV5ZoneEntry = null;
             while (true) {
-                Instant nextDownload = Instant.now().plusSeconds(5 * 60).truncatedTo(ChronoUnit.SECONDS);
+                logger.info("Sleeping until {}", nextDownload);
+                waitUntil(nextDownload);
+                nextDownload = nextDownload.plusSeconds(5 * 60);
                 lastV4TakeEntry = getFeed(feedsV4Path, FEEDS_V4_REQUEST, "takeover", "feeds_takeover_%s.%sjson",
                         lastV4TakeEntry);
                 waitBetweenFeeds();
@@ -113,8 +141,6 @@ public class FeedsDownloader {
                 waitBetweenFeeds();
                 lastV5ZoneEntry = getFeed(feedsV5Path, FEEDS_V5_REQUEST, "zone", "feeds_zone_%s.%sjson",
                         lastV5ZoneEntry);
-                logger.info("Sleeping until {}", nextDownload);
-                waitUntil(nextDownload);
             }
         } catch (Throwable e) {
             logger.error("Exception in downloadsFeeds(feedsV4Path: \"{}\", feedsV5Path: \"{}\") :", feedsV4Path, feedsV5Path, e);

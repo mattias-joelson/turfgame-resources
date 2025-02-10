@@ -24,19 +24,17 @@ public class FeedsPartitioner {
             } else if (arg.startsWith("-until=")) {
                 until = arg.substring(7);
             } else {
-                System.out.printf("Unknown option \"%s\"", arg);
+                System.err.printf("Unknown option \"%s\"", arg);
             }
         }
         if (args.length != 4 || feedpath == null || version == null || server == null || until == null) {
-            System.out.printf("Usage:%n\t%s -feedpath=C:\\feeds\\feeds_v4 -version=v4 -server=win -until=2024-06-16", FeedsPartitioner.class.getName());
-            System.exit(-1);
+            exitWithErrorMessage("Usage:%n\t%s -feedpath=C:\\feeds\\feeds_v4 -version=v4 -server=win -until=2024-06-16", FeedsPartitioner.class.getName());
         }
         String date = until;
 
         Path partitionDirectory = Path.of(feedpath, "partition");
         if (Files.exists(partitionDirectory)) {
-            System.out.printf("Can not create directory %s - file exists.", partitionDirectory);
-            System.exit(-1);
+            exitWithErrorMessage("Can not create directory %s - file exists.", partitionDirectory);
         }
 
         Files.createDirectory(partitionDirectory);
@@ -60,9 +58,30 @@ public class FeedsPartitioner {
         System.out.printf("<move %s to %s>%n", partitionDirectory, finalPartition);
         Files.move(partitionDirectory, finalPartition);
         System.out.printf("archive:%n\t7z a %s %s%n", finalPartition.getFileName() + ".zip", finalPartition);
+        String[] command = {
+                "\"C:\\Program Files\\7-Zip\\7z.exe\"",
+                "a",
+                finalPartition.getFileName() + ".zip",
+                finalPartition.toString()};
+        int status = invokeProcess(command);
+
+        if (status == 0) {
+            Files.list(finalPartition).forEach(path -> {
+                try {
+                    Files.delete(path);
+                    System.out.printf("<removed %s>%n", path);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+            Files.delete(finalPartition);
+            System.out.printf("<removed %s>%n", finalPartition);
+        }
+    }
+
+    private static int invokeProcess(String[] command) throws IOException {
         ProcessBuilder processBuilder = new ProcessBuilder();
-        Process process = processBuilder.command("\"C:\\Program Files\\7-Zip\\7z.exe\"", "a",
-                finalPartition.getFileName() + ".zip", finalPartition.toString()).start();
+        Process process = processBuilder.command(command).start();
         InputStream inputStream = process.getInputStream();
         try (BufferedReader inputReader = new BufferedReader(new InputStreamReader(inputStream))) {
             String line;
@@ -70,24 +89,23 @@ public class FeedsPartitioner {
                 System.out.println(line);
             }
         }
+        int status = 0;
         try {
-            int status = process.waitFor();
-            System.out.println("status: " + status);
-            if (status == 0) {
-                Files.list(finalPartition).forEach(path -> {
-                    try {
-                        Files.delete(path);
-                        System.out.printf("<removed %s>%n", path);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                });
-                Files.delete(finalPartition);
-                System.out.printf("<removed %s>%n", finalPartition);
-            }
+            status = process.waitFor();
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            exitWithErrorMessage("Error when waiting on command { %s } to finish", String.join(" ", command));
         }
+        if (status != 0) {
+            exitWithErrorMessage("Command { %s } did not exit with status 0 but %d",
+                    String.join(" ", command), status);
+        }
+        return status;
+    }
+
+    private static void exitWithErrorMessage(String format, Object... args) {
+        System.err.printf(format, args);
+        System.exit(-1);
     }
 
     private static void moveFile(Path partitionDirectory, Path path) {
@@ -97,7 +115,7 @@ public class FeedsPartitioner {
             Files.move(path, destination);
         } catch (IOException e) {
             e.printStackTrace();
-            System.exit(-1);
+            exitWithErrorMessage("Could not move %s to %s", path, partitionDirectory);
         }
     }
 

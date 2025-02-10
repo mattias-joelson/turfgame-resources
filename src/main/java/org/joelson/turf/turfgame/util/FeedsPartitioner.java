@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.stream.Stream;
 
 public class FeedsPartitioner {
 
@@ -60,23 +61,24 @@ public class FeedsPartitioner {
                 "a",
                 finalPartition.getFileName() + ".zip",
                 finalPartition.toString()};
-        int status = invokeProcess(command);
+        invokeProcess(command);
 
-        if (status == 0) {
-            Files.list(finalPartition).forEach(path -> {
+        try (Stream<Path> list = Files.list(finalPartition)) {
+            list.forEach(path -> {
                 try {
                     Files.delete(path);
                     System.out.printf("<removed %s>%n", path);
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    e.printStackTrace();
+                    exitWithErrorMessage("Could not remove %s from %s", path, finalPartition);
                 }
             });
-            Files.delete(finalPartition);
-            System.out.printf("<removed %s>%n", finalPartition);
         }
+        Files.delete(finalPartition);
+        System.out.printf("<removed %s>%n", finalPartition);
     }
 
-    private static int invokeProcess(String[] command) throws IOException {
+    private static void invokeProcess(String[] command) throws IOException {
         ProcessBuilder processBuilder = new ProcessBuilder();
         Process process = processBuilder.command(command).start();
         InputStream inputStream = process.getInputStream();
@@ -86,18 +88,16 @@ public class FeedsPartitioner {
                 System.out.println(line);
             }
         }
-        int status = 0;
         try {
-            status = process.waitFor();
+            int status = process.waitFor();
+            if (status != 0) {
+                exitWithErrorMessage("Command { %s } did not exit with status 0 but %d",
+                        String.join(" ", command), status);
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
             exitWithErrorMessage("Error when waiting on command { %s } to finish", String.join(" ", command));
         }
-        if (status != 0) {
-            exitWithErrorMessage("Command { %s } did not exit with status 0 but %d",
-                    String.join(" ", command), status);
-        }
-        return status;
     }
 
     private static void exitWithErrorMessage(String format, Object... args) {

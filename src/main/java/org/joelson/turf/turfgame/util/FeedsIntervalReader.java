@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.SortedSet;
@@ -17,34 +16,39 @@ import java.util.TreeSet;
 public class FeedsIntervalReader {
 
     private static int fileCount = 0;
+    private static final SortedSet<FeedInterval> feedIntervals = new TreeSet<>(new FeedIntervalComparator());
+    private static final DefaultFeedContentErrorHandler errorHandler = new DefaultFeedContentErrorHandler();
 
     public static void main(String[] args) throws IOException {
         if (args.length < 1) {
             System.out.printf("Usage:\n\t%s feed_file1.json ...%n", FeedsIntervalReader.class.getName());
-            return;
+            System.exit(-1);
         }
-        SortedSet<FeedInterval> feedNodes = new TreeSet<>(new FeedIntervalComparator());
+
         for (String filename : args) {
             FilesUtil.forEachFile(Path.of(filename), true, new FeedsPathComparator(),
-                    path -> readFeedNodes(feedNodes, readFeedFile(path)));
+                    FeedsIntervalReader::readFeedFile);
         }
-        feedNodes.stream().forEach(feedInterval
+        feedIntervals.forEach(feedInterval
                 -> System.out.printf("%s: %s - %s%n", feedInterval.type, feedInterval.start, feedInterval.end));
+
+        errorHandler.messageErrorPaths(20);
     }
 
-    private static void readFeedNodes(SortedSet<FeedInterval> feedIntervals, List<JsonNode> fileNodes) {
+    private static void readFeedNodes(List<JsonNode> fileNodes) throws IOException {
         if (fileNodes.size() <= 1) {
             return;
         }
-        FeedType type = FeedType.CHAT_MEDAL;
-        String nodeType = fileNodes.get(0).get("type").asText();
-        if (nodeType.equals("takeover")) {
-            type = FeedType.TAKEOVER;
-        } else if (nodeType.equals("zone")) {
-            type = FeedType.ZONE;
-        }
-        String start = fileNodes.get(fileNodes.size() - 1).get("time").asText();
-        String end = fileNodes.get(0).get("time").asText();
+        String nodeType = fileNodes.getFirst().get("type").asText();
+        FeedType type = switch (nodeType) {
+            case "chat", "medal" -> FeedType.CHAT_MEDAL;
+            case "takeover" -> FeedType.TAKEOVER;
+            case "zone" -> FeedType.ZONE;
+            case null -> throw new NoFeedTypeException();
+            default -> throw new UnknownFeedTypeException(nodeType);
+       };
+        String start = fileNodes.getLast().get("time").asText();
+        String end = fileNodes.getFirst().get("time").asText();
         if (start.equals(end)) {
             return;
         }
@@ -69,27 +73,22 @@ public class FeedsIntervalReader {
         return new FeedInterval(interval1.type, start, end);
     }
 
-    private static List<JsonNode> readFeedFile(Path feedPath) {
+    private static void readFeedFile(Path feedPath) {
+        if (fileCount % 100 == 0) {
+            System.out.printf("*** Reading %s (%d)%n", feedPath, fileCount);
+        }
+        fileCount += 1;
+        String content = null;
         try {
-            if (fileCount % 100 == 0) {
-                System.out.printf("*** Reading %s (%d)%n", feedPath, fileCount);
-            }
-            fileCount += 1;
-            return readJsonNodes(feedPath.toString(), Files.readString(feedPath));
+            content = Files.readString(feedPath);
+            List<JsonNode> jsonNodes = readJsonNodes(content);
+            readFeedNodes(jsonNodes);
         } catch (IOException e) {
-            e.printStackTrace();
-            return Collections.emptyList();
-        } catch (RuntimeException e) {
-            System.err.println("Error when parsing nodes in " + feedPath);
-            e.printStackTrace();
-            return Collections.emptyList();
+            errorHandler.handleErrorContent(feedPath, content, e);
         }
     }
 
-    private static List<JsonNode> readJsonNodes(String path, String content) {
-        if (content.isEmpty() || content.startsWith("<html>")) {
-            return Collections.emptyList();
-        }
+    private static List<JsonNode> readJsonNodes(String content) throws IOException {
         return Arrays.asList(JacksonUtil.readValue(content, JsonNode[].class));
     }
 
@@ -97,19 +96,12 @@ public class FeedsIntervalReader {
         CHAT_MEDAL, TAKEOVER, ZONE
     }
 
-    private static class FeedInterval {
+    private record FeedInterval(FeedType type, String start, String end) {
 
-        private final FeedType type;
-        private final String start;
-        private final String end;
-
-        private FeedInterval(FeedType type, String start, String end) {
+        private FeedInterval {
             if (start.compareTo(end) >= 0) {
                 throw new IllegalArgumentException("Wrong order " + start + " and " + end);
             }
-            this.type = type;
-            this.start = start;
-            this.end = end;
         }
 
         public boolean intersects(FeedInterval that) {

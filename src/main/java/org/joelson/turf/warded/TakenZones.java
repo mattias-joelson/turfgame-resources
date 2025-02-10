@@ -1,5 +1,6 @@
 package org.joelson.turf.warded;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.joelson.turf.util.JacksonUtil;
 
@@ -28,10 +29,16 @@ public final class TakenZones {
         return s.substring(startIndex, endIndex);
     }
 
-    public static Map<String, Integer> fromHTML(String s) {
+    public static Map<String, Integer> fromHTML(String s) throws RuntimeException {
         String json = getZonesJSONSting(s);
         Map<String, Integer> zoneCount = new HashMap<>();
-        for (JsonNode node : JacksonUtil.readValue(json, JsonNode[].class)) {
+        JsonNode[] jsonNodes;
+        try {
+            jsonNodes = JacksonUtil.readValue(json, JsonNode[].class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        for (JsonNode node : jsonNodes) {
             JsonNode properties = node.get(PROPERTIES_PROPERTY);
             String title = properties.get(TITLE_PROPERTY).asText();
             int count = properties.get(COUNT_PROPERTY).asInt();

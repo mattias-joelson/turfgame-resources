@@ -47,7 +47,7 @@ public final class FilesUtil {
         return Files.newBufferedWriter(createParentDirectory(filenamePath(filenameParts)), DEFAULT_OPEN_OPTIONS);
     }
 
-    public static boolean isZipFile(Path path) {
+    public static boolean isZipFile(Path path) throws IOException {
         try (InputStream in = Files.newInputStream(path)) {
             byte[] header = new byte[4];
             int read = in.read(header);
@@ -58,10 +58,8 @@ public final class FilesUtil {
                     return true;
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+            return false;
         }
-        return false;
     }
 
     public static void forEachFile(

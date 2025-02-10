@@ -64,14 +64,12 @@ public class FeedsPartitioner {
         Process process = processBuilder.command("\"C:\\Program Files\\7-Zip\\7z.exe\"", "a",
                 finalPartition.getFileName() + ".zip", finalPartition.toString()).start();
         InputStream inputStream = process.getInputStream();
-        BufferedReader inputReader = new BufferedReader(new InputStreamReader(inputStream));
-        new Thread(() -> {
-            try {
-                System.out.println(inputReader.readLine());
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+        try (BufferedReader inputReader = new BufferedReader(new InputStreamReader(inputStream))) {
+            String line;
+            while ((line = inputReader.readLine()) != null) {
+                System.out.println(line);
             }
-        }).start();
+        }
         try {
             int status = process.waitFor();
             System.out.println("status: " + status);

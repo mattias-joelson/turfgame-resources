@@ -28,11 +28,12 @@ public final class ZonesFind {
     }
 
     private static void readFile(Path path, String zoneName) {
-        String json;
+        String json = null;
         try {
             json = Files.readString(path);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            System.exit(-1);
         }
         List<Zone> zones = Zones.fromJSON(json);
         Zone zone = zones.stream().filter(z -> z.getName().equals(zoneName)).findFirst().orElse(null);

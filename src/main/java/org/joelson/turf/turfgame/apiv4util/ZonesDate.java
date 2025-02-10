@@ -24,11 +24,12 @@ public class ZonesDate {
     }
 
     private static void findLastCreateDate(Path path) {
-        String json;
+        String json = null;
         try {
             json = Files.readString(path);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            System.exit(-1);
         }
         List<Zone> zones = Zones.fromJSON(json);
         //findSingleLastDateCreated(path, zones);

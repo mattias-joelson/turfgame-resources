@@ -58,11 +58,11 @@ public class FeedsVerifier {
         lastFeedObject = feedObject;
     }
 
-    private static void verifyZip(String version, Path path, Map<String, Class<? extends FeedObject>> chat) {
+    private static void verifyZip(String version, Path path, Map<String, Class<? extends FeedObject>> types) {
         System.out.printf("--> %s %s%n", version, path);
         lastPath = null;
         lastFeedObject = null;
-        FeedsReader feedsReader = new FeedsReader(chat);
+        FeedsReader feedsReader = new FeedsReader(types);
         try {
             feedsReader.handleFeedObjectFile(path, FeedsVerifier::rememberPath, FeedsVerifier::rememberFeedObject);
         } catch (Exception e) {
@@ -70,6 +70,7 @@ public class FeedsVerifier {
             System.err.printf("  lastPath: %s%n", lastPath);
             System.err.printf("  lastObj:  %s%n", lastFeedObject);
             e.printStackTrace();
+            System.exit(-1);
         }
     }
 }

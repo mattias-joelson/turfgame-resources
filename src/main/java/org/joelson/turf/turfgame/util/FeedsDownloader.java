@@ -41,7 +41,7 @@ public class FeedsDownloader {
             exitWithError("Feeds dir does not exist: " + feedsPath);
         }
         if (timeOffset < 0 || timeOffset >= 5 * 60) {
-            throw new IllegalArgumentException("Invalid time offset" + timeOffset);
+            exitWithError("Invalid time offset " + timeOffset);
         }
         verifyDirectoryExists(feedsPath);
         feedsV4Path = createOrVerifyIsDirectory(feedsPath, FEEDS_V4_PATH_NAME);

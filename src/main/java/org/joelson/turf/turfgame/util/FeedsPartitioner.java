@@ -41,15 +41,20 @@ public class FeedsPartitioner {
         Files.createDirectory(partitionDirectory);
         System.out.printf("<create directory %s>%n", partitionDirectory);
 
-        Files.list(Path.of(feedpath)).filter(path -> includeFile(date, path))
-                .forEach(path -> moveFile(partitionDirectory, path));
+        try (Stream<Path> feedpathFiles = Files.list(Path.of(feedpath))) {
+            feedpathFiles.filter(path -> includeFile(date, path))
+                    .forEach(path -> moveFile(partitionDirectory, path));
+        }
 
-        if (Files.list(partitionDirectory).count() == 0) {
+        String firstDate;
+        try (Stream<Path> partitionFiles = Files.list(partitionDirectory)) {
+            firstDate = partitionFiles.filter(path -> includeFile(date, path))
+                    .map(FeedsPartitioner::getDate).sorted().findFirst().orElse(null);
+        }
+        if (firstDate == null) {
             Files.delete(partitionDirectory);
             exitWithErrorMessage("No files to include until %s", date);
         }
-        String firstDate = Files.list(partitionDirectory).filter(path -> includeFile(date, path))
-                .map(FeedsPartitioner::getDate).sorted().findFirst().orElseThrow();
         System.out.println("firstDate: " + firstDate);
 
         Path finalPartition = Path.of(feedpath, "feeds_" + version + '_' + firstDate + "." + server);

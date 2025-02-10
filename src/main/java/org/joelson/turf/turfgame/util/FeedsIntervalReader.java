@@ -31,13 +31,8 @@ public class FeedsIntervalReader {
         }
         feedIntervals.forEach(feedInterval
                 -> System.out.printf("%s: %s - %s%n", feedInterval.type, feedInterval.start, feedInterval.end));
-        List<Path> errorPaths = errorHandler.getErrorPaths();
-        if (!errorPaths.isEmpty()) {
-            System.err.println("Files with errors: " + errorPaths.size());
-            for (Path errorPath : errorPaths) {
-                System.err.println("    " + errorPath);
-            }
-        }
+
+        errorHandler.messageErrorPaths(20);
     }
 
     private static void readFeedNodes(List<JsonNode> fileNodes) throws IOException {

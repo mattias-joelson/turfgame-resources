@@ -26,17 +26,7 @@ public class FeedsVerifier {
             files.forEach(FeedsVerifier::verifyPath);
         }
 
-        List<Path> errorPaths = errorHandler.getErrorPaths();
-        if (!errorPaths.isEmpty()) {
-            System.err.println("Error in paths: " + errorPaths.size());
-            int max = Math.min(20, errorPaths.size());
-            for (int i = 0; i < max; i += 1) {
-                System.out.println("    " + errorPaths.get(i));
-            }
-            if (errorPaths.size() > 20) {
-                System.err.println("    ...");
-            }
-        }
+        errorHandler.messageErrorPaths(20);
     }
 
     private static void verifyPath(Path path) {

@@ -72,6 +72,17 @@ public class DefaultFeedContentErrorHandler implements FeedContentErrorHandler {
         return Collections.unmodifiableList(errorPaths);
     }
 
+    public void messageErrorPaths(int maxPaths) {
+        if (!errorPaths.isEmpty()) {
+            message("Error in paths: %d", errorPaths.size());
+            int max = Math.min(maxPaths, errorPaths.size());
+            errorPaths.stream().limit(max).forEach(path -> message("    %s", path));
+            if (errorPaths.size() > max) {
+                message("    ...");
+            }
+        }
+    }
+
     private static boolean allZeroes(String s) {
         return s.chars().allMatch(ch -> ch == 0);
     }

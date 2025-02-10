@@ -40,13 +40,6 @@ public class FeedsPartitioner {
         Files.createDirectory(partitionDirectory);
         System.out.printf("<create directory %s>%n", partitionDirectory);
 
-//        int noFiles = Files.list(Path.of(feedpath)).mapToInt(path -> 1).sum();
-//        System.out.println("noFiles: " + noFiles);
-//
-//        noFiles = Files.list(Path.of(feedpath))
-//                .filter(path -> pathNotLarger(date, path))
-//                .mapToInt(path -> 1).sum();
-//        System.out.println("noFiles: " + noFiles);
         Files.list(Path.of(feedpath)).filter(path -> includeFile(date, path))
                 .forEach(path -> moveFile(partitionDirectory, path));
 
@@ -129,18 +122,6 @@ public class FeedsPartitioner {
         } catch (RuntimeException e) {
             return false;
         }
-//        String filename = path.getFileName().toString();
-//        int startIndex = -1;
-//        for (int i = 0; i < filename.length(); i += 1) {
-//            if (Character.isDigit(filename.charAt(i))) {
-//                startIndex = i;
-//                break;
-//            }
-//        }
-//        if (startIndex < 0) {
-//            return false;
-//        }
-//        return filename.substring(startIndex, startIndex + date.length()).compareTo(date) <= 0;
     }
 
     private static String getDate(Path path) {

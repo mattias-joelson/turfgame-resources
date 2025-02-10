@@ -1,5 +1,6 @@
 package org.joelson.turf.turfgame.apiv4;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.joelson.turf.util.JacksonUtil;
 import org.joelson.turf.util.URLReader;
 
@@ -84,7 +85,11 @@ public final class Zones {
         return Instant.from(zonedDateTime);
     }
 
-    public static List<Zone> fromJSON(String s) {
-        return Arrays.asList(JacksonUtil.readValue(s, Zone[].class));
+    public static List<Zone> fromJSON(String s) throws RuntimeException {
+        try {
+            return Arrays.asList(JacksonUtil.readValue(s, Zone[].class));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

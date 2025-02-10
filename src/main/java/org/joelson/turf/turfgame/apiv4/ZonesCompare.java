@@ -1,8 +1,4 @@
-package org.joelson.turf.turfgame.apiv4util;
-
-import org.joelson.turf.turfgame.apiv4.Region;
-import org.joelson.turf.turfgame.apiv4.Zone;
-import org.joelson.turf.turfgame.apiv4.Zones;
+package org.joelson.turf.turfgame.apiv4;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -24,7 +20,7 @@ public class ZonesCompare {
             List<Zone> zones1 = readZones(Path.of(args[i]));
             List<Zone> zones2 = readZones(Path.of(args[i + 1]));
             Map<Integer, Zone> zonesMap = zones1.stream().collect(Collectors.toMap(Zone::getId, Function.identity()));
-            zones2.stream().forEach(zone -> compareZones(zonesMap.get(zone.getId()), zone));
+            zones2.forEach(zone -> compareZones(zonesMap.get(zone.getId()), zone));
         }
     }
 

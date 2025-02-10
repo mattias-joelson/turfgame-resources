@@ -12,19 +12,11 @@ public final class JacksonUtil {
         throw new InstantiationException("Should not be instantiated!");
     }
 
-    public static <T> T readValue(String content, Class<T> valueType) {
-        try {
-            return OBJECT_MAPPER.readValue(content, valueType);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+    public static <T> T readValue(String content, Class<T> valueType) throws JsonProcessingException {
+        return OBJECT_MAPPER.readValue(content, valueType);
     }
 
-    public static <T> T treeToValue(TreeNode n, Class<T> valueType) {
-        try {
-            return OBJECT_MAPPER.treeToValue(n, valueType);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+    public static <T> T treeToValue(TreeNode n, Class<T> valueType) throws JsonProcessingException {
+        return OBJECT_MAPPER.treeToValue(n, valueType);
     }
 }

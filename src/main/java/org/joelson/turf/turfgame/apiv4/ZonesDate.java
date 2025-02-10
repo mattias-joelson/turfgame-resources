@@ -1,7 +1,5 @@
-package org.joelson.turf.turfgame.apiv4util;
+package org.joelson.turf.turfgame.apiv4;
 
-import org.joelson.turf.turfgame.apiv4.Zone;
-import org.joelson.turf.turfgame.apiv4.Zones;
 import org.joelson.turf.turfgame.util.FeedsPathComparator;
 import org.joelson.turf.util.FilesUtil;
 
@@ -24,13 +22,15 @@ public class ZonesDate {
     }
 
     private static void findLastCreateDate(Path path) {
-        String json;
+        List<Zone> zones = null;
         try {
-            json = Files.readString(path);
+            String json = Files.readString(path);
+            zones = Zones.fromJSON(json);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            System.err.println("Exception reading path " + path);
+            System.exit(-1);
         }
-        List<Zone> zones = Zones.fromJSON(json);
         //findSingleLastDateCreated(path, zones);
         findLast10DateCreated(path, zones);
     }

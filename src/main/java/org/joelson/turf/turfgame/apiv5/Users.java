@@ -3,12 +3,12 @@ package org.joelson.turf.turfgame.apiv5;
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.joelson.turf.util.JacksonUtil;
 import org.joelson.turf.util.URLReader;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
@@ -51,7 +51,7 @@ public final class Users {
         return fromJSON(URLReader.postRequest(USERS_REQUEST, string));
     }
 
-    static List<User> fromJSON(String s) {
+    static List<User> fromJSON(String s) throws JsonProcessingException {
         return Arrays.asList(JacksonUtil.readValue(s, User[].class));
     }
 

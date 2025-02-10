@@ -18,7 +18,7 @@ class FilesUtilTest {
     }
 
     @Test
-    void isZipFileTest() {
+    void isZipFileTest() throws IOException {
         assertTrue(FilesUtil.isZipFile(pathOfResource("complex.zip")));
         assertFalse(FilesUtil.isZipFile(pathOfResource("regions.json")));
     }

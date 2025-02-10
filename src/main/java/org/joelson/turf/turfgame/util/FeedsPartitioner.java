@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.stream.Stream;
 
 public class FeedsPartitioner {
 
@@ -24,72 +25,97 @@ public class FeedsPartitioner {
             } else if (arg.startsWith("-until=")) {
                 until = arg.substring(7);
             } else {
-                System.out.printf("Unknown option \"%s\"", arg);
+                System.err.printf("Unknown option \"%s\"", arg);
             }
         }
         if (args.length != 4 || feedpath == null || version == null || server == null || until == null) {
-            System.out.printf("Usage:%n\t%s -feedpath=C:\\feeds\\feeds_v4 -version=v4 -server=win -until=2024-06-16", FeedsPartitioner.class.getName());
-            System.exit(-1);
+            exitWithErrorMessage("Usage:%n\t%s -feedpath=C:\\feeds\\feeds_v4 -version=v4 -server=win -until=2024-06-16",
+                    FeedsPartitioner.class.getName());
         }
         String date = until;
 
         Path partitionDirectory = Path.of(feedpath, "partition");
         if (Files.exists(partitionDirectory)) {
-            System.out.printf("Can not create directory %s - file exists.", partitionDirectory);
-            System.exit(-1);
+            exitWithErrorMessage("Can not create directory %s - file exists.", partitionDirectory);
         }
 
         Files.createDirectory(partitionDirectory);
         System.out.printf("<create directory %s>%n", partitionDirectory);
 
-//        int noFiles = Files.list(Path.of(feedpath)).mapToInt(path -> 1).sum();
-//        System.out.println("noFiles: " + noFiles);
-//
-//        noFiles = Files.list(Path.of(feedpath))
-//                .filter(path -> pathNotLarger(date, path))
-//                .mapToInt(path -> 1).sum();
-//        System.out.println("noFiles: " + noFiles);
-        Files.list(Path.of(feedpath)).filter(path -> includeFile(date, path))
-                .forEach(path -> moveFile(partitionDirectory, path));
+        try (Stream<Path> feedpathFiles = Files.list(Path.of(feedpath))) {
+            feedpathFiles.filter(path -> includeFile(date, path))
+                    .forEach(path -> moveFile(partitionDirectory, path));
+        }
 
-        String firstDate = Files.list(partitionDirectory).filter(path -> includeFile(date, path))
-                .map(FeedsPartitioner::getDate).sorted().findFirst().orElseThrow();
+        String firstDate;
+        try (Stream<Path> partitionFiles = Files.list(partitionDirectory)) {
+            firstDate = partitionFiles.filter(path -> includeFile(date, path))
+                    .map(FeedsPartitioner::getDate).sorted().findFirst().orElse(null);
+        }
+        if (firstDate == null) {
+            Files.delete(partitionDirectory);
+            exitWithErrorMessage("No files to include until %s", date);
+        }
         System.out.println("firstDate: " + firstDate);
 
         Path finalPartition = Path.of(feedpath, "feeds_" + version + '_' + firstDate + "." + server);
         System.out.printf("<move %s to %s>%n", partitionDirectory, finalPartition);
         Files.move(partitionDirectory, finalPartition);
-        System.out.printf("archive:%n\t7z a %s %s%n", finalPartition.getFileName() + ".zip", finalPartition);
+        System.out.printf("archive files:%n\t7z a %s %s%n", finalPartition.getFileName() + ".zip", finalPartition);
+        invokeProcess(new String[]{
+                "\"C:\\Program Files\\7-Zip\\7z.exe\"",
+                "a",
+                finalPartition.getFileName() + ".zip",
+                finalPartition.toString()
+        });
+
+        System.out.printf("%ntest archive:%n\t7z t %s%n", finalPartition.getFileName() + ".zip");
+        invokeProcess(new String[]{
+                "\"C:\\Program Files\\7-Zip\\7z.exe\"",
+                "t",
+                finalPartition.getFileName() + ".zip"
+        });
+
+        try (Stream<Path> list = Files.list(finalPartition)) {
+            list.forEach(path -> {
+                try {
+                    Files.delete(path);
+                    System.out.printf("<removed %s>%n", path);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    exitWithErrorMessage("Could not remove %s from %s", path, finalPartition);
+                }
+            });
+        }
+        Files.delete(finalPartition);
+        System.out.printf("<removed %s>%n", finalPartition);
+    }
+
+    private static void invokeProcess(String[] command) throws IOException {
         ProcessBuilder processBuilder = new ProcessBuilder();
-        Process process = processBuilder.command("\"C:\\Program Files\\7-Zip\\7z.exe\"", "a",
-                finalPartition.getFileName() + ".zip", finalPartition.toString()).start();
+        Process process = processBuilder.command(command).start();
         InputStream inputStream = process.getInputStream();
-        BufferedReader inputReader = new BufferedReader(new InputStreamReader(inputStream));
-        new Thread(() -> {
-            try {
-                System.out.println(inputReader.readLine());
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+        try (BufferedReader inputReader = new BufferedReader(new InputStreamReader(inputStream))) {
+            String line;
+            while ((line = inputReader.readLine()) != null) {
+                System.out.println(line);
             }
-        }).start();
+        }
         try {
             int status = process.waitFor();
-            System.out.println("status: " + status);
-            if (status == 0) {
-                Files.list(finalPartition).forEach(path -> {
-                    try {
-                        Files.delete(path);
-                        System.out.printf("<removed %s>%n", path);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                });
-                Files.delete(finalPartition);
-                System.out.printf("<removed %s>%n", finalPartition);
+            if (status != 0) {
+                exitWithErrorMessage("Command { %s } did not exit with status 0 but %d",
+                        String.join(" ", command), status);
             }
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            exitWithErrorMessage("Error when waiting on command { %s } to finish", String.join(" ", command));
         }
+    }
+
+    private static void exitWithErrorMessage(String format, Object... args) {
+        System.err.printf(format, args);
+        System.exit(-1);
     }
 
     private static void moveFile(Path partitionDirectory, Path path) {
@@ -99,7 +125,7 @@ public class FeedsPartitioner {
             Files.move(path, destination);
         } catch (IOException e) {
             e.printStackTrace();
-            System.exit(-1);
+            exitWithErrorMessage("Could not move %s to %s", path, partitionDirectory);
         }
     }
 
@@ -109,18 +135,6 @@ public class FeedsPartitioner {
         } catch (RuntimeException e) {
             return false;
         }
-//        String filename = path.getFileName().toString();
-//        int startIndex = -1;
-//        for (int i = 0; i < filename.length(); i += 1) {
-//            if (Character.isDigit(filename.charAt(i))) {
-//                startIndex = i;
-//                break;
-//            }
-//        }
-//        if (startIndex < 0) {
-//            return false;
-//        }
-//        return filename.substring(startIndex, startIndex + date.length()).compareTo(date) <= 0;
     }
 
     private static String getDate(Path path) {

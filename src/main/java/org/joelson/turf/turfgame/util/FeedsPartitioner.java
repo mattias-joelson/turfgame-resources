@@ -29,7 +29,8 @@ public class FeedsPartitioner {
             }
         }
         if (args.length != 4 || feedpath == null || version == null || server == null || until == null) {
-            exitWithErrorMessage("Usage:%n\t%s -feedpath=C:\\feeds\\feeds_v4 -version=v4 -server=win -until=2024-06-16", FeedsPartitioner.class.getName());
+            exitWithErrorMessage("Usage:%n\t%s -feedpath=C:\\feeds\\feeds_v4 -version=v4 -server=win -until=2024-06-16",
+                    FeedsPartitioner.class.getName());
         }
         String date = until;
 
@@ -61,19 +62,19 @@ public class FeedsPartitioner {
         System.out.printf("<move %s to %s>%n", partitionDirectory, finalPartition);
         Files.move(partitionDirectory, finalPartition);
         System.out.printf("archive files:%n\t7z a %s %s%n", finalPartition.getFileName() + ".zip", finalPartition);
-        String[] zipCommand = {
+        invokeProcess(new String[]{
                 "\"C:\\Program Files\\7-Zip\\7z.exe\"",
                 "a",
                 finalPartition.getFileName() + ".zip",
-                finalPartition.toString() };
-        invokeProcess(zipCommand);
+                finalPartition.toString()
+        });
 
         System.out.printf("%ntest archive:%n\t7z t %s%n", finalPartition.getFileName() + ".zip");
-        String[] testCommand = {
+        invokeProcess(new String[]{
                 "\"C:\\Program Files\\7-Zip\\7z.exe\"",
                 "t",
-                finalPartition.getFileName() + ".zip" };
-        invokeProcess(testCommand);
+                finalPartition.getFileName() + ".zip"
+        });
 
         try (Stream<Path> list = Files.list(finalPartition)) {
             list.forEach(path -> {

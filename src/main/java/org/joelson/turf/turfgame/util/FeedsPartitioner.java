@@ -50,6 +50,10 @@ public class FeedsPartitioner {
         Files.list(Path.of(feedpath)).filter(path -> includeFile(date, path))
                 .forEach(path -> moveFile(partitionDirectory, path));
 
+        if (Files.list(partitionDirectory).count() == 0) {
+            Files.delete(partitionDirectory);
+            exitWithErrorMessage("No files to include until %s", date);
+        }
         String firstDate = Files.list(partitionDirectory).filter(path -> includeFile(date, path))
                 .map(FeedsPartitioner::getDate).sorted().findFirst().orElseThrow();
         System.out.println("firstDate: " + firstDate);

@@ -16,10 +16,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalField;
-import java.time.temporal.TemporalUnit;
 import java.util.Objects;
 
 public class FeedsDownloader {
@@ -56,7 +53,7 @@ public class FeedsDownloader {
         if (args.length != 2) {
             exitWithError(String.format("Usage:%n\t%s feeds_dir time_offset", FeedsDownloader.class));
         }
-        new FeedsDownloader(Path.of(args[0]), Integer.valueOf(args[1])).downloadFeeds();
+        new FeedsDownloader(Path.of(args[0]), Integer.parseInt(args[1])).downloadFeeds();
     }
 
     private static void exitWithError(String msg) {

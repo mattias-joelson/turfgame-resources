@@ -55,13 +55,20 @@ public class FeedsPartitioner {
         Path finalPartition = Path.of(feedpath, "feeds_" + version + '_' + firstDate + "." + server);
         System.out.printf("<move %s to %s>%n", partitionDirectory, finalPartition);
         Files.move(partitionDirectory, finalPartition);
-        System.out.printf("archive:%n\t7z a %s %s%n", finalPartition.getFileName() + ".zip", finalPartition);
-        String[] command = {
+        System.out.printf("archive files:%n\t7z a %s %s%n", finalPartition.getFileName() + ".zip", finalPartition);
+        String[] zipCommand = {
                 "\"C:\\Program Files\\7-Zip\\7z.exe\"",
                 "a",
                 finalPartition.getFileName() + ".zip",
-                finalPartition.toString()};
-        invokeProcess(command);
+                finalPartition.toString() };
+        invokeProcess(zipCommand);
+
+        System.out.printf("%ntest archive:%n\t7z t %s%n", finalPartition.getFileName() + ".zip");
+        String[] testCommand = {
+                "\"C:\\Program Files\\7-Zip\\7z.exe\"",
+                "t",
+                finalPartition.getFileName() + ".zip" };
+        invokeProcess(testCommand);
 
         try (Stream<Path> list = Files.list(finalPartition)) {
             list.forEach(path -> {

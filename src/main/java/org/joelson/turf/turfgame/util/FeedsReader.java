@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 public class FeedsReader {
 
@@ -35,12 +36,6 @@ public class FeedsReader {
         this.feedReversed = feedReversed;
     }
 
-    private static String readFile(Path path, Consumer<Path> forEachPath) throws IOException {
-        String content = Files.readString(path);
-        forEachPath.accept(path);
-        return content;
-    }
-
     private static String getJsonNodeTime(JsonNode node) {
         JsonNode timeNode = node.get("time");
         if (timeNode == null) {
@@ -49,17 +44,20 @@ public class FeedsReader {
         return timeNode.asText();
     }
 
-    public void handleFeedObjectPath(Path path, Consumer<Path> forEachPath, Consumer<FeedObject> forEachFeedObject)
+    public void handleFeedObjectPath(Path path, Predicate<Path> forEachPath, Consumer<FeedObject> forEachFeedObject)
             throws IOException {
         Comparator<Path> pathComparator = (filesReversed) ? new FeedsPathComparator().reversed() : new FeedsPathComparator();
         FilesUtil.forEachFile(path, true, pathComparator,
                 p -> handleFeedObjectFile(p, forEachPath, forEachFeedObject));
     }
 
-    private void handleFeedObjectFile(Path path, Consumer<Path> forEachPath, Consumer<FeedObject> forEachFeedObject) {
+    private void handleFeedObjectFile(Path path, Predicate<Path> forEachPath, Consumer<FeedObject> forEachFeedObject) {
+        if (!forEachPath.test(path)) {
+            return;
+        }
         String content = null;
         try {
-            content = readFile(path, forEachPath);
+            content = Files.readString(path);
             handleFeedObjects(content, forEachFeedObject);
         } catch (IOException e) {
             errorHandler.handleErrorContent(path, content, e);

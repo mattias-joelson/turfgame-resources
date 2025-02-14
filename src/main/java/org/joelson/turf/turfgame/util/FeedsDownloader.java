@@ -23,17 +23,20 @@ import java.util.Objects;
 public class FeedsDownloader {
 
     private static final String FEEDS_V4_REQUEST = "https://api.turfgame.com/v4/feeds";
-    private static final String FEEDS_V5_REQUEST = "https://api.turfgame.com/unstable/feeds";
+    private static final String FEEDS_V5_REQUEST = "https://api.turfgame.com/v5/feeds";
+    private static final String FEEDS_V6_REQUEST = "https://api.turfgame.com/unstable/feeds";
 
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
     private static final Logger logger = LoggerFactory.getLogger(FeedsDownloader.class);
 
     private static final String FEEDS_V4_PATH_NAME = "feeds_v4";
     private static final String FEEDS_V5_PATH_NAME = "feeds_v5";
+    private static final String FEEDS_V6_PATH_NAME = "feeds_v6";
     private static final int ERROR_EXIT_STATUS = 1;
 
     private final Path feedsV4Path;
     private final Path feedsV5Path;
+    private final Path feedsV6Path;
     private final int timeOffset;
 
     public FeedsDownloader(Path feedsPath, int timeOffset) throws IOException {
@@ -47,6 +50,7 @@ public class FeedsDownloader {
         verifyDirectoryExists(feedsPath);
         feedsV4Path = createOrVerifyIsDirectory(feedsPath, FEEDS_V4_PATH_NAME);
         feedsV5Path = createOrVerifyIsDirectory(feedsPath, FEEDS_V5_PATH_NAME);
+        feedsV6Path = createOrVerifyIsDirectory(feedsPath, FEEDS_V6_PATH_NAME);
         this.timeOffset = timeOffset;
     }
 
@@ -118,6 +122,9 @@ public class FeedsDownloader {
             Instant lastV5TakeEntry = null;
             Instant lastV5MedalChatEntry = null;
             Instant lastV5ZoneEntry = null;
+            Instant lastV6TakeEntry = null;
+            Instant lastV6MedalChatEntry = null;
+            Instant lastV6ZoneEntry = null;
             while (true) {
                 logger.info("Sleeping until {}", nextDownload);
                 waitUntil(nextDownload);
@@ -139,9 +146,19 @@ public class FeedsDownloader {
                 waitBetweenFeeds();
                 lastV5ZoneEntry = getFeed(feedsV5Path, FEEDS_V5_REQUEST, "zone", "feeds_zone_%s.%sjson",
                         lastV5ZoneEntry);
+                waitBetweenFeeds();
+                lastV6TakeEntry = getFeed(feedsV6Path, FEEDS_V6_REQUEST, "takeover", "feeds_takeover_%s.%sjson",
+                        lastV6TakeEntry);
+                waitBetweenFeeds();
+                lastV6MedalChatEntry = getFeed(feedsV6Path, FEEDS_V6_REQUEST, "medal+chat",
+                        "feeds_medal_chat_%s.%sjson", lastV6MedalChatEntry);
+                waitBetweenFeeds();
+                lastV6ZoneEntry = getFeed(feedsV6Path, FEEDS_V6_REQUEST, "zone", "feeds_zone_%s.%sjson",
+                        lastV6ZoneEntry);
             }
         } catch (Throwable e) {
-            logger.error("Exception in downloadsFeeds(feedsV4Path: \"{}\", feedsV5Path: \"{}\") :", feedsV4Path, feedsV5Path, e);
+            logger.error("Exception in downloadsFeeds(feedsV4Path: \"{}\", feedsV5Path: \"{}\", feedsV6Path: \"{}\") :",
+                    feedsV4Path, feedsV5Path, feedsV6Path, e);
             System.exit(-1);
         }
     }

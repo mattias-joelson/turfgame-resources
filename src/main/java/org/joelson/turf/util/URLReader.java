@@ -18,6 +18,8 @@ import java.util.function.Function;
 
 public final class URLReader {
 
+    private static final HttpClient httpClient = HttpClient.newHttpClient();
+
     private URLReader() throws InstantiationException {
         throw new InstantiationException("Should not be instantiated!");
     }
@@ -25,8 +27,7 @@ public final class URLReader {
     public static String getRequest(String request) throws IOException {
         try {
             HttpRequest httpRequest = HttpRequest.newBuilder().uri(new URI(request)).GET().build();
-            HttpResponse<String> httpResponse = HttpClient.newBuilder().build()
-                    .send(httpRequest, BodyHandlers.ofString());
+            HttpResponse<String> httpResponse = httpClient.send(httpRequest, BodyHandlers.ofString());
             return httpResponse.body();
         } catch (URISyntaxException | InterruptedException e) {
             throw new IOException(e);
@@ -37,8 +38,7 @@ public final class URLReader {
         try {
             HttpRequest httpRequest = HttpRequest.newBuilder().uri(new URI(request))
                     .header("Content-Type", "application/json").POST(BodyPublishers.ofString(json)).build();
-            HttpResponse<String> httpResponse = HttpClient.newBuilder().build()
-                    .send(httpRequest, BodyHandlers.ofString());
+            HttpResponse<String> httpResponse = httpClient.send(httpRequest, BodyHandlers.ofString());
             return httpResponse.body();
         } catch (URISyntaxException | InterruptedException e) {
             throw new IOException(e);

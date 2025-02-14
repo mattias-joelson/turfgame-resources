@@ -48,7 +48,7 @@ public final class Users {
         generator.close();
         String string = stream.toString(StandardCharsets.UTF_8);
         System.out.println(string);
-        return fromJSON(URLReader.postRequest(USERS_REQUEST, string));
+        return fromJSON(URLReader.postTurfgameRequest(USERS_REQUEST, string));
     }
 
     static List<User> fromJSON(String s) throws JsonProcessingException {

@@ -25,7 +25,7 @@ public final class Regions {
     }
 
     private static String getAllRegionsJSON() throws IOException {
-        return URLReader.getRequest(REGIONS_REQUEST);
+        return URLReader.getTurfgameRequest(REGIONS_REQUEST);
     }
 
     public static void main(String[] args) throws IOException {

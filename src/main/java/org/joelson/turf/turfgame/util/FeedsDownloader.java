@@ -221,7 +221,7 @@ public class FeedsDownloader {
         if (since != null) {
             afterDate = "?afterDate=" + TimeUtil.turfAPITimestampFormatter(since);
         }
-        return URLReader.getRequest(feedsRequest + '/' + feed + afterDate);
+        return URLReader.getTurfgameRequest(feedsRequest + '/' + feed + afterDate);
     }
 
     private Instant getLastEntryTime(String json) throws JsonProcessingException {

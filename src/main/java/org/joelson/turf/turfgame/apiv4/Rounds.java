@@ -17,7 +17,7 @@ public final class Rounds {
     }
 
     public static List<Round> readRounds() throws IOException {
-        return fromJSON(URLReader.getRequest(ROUNDS_REQUEST));
+        return fromJSON(URLReader.getTurfgameRequest(ROUNDS_REQUEST));
     }
 
     static List<Round> fromJSON(String s) throws RuntimeException {

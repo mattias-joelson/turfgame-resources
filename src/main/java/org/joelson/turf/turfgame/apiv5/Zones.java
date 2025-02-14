@@ -29,7 +29,7 @@ public class Zones {
     }
 
     private static String getAllZonesJSON() throws IOException {
-        return URLReader.getRequest(ALL_ZONES_REQUEST);
+        return URLReader.getTurfgameRequest(ALL_ZONES_REQUEST);
     }
 
     public static void main(String[] args) throws IOException {

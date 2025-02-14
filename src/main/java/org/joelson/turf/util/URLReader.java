@@ -1,8 +1,6 @@
 package org.joelson.turf.util;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -15,7 +13,6 @@ import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.nio.charset.StandardCharsets;
-import java.util.function.Function;
 import java.util.zip.GZIPInputStream;
 
 public final class URLReader {
@@ -89,12 +86,6 @@ public final class URLReader {
                 line = reader.readLine();
             }
             return builder.toString();
-        }
-    }
-
-    public static <R> R readProperties(File file, Function<String, R> function) throws IOException {
-        try (FileInputStream input = new FileInputStream(file)) {
-            return function.apply(URLReader.readStream(input));
         }
     }
 }

@@ -22,7 +22,7 @@ public class FeedsPrinter {
         for (String filename : filenames) {
             try {
                 feedsReader.handleFeedObjectPath(
-                        Path.of(filename), path -> {}, feedObject -> handleFeedObject(stringObjects, feedObject));
+                        Path.of(filename), path -> true, feedObject -> handleFeedObject(stringObjects, feedObject));
             } catch (IOException e) {
                 e.printStackTrace();
                 System.err.println("Handling filename " + filename);

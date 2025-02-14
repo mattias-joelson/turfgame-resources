@@ -16,7 +16,7 @@ import java.util.List;
 
 public final class Users {
     
-    private static final String USERS_REQUEST = "https://api.turfgame.com/unstable/users";
+    private static final String USERS_REQUEST = "https://api.turfgame.com/v5/users";
     private static final String NAME_PARAMETER = "name";
     private static final String ID_PARAMETER = "id";
     

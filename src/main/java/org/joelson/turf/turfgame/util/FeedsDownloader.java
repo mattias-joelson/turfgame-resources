@@ -13,6 +13,7 @@ import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -105,9 +106,12 @@ public class FeedsDownloader {
     }
 
     private static void waitUntil(Instant until) {
-        while (Instant.now().isBefore(until)) {
+        Instant now;
+        while ((now = Instant.now()).isBefore(until)) {
+            Duration left = Duration.between(now, until);
+            long millis = Math.min(5000, left.toMillis());
             try {
-                Thread.sleep(1000);
+                Thread.sleep(millis);
             } catch (InterruptedException e) {
                 // ignore
             }

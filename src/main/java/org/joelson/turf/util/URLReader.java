@@ -86,13 +86,13 @@ public final class URLReader {
                     String.format("%s=%s, %s=%s", CONTENT_TYPE, contentType, CONTENT_ENCODING, contentEncoding));
         }
         if (contentEncoding == null) {
-            return readStream(httpResponse.body());
+            return readUTF8Stream(httpResponse.body());
         } else {
-            return readStream(new GZIPInputStream(httpResponse.body()));
+            return readUTF8Stream(new GZIPInputStream(httpResponse.body()));
         }
     }
 
-    static String readStream(InputStream inputStream) throws IOException {
+    static String readUTF8Stream(InputStream inputStream) throws IOException {
         try (BufferedReader reader = new BufferedReader(
                 new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
             return reader.lines().collect(Collectors.joining("\n"));

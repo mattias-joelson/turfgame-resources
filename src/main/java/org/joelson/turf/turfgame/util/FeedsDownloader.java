@@ -264,7 +264,7 @@ public class FeedsDownloader {
                 }
                 return since;
             }
-            return (lastEntryTime == null) ? null : Instant.from(lastEntryTime).minusSeconds(1);
+            return (lastEntryTime != null) ? lastEntryTime.minusSeconds(1) : null;
         } catch (Throwable e) {
             logger.error("Exception in getFeed(\"{}\", \"{}\", \"{}\", \"{}\", {}): ", feedPath, feedRequest, feed, filenamePattern, since, e);
             logger.error("{} content:       {}", logQuantifier, content);

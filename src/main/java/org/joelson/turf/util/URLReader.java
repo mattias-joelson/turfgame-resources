@@ -50,8 +50,8 @@ public final class URLReader {
 
     public static Response getTurfgameRequest(String request) throws IOException {
         try {
-            HttpRequest.Builder builder = HttpRequest.newBuilder().headers(TURFGAME_GET_HEADERS).uri(new URI(request));
-            HttpRequest httpRequest = builder.GET().build();
+            HttpRequest httpRequest = HttpRequest.newBuilder().headers(TURFGAME_GET_HEADERS).uri(new URI(request)).GET()
+                    .build();
             HttpResponse<InputStream> httpResponse = httpClient.send(httpRequest, BodyHandlers.ofInputStream());
             return new Response(httpResponse.statusCode(), getTurfgameBody(httpResponse));
         } catch (URISyntaxException | InterruptedException e) {

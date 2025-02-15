@@ -34,32 +34,48 @@ public class FeedsDownloader {
     private static final String FEEDS_V5_PATH_NAME = "feeds_v5";
     private static final String FEEDS_V6_PATH_NAME = "feeds_v6";
     private static final int ERROR_EXIT_STATUS = 1;
+    private static final int DEFAULT_REQUEST_ATTEMPTS = 2;
 
     private final Path feedsV4Path;
     private final Path feedsV5Path;
     private final Path feedsV6Path;
     private final int timeOffset;
+    private final int requestAttempts;
 
-    public FeedsDownloader(Path feedsPath, int timeOffset) throws IOException {
+    public FeedsDownloader(Path feedsPath, int timeOffset, int requestAttempts) throws IOException {
         Objects.requireNonNull(feedsPath, "feedsPath is null");
-        if (!Files.exists(feedsPath)) {
+        if (!Files.exists(feedsPath) && !Files.isDirectory(feedsPath)) {
             exitWithError("Feeds dir does not exist: " + feedsPath);
         }
         if (timeOffset < 0 || timeOffset >= 5 * 60) {
-            exitWithError("Invalid time offset " + timeOffset);
+            exitWithError("Invalid timeOffset: " + timeOffset);
+        }
+        if (requestAttempts < 1) {
+            exitWithError("Invalid requestAttempts: " + requestAttempts);
         }
         verifyDirectoryExists(feedsPath);
         feedsV4Path = createOrVerifyIsDirectory(feedsPath, FEEDS_V4_PATH_NAME);
         feedsV5Path = createOrVerifyIsDirectory(feedsPath, FEEDS_V5_PATH_NAME);
         feedsV6Path = createOrVerifyIsDirectory(feedsPath, FEEDS_V6_PATH_NAME);
         this.timeOffset = timeOffset;
+        this.requestAttempts = requestAttempts;
     }
 
     public static void main(String[] args) throws IOException {
-        if (args.length != 2) {
-            exitWithError(String.format("Usage:%n\t%s feeds_dir time_offset", FeedsDownloader.class));
+        if (args.length < 2 || args.length > 3) {
+            exitWithError(String.format("""
+                    Usage:
+                    %s feeds_dir time_offset [request_attempts]
+                    
+                    feeds_dir          An existing writeable directory to where downloaded files are stored.
+                    time_offset        Time offset in seconds to when to start file download. (valid 0-299)
+                                       A download starts every five minutes. This is the offset of minutes modulo 5.
+                    request_attempts   The number of attempts to get valid content for a request. (valid 1-, default 2)
+                                       Will wait two seconds between each attempt.""",
+                    FeedsDownloader.class.getName()));
         }
-        new FeedsDownloader(Path.of(args[0]), Integer.parseInt(args[1])).downloadFeeds();
+        int requestAttempts = (args.length == 3) ? Integer.parseInt(args[2]) : DEFAULT_REQUEST_ATTEMPTS;
+        new FeedsDownloader(Path.of(args[0]), Integer.parseInt(args[1]), requestAttempts).downloadFeeds();
     }
 
     private static void exitWithError(String msg) {

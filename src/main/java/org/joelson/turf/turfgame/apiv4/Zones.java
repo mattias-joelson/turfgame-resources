@@ -5,6 +5,7 @@ import org.joelson.turf.util.JacksonUtil;
 import org.joelson.turf.util.URLReader;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -30,7 +31,11 @@ public final class Zones {
     }
 
     private static String getAllZonesJSON() throws IOException {
-        return URLReader.getTurfgameRequest(ALL_ZONES_REQUEST);
+        URLReader.Response response = URLReader.getTurfgameRequest(ALL_ZONES_REQUEST);
+        if (response.status() != HttpURLConnection.HTTP_OK) {
+            System.err.printf("Response status: %d, request: %s", response.status(), ALL_ZONES_REQUEST);
+        }
+        return response.body();
     }
 
     public static void main(String[] args) throws IOException {

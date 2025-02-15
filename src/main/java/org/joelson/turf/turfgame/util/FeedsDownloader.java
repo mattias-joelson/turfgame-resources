@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -227,7 +228,12 @@ public class FeedsDownloader {
         if (since != null) {
             afterDate = "?afterDate=" + TimeUtil.turfAPITimestampFormatter(since);
         }
-        return URLReader.getTurfgameRequest(feedsRequest + '/' + feed + afterDate);
+        String request = feedsRequest + '/' + feed + afterDate;
+        URLReader.Response response = URLReader.getTurfgameRequest(request);
+        if (response.status() != HttpURLConnection.HTTP_OK) {
+            logger.error("Not 200/OK, response status: {}, request URL: {}", response.status(), request);
+        }
+        return response.body();
     }
 
     private Instant getLastEntryTime(String json) throws JsonProcessingException {

@@ -9,6 +9,7 @@ import org.joelson.turf.util.URLReader;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
@@ -46,9 +47,14 @@ public final class Users {
         }
         generator.writeEndArray();
         generator.close();
-        String string = stream.toString(StandardCharsets.UTF_8);
-        System.out.println(string);
-        return fromJSON(URLReader.postTurfgameRequest(USERS_REQUEST, string));
+        String requestJSON = stream.toString(StandardCharsets.UTF_8);
+        System.out.println(requestJSON);
+        URLReader.Response response = URLReader.postTurfgameRequest(USERS_REQUEST, requestJSON);
+        if (response.status() != HttpURLConnection.HTTP_OK) {
+            System.err.printf("Response status: %d, request URL: %s, JSON: %s%n%n", response.status(), USERS_REQUEST,
+                    requestJSON);
+        }
+        return fromJSON(response.body());
     }
 
     static List<User> fromJSON(String s) throws JsonProcessingException {

@@ -5,6 +5,7 @@ import org.joelson.turf.util.JacksonUtil;
 import org.joelson.turf.util.URLReader;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.util.Arrays;
 import java.util.List;
 
@@ -17,7 +18,11 @@ public final class Rounds {
     }
 
     public static List<Round> readRounds() throws IOException {
-        return fromJSON(URLReader.getTurfgameRequest(ROUNDS_REQUEST));
+        URLReader.Response response = URLReader.getTurfgameRequest(ROUNDS_REQUEST);
+        if (response.status() != HttpURLConnection.HTTP_OK) {
+            System.err.printf("Response status: %d, request: %s", response.status(), ROUNDS_REQUEST);
+        }
+        return fromJSON(response.body());
     }
 
     static List<Round> fromJSON(String s) throws RuntimeException {

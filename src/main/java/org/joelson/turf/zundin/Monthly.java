@@ -9,6 +9,7 @@ import org.joelson.turf.statistics.Zone;
 import org.joelson.turf.util.URLReader;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -52,7 +53,11 @@ public class Monthly {
         if (round > 0) {
             request += "&roundid=" + round;
         }
-        return fromHTML(userName, round, URLReader.getRequest(request));
+        URLReader.Response response = URLReader.getRequest(request);
+        if (response.status() != HttpURLConnection.HTTP_OK) {
+            System.err.printf("Response status: %d, request: %s", response.status(), request);
+        }
+        return fromHTML(userName, round, response.body());
     }
 
     public static Monthly fromHTML(String userName, int round, String html) {

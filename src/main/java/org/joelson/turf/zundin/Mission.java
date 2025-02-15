@@ -4,6 +4,7 @@ import org.joelson.turf.util.URLReader;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +23,11 @@ public class Mission {
         if (user != null && user.length() > 0) {
             request += "&userid=" + user;
         }
-        return URLReader.getRequest(request);
+        URLReader.Response response = URLReader.getRequest(request);
+        if (response.status() != HttpURLConnection.HTTP_OK) {
+            System.err.printf("Response status: %d, request: %s", response.status(), request);
+        }
+        return response.body();
     }
 
     public static void main(String[] args) throws IOException {

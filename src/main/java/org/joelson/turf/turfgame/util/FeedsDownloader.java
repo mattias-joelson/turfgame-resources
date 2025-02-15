@@ -179,6 +179,15 @@ public class FeedsDownloader {
         try {
             try {
                 content = downloadFeedContent(feedRequest, feed, since);
+            } catch (UnknownContentEncodingTypeException e) {
+                if (e.getContent() == null) {
+                    logger.error("{} Unable to get content: ", logQuantifier, e);
+                    return null;
+                } else {
+                    logger.error("{} Unknown content encoding type, statusCode={} ",
+                            logQuantifier, e.getStatusCode(), e);
+                    content = e.getContent();
+                }
             } catch (IOException e) {
                 logger.error("{} Unable to get content: ", logQuantifier, e);
                 return null;

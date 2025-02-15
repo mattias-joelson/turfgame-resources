@@ -4,7 +4,6 @@ import org.joelson.turf.util.URLReader;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpClient;
@@ -66,8 +65,19 @@ public final class TurfgameURLReader {
         String contentType = httpResponse.headers().firstValue(CONTENT_TYPE).orElse(null);
         if ((contentEncoding != null && !CONTENT_ENCODING_GZIP.equals(contentEncoding))
                 || !CONTENT_TYPE_APPLICATION_JSON_CHARSET_UTF_8.equals(contentType)) {
-            throw new UnsupportedEncodingException(
-                    String.format("%s=%s, %s=%s", CONTENT_TYPE, contentType, CONTENT_ENCODING, contentEncoding));
+            String content;
+            try {
+                if (CONTENT_ENCODING_GZIP.equals(contentEncoding)) {
+                    content = URLReader.readUTF8Stream(new GZIPInputStream(httpResponse.body()));
+                } else {
+                    content = URLReader.readUTF8Stream(httpResponse.body());
+                }
+            } catch (IOException e) {
+                throw new UnknownContentEncodingTypeException(httpResponse.statusCode(), contentType, contentEncoding,
+                        e);
+            }
+            throw new UnknownContentEncodingTypeException(httpResponse.statusCode(), contentType, contentEncoding,
+                    content);
         }
         if (contentEncoding == null) {
             return URLReader.readUTF8Stream(httpResponse.body());

@@ -190,23 +190,47 @@ public class FeedsDownloader {
         };
         String logQuantifier = String.format("%s (%s)", feed, version);
         String content = null;
+        boolean tooManyRequests = false;
         Instant lastEntryTime = null;
         Path file = null;
         try {
-            try {
-                content = downloadFeedContent(feedRequest, feed, since);
-            } catch (UnknownContentEncodingTypeException e) {
-                if (e.getContent() == null) {
-                    logger.error("{} Unable to get content: ", logQuantifier, e);
-                    return null;
-                } else {
-                    logger.error("{} Unknown content encoding type, statusCode={} ",
-                            logQuantifier, e.getStatusCode(), e);
+            for (int attempt = 1; content == null && attempt <= requestAttempts; attempt += 1) {
+                try {
+                    Response response = downloadFeedContent(feedRequest, feed, since);
+                    if (response.status() == TurfgameURLReader.HTTP_TOO_MANY_REQUESTS
+                            && TurfgameURLReader.ERROR_MESSAGE_TOO_MANY_REQUESTS.equals(response.body())) {
+                        logger.info("{} Request attempt {}, statusCode 429/Too Many Requests", logQuantifier, attempt);
+                        tooManyRequests = true;
+                    } else {
+                        content = response.body();
+                        tooManyRequests = false;
+                        if (response.status() != HttpURLConnection.HTTP_OK) {
+                            logger.error("{} Not statusCode 200/OK: {}, content={}", logQuantifier, response.status(),
+                                    (content.length() > 40) ? content.substring(1, 40) + "..." : content);
+                        }
+                        break;
+                    }
+                } catch (RequestFailureException e) {
+                    if (attempt < requestAttempts) {
+                        logger.error("{} Request attempt {} failed, retrying: {}",
+                                logQuantifier, attempt, e.getMessage());
+                    } else {
+                        logger.error("{} Request attempt {} failed, request {}",
+                                logQuantifier, attempt, e.getRequestMessage(), e);
+                    }
+                } catch (RequestContentException e) {
                     content = e.getContent();
+                    if (content != null || attempt < requestAttempts) {
+                        logger.error("{} Request attempt {}, {}", logQuantifier, attempt, e.getMessage());
+                    } else {
+                        logger.error("{} Request attempt {}", logQuantifier, attempt, e);
+                    }
                 }
-            } catch (IOException e) {
-                logger.error("{} Unable to get content: ", logQuantifier, e);
-                return null;
+                waitUntil(Instant.now().plusSeconds(2));
+            }
+            if (tooManyRequests) {
+                logger.error("{} StatusCode 429/Too Many Request", logQuantifier);
+                return since;
             }
             if (content == null || content.equals("[]")) {
                 if (since != null) {
@@ -249,17 +273,14 @@ public class FeedsDownloader {
         }
     }
 
-    private String downloadFeedContent(String feedRequest, String feed, Instant since) throws IOException {
+    private Response downloadFeedContent(String feedRequest, String feed, Instant since)
+            throws RequestFailureException, RequestContentException {
         String afterDate = "";
         if (since != null) {
             afterDate = "?afterDate=" + TimeUtil.turfAPITimestampFormatter(since);
         }
         String request = feedRequest + '/' + feed + afterDate;
-        Response response = TurfgameURLReader.getTurfgameRequest(request);
-        if (response.status() != HttpURLConnection.HTTP_OK) {
-            logger.error("Not 200/OK, response status: {}, request URL: {}", response.status(), request);
-        }
-        return response.body();
+        return TurfgameURLReader.getTurfgameRequest(request);
     }
 
     private Instant getLastEntryTime(String json) throws JsonProcessingException {

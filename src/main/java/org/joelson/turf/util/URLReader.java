@@ -70,12 +70,16 @@ public final class URLReader {
     private static String getTurfgameBody(HttpResponse<InputStream> httpResponse) throws IOException {
         String contentEncoding = httpResponse.headers().firstValue(CONTENT_ENCODING).orElse(null);
         String contentType = httpResponse.headers().firstValue(CONTENT_TYPE).orElse(null);
-        if (!CONTENT_ENCODING_GZIP.equals(contentEncoding) || !CONTENT_TYPE_APPLICATION_JSON_CHARSET_UTF_8.equals(
-                contentType)) {
+        if ((contentEncoding != null && !CONTENT_ENCODING_GZIP.equals(contentEncoding))
+                || !CONTENT_TYPE_APPLICATION_JSON_CHARSET_UTF_8.equals(contentType)) {
             throw new UnsupportedEncodingException(
                     String.format("%s=%s, %s=%s", CONTENT_TYPE, contentType, CONTENT_ENCODING, contentEncoding));
         }
-        return readStream(new GZIPInputStream(httpResponse.body()));
+        if (contentEncoding == null) {
+            return readStream(httpResponse.body());
+        } else {
+            return readStream(new GZIPInputStream(httpResponse.body()));
+        }
     }
 
     static String readStream(InputStream inputStream) throws IOException {

@@ -20,10 +20,10 @@ public final class Rounds {
 
     public static List<Round> readRounds() throws IOException {
         Response response = TurfgameURLReader.getTurfgameRequest(ROUNDS_REQUEST);
-        if (response.status() != HttpURLConnection.HTTP_OK) {
-            System.err.printf("Response status: %d, request: %s", response.status(), ROUNDS_REQUEST);
+        if (response.statusCode() != HttpURLConnection.HTTP_OK) {
+            System.err.printf("Response statusCode: %d, request: %s", response.statusCode(), ROUNDS_REQUEST);
         }
-        return fromJSON(response.body());
+        return fromJSON(response.content());
     }
 
     static List<Round> fromJSON(String s) throws RuntimeException {

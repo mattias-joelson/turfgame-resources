@@ -49,11 +49,11 @@ public final class Users {
         generator.close();
         String requestJSON = stream.toString(StandardCharsets.UTF_8);
         Response response = TurfgameURLReader.postTurfgameRequest(USERS_REQUEST, requestJSON);
-        if (response.status() != HttpURLConnection.HTTP_OK) {
-            System.err.printf("Response status: %d, request URL: %s, JSON: %s%n", response.status(), USERS_REQUEST,
-                    requestJSON);
+        if (response.statusCode() != HttpURLConnection.HTTP_OK) {
+            System.err.printf("Response statusCode: %d, request URL: %s, JSON: %s%n",
+                    response.statusCode(), USERS_REQUEST, requestJSON);
         }
-        return fromJSON(response.body());
+        return fromJSON(response.content());
     }
 
     static List<User> fromJSON(String s) throws JsonProcessingException {

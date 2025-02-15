@@ -33,10 +33,10 @@ public final class Municipality {
         String request = String.format("https://turf.lundkvist.com/?user=%s&country=%s&region=%d&city=%s",
                 userName, country, region, municipality);
         URLReader.Response response = URLReader.getRequest(request);
-        if (response.status() != HttpURLConnection.HTTP_OK) {
-            System.err.printf("Response status: %d, request: %s", response.status(), request);
+        if (response.statusCode() != HttpURLConnection.HTTP_OK) {
+            System.err.printf("Response statusCode: %d, request: %s", response.statusCode(), request);
         }
-        return response.body();
+        return response.content();
     }
 
     public static void main(String[] args) throws IOException {

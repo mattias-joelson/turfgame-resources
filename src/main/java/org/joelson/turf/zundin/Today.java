@@ -26,10 +26,10 @@ public class Today {
     public static Today fromZundin(String userName, String date) throws IOException {
         String request = "https://frut.zundin.se/today.php?userid=" + userName + "&date=" + date;
         URLReader.Response response = URLReader.getRequest(request);
-        if (response.status() != HttpURLConnection.HTTP_OK) {
-            System.err.printf("Response status: %d, request: %s", response.status(), request);
+        if (response.statusCode() != HttpURLConnection.HTTP_OK) {
+            System.err.printf("Response statusCode: %d, request: %s", response.statusCode(), request);
         }
-        return fromHTML(userName, date, response.body());
+        return fromHTML(userName, date, response.content());
     }
 
     public static Today fromHTML(String userName, String date, String html) {

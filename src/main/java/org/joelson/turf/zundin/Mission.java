@@ -24,10 +24,10 @@ public class Mission {
             request += "&userid=" + user;
         }
         URLReader.Response response = URLReader.getRequest(request);
-        if (response.status() != HttpURLConnection.HTTP_OK) {
-            System.err.printf("Response status: %d, request: %s", response.status(), request);
+        if (response.statusCode() != HttpURLConnection.HTTP_OK) {
+            System.err.printf("Response statusCode: %d, request: %s", response.statusCode(), request);
         }
-        return response.body();
+        return response.content();
     }
 
     public static void main(String[] args) throws IOException {

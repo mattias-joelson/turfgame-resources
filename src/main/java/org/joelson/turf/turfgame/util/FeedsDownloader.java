@@ -197,15 +197,16 @@ public class FeedsDownloader {
             for (int attempt = 1; content == null && attempt <= requestAttempts; attempt += 1) {
                 try {
                     Response response = downloadFeedContent(feedRequest, feed, since);
-                    if (response.status() == TurfgameURLReader.HTTP_TOO_MANY_REQUESTS
-                            && TurfgameURLReader.ERROR_MESSAGE_TOO_MANY_REQUESTS.equals(response.body())) {
+                    if (response.statusCode() == TurfgameURLReader.HTTP_TOO_MANY_REQUESTS
+                            && TurfgameURLReader.ERROR_MESSAGE_TOO_MANY_REQUESTS.equals(response.content())) {
                         logger.info("{} Request attempt {}, statusCode 429/Too Many Requests", logQuantifier, attempt);
                         tooManyRequests = true;
                     } else {
-                        content = response.body();
+                        content = response.content();
                         tooManyRequests = false;
-                        if (response.status() != HttpURLConnection.HTTP_OK) {
-                            logger.error("{} Not statusCode 200/OK: {}, content={}", logQuantifier, response.status(),
+                        if (response.statusCode() != HttpURLConnection.HTTP_OK) {
+                            logger.error("{} Not statusCode 200/OK: {}, content={}",
+                                    logQuantifier, response.statusCode(),
                                     (content.length() > 40) ? content.substring(1, 40) + "..." : content);
                         }
                         break;

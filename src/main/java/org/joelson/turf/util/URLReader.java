@@ -11,11 +11,19 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public final class URLReader {
 
-    public record Response(int status, String body) {
+    public record Response(int statusCode, String content) {
+
+        public Response {
+            if (statusCode < 100 || statusCode > 599) {
+                throw new IllegalArgumentException("Invalid statusCode " + statusCode);
+            }
+            Objects.requireNonNull(content);
+        }
     }
 
     private static final HttpClient httpClient = HttpClient.newHttpClient();

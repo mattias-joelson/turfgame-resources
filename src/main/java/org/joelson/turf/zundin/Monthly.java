@@ -54,10 +54,10 @@ public class Monthly {
             request += "&roundid=" + round;
         }
         URLReader.Response response = URLReader.getRequest(request);
-        if (response.status() != HttpURLConnection.HTTP_OK) {
-            System.err.printf("Response status: %d, request: %s", response.status(), request);
+        if (response.statusCode() != HttpURLConnection.HTTP_OK) {
+            System.err.printf("Response statusCode: %d, request: %s", response.statusCode(), request);
         }
-        return fromHTML(userName, round, response.body());
+        return fromHTML(userName, round, response.content());
     }
 
     public static Monthly fromHTML(String userName, int round, String html) {

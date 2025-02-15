@@ -40,7 +40,9 @@ public final class URLReader {
 
     public static Response getRequest(String request) throws IOException {
         try {
-            HttpRequest httpRequest = HttpRequest.newBuilder().uri(new URI(request)).GET().build();
+            HttpRequest httpRequest = HttpRequest.newBuilder()
+                    .uri(new URI(request))
+                    .GET().build();
             HttpResponse<String> httpResponse = httpClient.send(httpRequest, BodyHandlers.ofString());
             return new Response(httpResponse.statusCode(), httpResponse.body());
         } catch (URISyntaxException | InterruptedException e) {
@@ -50,8 +52,10 @@ public final class URLReader {
 
     public static Response getTurfgameRequest(String request) throws IOException {
         try {
-            HttpRequest httpRequest = HttpRequest.newBuilder().headers(TURFGAME_GET_HEADERS).uri(new URI(request)).GET()
-                    .build();
+            HttpRequest httpRequest = HttpRequest.newBuilder()
+                    .headers(TURFGAME_GET_HEADERS)
+                    .uri(new URI(request))
+                    .GET().build();
             HttpResponse<InputStream> httpResponse = httpClient.send(httpRequest, BodyHandlers.ofInputStream());
             return new Response(httpResponse.statusCode(), getTurfgameBody(httpResponse));
         } catch (URISyntaxException | InterruptedException e) {
@@ -61,8 +65,11 @@ public final class URLReader {
 
     public static Response postTurfgameRequest(String request, String json) throws IOException {
         try {
-            HttpRequest httpRequest = HttpRequest.newBuilder().uri(new URI(request))
-                    .headers(TURFGAME_POST_HEADERS).POST(BodyPublishers.ofString(json)).build();
+            HttpRequest httpRequest = HttpRequest.newBuilder()
+                    .headers(TURFGAME_POST_HEADERS)
+                    .uri(new URI(request))
+                    .POST(BodyPublishers.ofString(json))
+                    .build();
             HttpResponse<InputStream> httpResponse = httpClient.send(httpRequest, BodyHandlers.ofInputStream());
             return new Response(httpResponse.statusCode(), getTurfgameBody(httpResponse));
         } catch (URISyntaxException | InterruptedException e) {

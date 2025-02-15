@@ -95,7 +95,7 @@ public final class Municipality {
         Map<String, Boolean> municipalityZones = new HashMap<>();
         while (pos > -1 && pos < html.length()) {
             String zoneName = zoneNameFromHTML(pos, html);
-            int end = lineEndInHTML(pos, html);
+            int end = html.indexOf(ROW_END, pos);
             boolean taken = zoneTakenFromHTML(end, html);
             municipalityZones.put(zoneName, taken);
             pos = html.indexOf(ZONE_LINK, end + ROW_END.length());
@@ -105,13 +105,7 @@ public final class Municipality {
 
     private static String zoneNameFromHTML(int pos, String html) {
         int end = html.indexOf("'", pos + ZONE_LINK.length());
-        String zoneName = html.substring(pos + ZONE_LINK.length(), end);
-        return zoneName;
-    }
-
-    private static int lineEndInHTML(int pos, String html) {
-        int end = html.indexOf(ROW_END, pos);
-        return end;
+        return html.substring(pos + ZONE_LINK.length(), end);
     }
 
     private static boolean zoneTakenFromHTML(int end, String html) {

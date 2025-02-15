@@ -20,7 +20,7 @@ public class Mission {
 
     private static String getMissionHTML(String user, int mission) throws IOException {
         String request = String.format("https://frut.zundin.se/mission.php?missionid=%d", mission);
-        if (user != null && user.length() > 0) {
+        if (user != null && !user.isEmpty()) {
             request += "&userid=" + user;
         }
         URLReader.Response response = URLReader.getRequest(request);

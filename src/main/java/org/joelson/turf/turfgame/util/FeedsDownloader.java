@@ -246,7 +246,11 @@ public class FeedsDownloader {
                 return null;
             }
             try {
-                lastEntryTime = getLastEntryTime(content);
+                if (isHTML(content)) {
+                    filenamePattern += ".html";
+                } else {
+                    lastEntryTime = getLastEntryTime(content);
+                }
             } catch (JsonProcessingException e) {
                 logger.error("{} Unable to retrieve time from JSON: ", logQuantifier, e);
                 logger.error("{} content: {}", logQuantifier, content);
@@ -322,5 +326,10 @@ public class FeedsDownloader {
         }
         LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, ZoneOffset.UTC);
         return DATE_TIME_FORMATTER.format(localDateTime);
+    }
+
+    private static boolean isHTML(String content) {
+        String contentPart = content.substring(0, 15).toLowerCase();
+        return contentPart.startsWith("<!doctype html>") || contentPart.startsWith("<html>");
     }
 }

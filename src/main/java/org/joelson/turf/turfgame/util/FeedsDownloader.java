@@ -83,7 +83,7 @@ public class FeedsDownloader {
         }
     }
 
-    private static void waitBetweenFeeds() {
+    private static void waitUntilNextRequest() {
         Instant until = Instant.now().plusSeconds(5);
         waitUntil(until);
     }
@@ -130,31 +130,31 @@ public class FeedsDownloader {
                 logger.info("Sleeping until {}", nextDownload);
                 waitUntil(nextDownload);
                 nextDownload = nextDownload.plusSeconds(5 * 60);
-                lastV4TakeEntry = getFeed(feedsV4Path, FEEDS_V4_REQUEST, "takeover", "feeds_takeover_%s.%sjson",
+                lastV4TakeEntry = downloadFeed(feedsV4Path, FEEDS_V4_REQUEST, "takeover", "feeds_takeover_%s.%sjson",
                         lastV4TakeEntry);
-                waitBetweenFeeds();
-                lastV4MedalChatEntry = getFeed(feedsV4Path, FEEDS_V4_REQUEST, "medal+chat",
+                waitUntilNextRequest();
+                lastV4MedalChatEntry = downloadFeed(feedsV4Path, FEEDS_V4_REQUEST, "medal+chat",
                         "feeds_medal_chat_%s.%sjson", lastV4MedalChatEntry);
-                waitBetweenFeeds();
-                lastV4ZoneEntry = getFeed(feedsV4Path, FEEDS_V4_REQUEST, "zone", "feeds_zone_%s.%sjson",
+                waitUntilNextRequest();
+                lastV4ZoneEntry = downloadFeed(feedsV4Path, FEEDS_V4_REQUEST, "zone", "feeds_zone_%s.%sjson",
                         lastV4ZoneEntry);
-                waitBetweenFeeds();
-                lastV5TakeEntry = getFeed(feedsV5Path, FEEDS_V5_REQUEST, "takeover", "feeds_takeover_%s.%sjson",
+                waitUntilNextRequest();
+                lastV5TakeEntry = downloadFeed(feedsV5Path, FEEDS_V5_REQUEST, "takeover", "feeds_takeover_%s.%sjson",
                         lastV5TakeEntry);
-                waitBetweenFeeds();
-                lastV5MedalChatEntry = getFeed(feedsV5Path, FEEDS_V5_REQUEST, "medal+chat",
+                waitUntilNextRequest();
+                lastV5MedalChatEntry = downloadFeed(feedsV5Path, FEEDS_V5_REQUEST, "medal+chat",
                         "feeds_medal_chat_%s.%sjson", lastV5MedalChatEntry);
-                waitBetweenFeeds();
-                lastV5ZoneEntry = getFeed(feedsV5Path, FEEDS_V5_REQUEST, "zone", "feeds_zone_%s.%sjson",
+                waitUntilNextRequest();
+                lastV5ZoneEntry = downloadFeed(feedsV5Path, FEEDS_V5_REQUEST, "zone", "feeds_zone_%s.%sjson",
                         lastV5ZoneEntry);
-                waitBetweenFeeds();
-                lastV6TakeEntry = getFeed(feedsV6Path, FEEDS_V6_REQUEST, "takeover", "feeds_takeover_%s.%sjson",
+                waitUntilNextRequest();
+                lastV6TakeEntry = downloadFeed(feedsV6Path, FEEDS_V6_REQUEST, "takeover", "feeds_takeover_%s.%sjson",
                         lastV6TakeEntry);
-                waitBetweenFeeds();
-                lastV6MedalChatEntry = getFeed(feedsV6Path, FEEDS_V6_REQUEST, "medal+chat",
+                waitUntilNextRequest();
+                lastV6MedalChatEntry = downloadFeed(feedsV6Path, FEEDS_V6_REQUEST, "medal+chat",
                         "feeds_medal_chat_%s.%sjson", lastV6MedalChatEntry);
-                waitBetweenFeeds();
-                lastV6ZoneEntry = getFeed(feedsV6Path, FEEDS_V6_REQUEST, "zone", "feeds_zone_%s.%sjson",
+                waitUntilNextRequest();
+                lastV6ZoneEntry = downloadFeed(feedsV6Path, FEEDS_V6_REQUEST, "zone", "feeds_zone_%s.%sjson",
                         lastV6ZoneEntry);
             }
         } catch (Throwable e) {
@@ -164,25 +164,26 @@ public class FeedsDownloader {
         }
     }
 
-    private Instant getFeed(Path feedPath, String feedsRequest, String feed, String filenamePattern, Instant since) {
-        String version = switch (feedsRequest) {
+    private Instant downloadFeed(
+            Path feedPath, String feedRequest, String feed, String filenamePattern, Instant since) {
+        String version = switch (feedRequest) {
             case FEEDS_V4_REQUEST -> "v4";
             case FEEDS_V5_REQUEST -> "v5";
             case FEEDS_V6_REQUEST -> "v6/unstable";
-            default -> String.format("unknown(%s)", feedsRequest);
+            default -> String.format("unknown(%s)", feedRequest);
         };
         String logQuantifier = String.format("%s (%s)", feed, version);
-        String json = null;
+        String content = null;
         Instant lastEntryTime = null;
         Path file = null;
         try {
             try {
-                json = getFeedsJSON(feedsRequest, feed, since);
+                content = downloadFeedContent(feedRequest, feed, since);
             } catch (IOException e) {
-                logger.error("{} Unable to get JSON: ", logQuantifier, e);
+                logger.error("{} Unable to get content: ", logQuantifier, e);
                 return null;
             }
-            if (json == null || json.equals("[]")) {
+            if (content == null || content.equals("[]")) {
                 if (since != null) {
                     logger.error("{} No data since {}.", logQuantifier, since);
                 } else {
@@ -191,44 +192,44 @@ public class FeedsDownloader {
                 return null;
             }
             try {
-                lastEntryTime = getLastEntryTime(json);
+                lastEntryTime = getLastEntryTime(content);
             } catch (JsonProcessingException e) {
                 logger.error("{} Unable to retrieve time from JSON: ", logQuantifier, e);
-                logger.error("{} json: {}", logQuantifier, json);
+                logger.error("{} content: {}", logQuantifier, content);
             }
             try {
                 file = getFilePath(feedPath, filenamePattern, lastEntryTime);
-                Files.writeString(file, json, StandardCharsets.UTF_8);
+                Files.writeString(file, content, StandardCharsets.UTF_8);
                 logger.info("Downloaded {}", file);
             } catch (IOException e) {
                 logger.error("{} Unable to store to {}:", logQuantifier, file, e);
                 Path tempFile = null;
                 try {
-                    tempFile = Files.createTempFile(feedPath, "feed_download", ".json");
-                    Files.writeString(tempFile, json, StandardCharsets.UTF_8);
+                    tempFile = Files.createTempFile(feedPath, "feed_download", ".content");
+                    Files.writeString(tempFile, content, StandardCharsets.UTF_8);
                     logger.info("Stored {}", tempFile);
                 } catch (IOException ex) {
                     logger.error("{} Unable to store to {}:", logQuantifier, tempFile, ex);
-                    logger.error("{} json: {}", logQuantifier, json);
+                    logger.error("{} content: {}", logQuantifier, content);
                 }
                 return since;
             }
             return (lastEntryTime == null) ? null : Instant.from(lastEntryTime).minusSeconds(1);
         } catch (Throwable e) {
-            logger.error("Exception in getFeed(\"{}\", \"{}\", \"{}\", \"{}\", {}): ", feedPath, feedsRequest, feed, filenamePattern, since, e);
-            logger.error("{} json:          {}", logQuantifier, json);
+            logger.error("Exception in getFeed(\"{}\", \"{}\", \"{}\", \"{}\", {}): ", feedPath, feedRequest, feed, filenamePattern, since, e);
+            logger.error("{} content:       {}", logQuantifier, content);
             logger.error("{} lastEntryTime: {}", logQuantifier, lastEntryTime);
             logger.error("{} file:          {}", logQuantifier, file);
             return null;
         }
     }
 
-    private String getFeedsJSON(String feedsRequest, String feed, Instant since) throws IOException {
+    private String downloadFeedContent(String feedRequest, String feed, Instant since) throws IOException {
         String afterDate = "";
         if (since != null) {
             afterDate = "?afterDate=" + TimeUtil.turfAPITimestampFormatter(since);
         }
-        String request = feedsRequest + '/' + feed + afterDate;
+        String request = feedRequest + '/' + feed + afterDate;
         URLReader.Response response = URLReader.getTurfgameRequest(request);
         if (response.status() != HttpURLConnection.HTTP_OK) {
             logger.error("Not 200/OK, response status: {}, request URL: {}", response.status(), request);

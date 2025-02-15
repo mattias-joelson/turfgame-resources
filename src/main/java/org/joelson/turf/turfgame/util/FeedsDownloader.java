@@ -164,7 +164,13 @@ public class FeedsDownloader {
     }
 
     private Instant getFeed(Path feedPath, String feedsRequest, String feed, String filenamePattern, Instant since) {
-        String logQuantifier = String.format("%s (%s)", feed, (FEEDS_V4_REQUEST.equals(feedsRequest)) ? "v4" : "v5");
+        String version = switch (feedsRequest) {
+            case FEEDS_V4_REQUEST -> "v4";
+            case FEEDS_V5_REQUEST -> "v5";
+            case FEEDS_V6_REQUEST -> "v6/unstable";
+            default -> String.format("unknown(%s)", feedsRequest);
+        };
+        String logQuantifier = String.format("%s (%s)", feed, version);
         String json = null;
         Instant lastEntryTime = null;
         Path file = null;

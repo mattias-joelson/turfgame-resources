@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.joelson.turf.util.JacksonUtil;
 import org.joelson.turf.util.TimeUtil;
-import org.joelson.turf.util.URLReader;
+import org.joelson.turf.util.URLReader.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -230,7 +230,7 @@ public class FeedsDownloader {
             afterDate = "?afterDate=" + TimeUtil.turfAPITimestampFormatter(since);
         }
         String request = feedRequest + '/' + feed + afterDate;
-        URLReader.Response response = URLReader.getTurfgameRequest(request);
+        Response response = TurfgameURLReader.getTurfgameRequest(request);
         if (response.status() != HttpURLConnection.HTTP_OK) {
             logger.error("Not 200/OK, response status: {}, request URL: {}", response.status(), request);
         }

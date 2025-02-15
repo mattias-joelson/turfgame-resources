@@ -1,8 +1,9 @@
 package org.joelson.turf.turfgame.apiv4;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.joelson.turf.turfgame.util.TurfgameURLReader;
 import org.joelson.turf.util.JacksonUtil;
-import org.joelson.turf.util.URLReader;
+import org.joelson.turf.util.URLReader.Response;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -26,7 +27,7 @@ public final class Regions {
     }
 
     private static String getAllRegionsJSON() throws IOException {
-        URLReader.Response response = URLReader.getTurfgameRequest(REGIONS_REQUEST);
+        Response response = TurfgameURLReader.getTurfgameRequest(REGIONS_REQUEST);
         if (response.status() != HttpURLConnection.HTTP_OK) {
             System.err.printf("Response status: %d, request: %s", response.status(), REGIONS_REQUEST);
         }

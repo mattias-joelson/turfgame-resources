@@ -4,6 +4,7 @@ import org.joelson.turf.util.URLReader;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,7 +32,11 @@ public final class Municipality {
             throws IOException {
         String request = String.format("https://turf.lundkvist.com/?user=%s&country=%s&region=%d&city=%s",
                 userName, country, region, municipality);
-        return URLReader.getRequest(request);
+        URLReader.Response response = URLReader.getRequest(request);
+        if (response.statusCode() != HttpURLConnection.HTTP_OK) {
+            System.err.printf("Response statusCode: %d, request: %s", response.statusCode(), request);
+        }
+        return response.content();
     }
 
     public static void main(String[] args) throws IOException {
@@ -90,7 +95,7 @@ public final class Municipality {
         Map<String, Boolean> municipalityZones = new HashMap<>();
         while (pos > -1 && pos < html.length()) {
             String zoneName = zoneNameFromHTML(pos, html);
-            int end = lineEndInHTML(pos, html);
+            int end = html.indexOf(ROW_END, pos);
             boolean taken = zoneTakenFromHTML(end, html);
             municipalityZones.put(zoneName, taken);
             pos = html.indexOf(ZONE_LINK, end + ROW_END.length());
@@ -100,13 +105,7 @@ public final class Municipality {
 
     private static String zoneNameFromHTML(int pos, String html) {
         int end = html.indexOf("'", pos + ZONE_LINK.length());
-        String zoneName = html.substring(pos + ZONE_LINK.length(), end);
-        return zoneName;
-    }
-
-    private static int lineEndInHTML(int pos, String html) {
-        int end = html.indexOf(ROW_END, pos);
-        return end;
+        return html.substring(pos + ZONE_LINK.length(), end);
     }
 
     private static boolean zoneTakenFromHTML(int end, String html) {

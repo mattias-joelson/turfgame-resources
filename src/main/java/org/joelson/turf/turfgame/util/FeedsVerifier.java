@@ -53,9 +53,10 @@ public class FeedsVerifier {
                 "zone", org.joelson.turf.turfgame.apiv5.FeedZone.class));
     }
 
-    private static void rememberPath(Path path) {
+    private static boolean rememberPath(Path path) {
         lastPath = path;
         lastFeedObject = null;
+        return true;
     }
 
     private static void rememberFeedObject(FeedObject feedObject) {

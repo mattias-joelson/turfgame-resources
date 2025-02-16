@@ -26,11 +26,17 @@ public class DefaultFeedContentErrorHandler implements FeedContentErrorHandler {
                 message("Path %s is empty.", path);
                 return;
             } else if (content.charAt(0) == 0 && allZeroes(content)) {
-                message("Path %s is contains only zeroes.", path);
+                message("Path %s contains only zeroes.", path);
                 return;
-            } else if (content.startsWith("<html>")) {
+            } else if (isHTML(content)) {
                 if (content.contains("504 Gateway Time-out")) {
                     message("Path %s contains HTML response - 504 Gateway Time-out", path);
+                    return;
+                } else if (content.contains("Status 500") && content.contains("Internal Server Error")) {
+                    message("Path %s contains HTML response - 500 Internal Server Error", path);
+                    return;
+                } else {
+                    message("Path %s probably contains HTML - %s...", path, content.substring(0, 40));
                     return;
                 }
             }
@@ -85,5 +91,10 @@ public class DefaultFeedContentErrorHandler implements FeedContentErrorHandler {
 
     private static boolean allZeroes(String s) {
         return s.chars().allMatch(ch -> ch == 0);
+    }
+
+    private static boolean isHTML(String content) {
+        String contentPart = content.substring(0, 15).toLowerCase();
+        return contentPart.startsWith("<!doctype html>") || contentPart.startsWith("<html>");
     }
 }

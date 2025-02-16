@@ -4,11 +4,13 @@ import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.joelson.turf.turfgame.util.TurfgameURLReader;
 import org.joelson.turf.util.JacksonUtil;
-import org.joelson.turf.util.URLReader;
+import org.joelson.turf.util.URLReader.Response;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
@@ -16,7 +18,7 @@ import java.util.List;
 
 public final class Users {
     
-    private static final String USERS_REQUEST = "https://api.turfgame.com/unstable/users";
+    private static final String USERS_REQUEST = "https://api.turfgame.com/v5/users";
     private static final String NAME_PARAMETER = "name";
     private static final String ID_PARAMETER = "id";
     
@@ -46,9 +48,14 @@ public final class Users {
         }
         generator.writeEndArray();
         generator.close();
-        String string = stream.toString(StandardCharsets.UTF_8);
-        System.out.println(string);
-        return fromJSON(URLReader.postRequest(USERS_REQUEST, string));
+        String requestJSON = stream.toString(StandardCharsets.UTF_8);
+        System.out.println(requestJSON);
+        Response response = TurfgameURLReader.postTurfgameRequest(USERS_REQUEST, requestJSON);
+        if (response.statusCode() != HttpURLConnection.HTTP_OK) {
+            System.err.printf("Response statusCode: %d, request URL: %s, JSON: %s%n%n",
+                    response.statusCode(), USERS_REQUEST, requestJSON);
+        }
+        return fromJSON(response.content());
     }
 
     static List<User> fromJSON(String s) throws JsonProcessingException {

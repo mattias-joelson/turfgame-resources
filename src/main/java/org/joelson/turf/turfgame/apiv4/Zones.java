@@ -1,10 +1,12 @@
 package org.joelson.turf.turfgame.apiv4;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.joelson.turf.turfgame.util.TurfgameURLReader;
 import org.joelson.turf.util.JacksonUtil;
-import org.joelson.turf.util.URLReader;
+import org.joelson.turf.util.URLReader.Response;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -30,7 +32,11 @@ public final class Zones {
     }
 
     private static String getAllZonesJSON() throws IOException {
-        return URLReader.getRequest(ALL_ZONES_REQUEST);
+        Response response = TurfgameURLReader.getTurfgameRequest(ALL_ZONES_REQUEST);
+        if (response.statusCode() != HttpURLConnection.HTTP_OK) {
+            System.err.printf("Response statusCode: %d, request: %s", response.statusCode(), ALL_ZONES_REQUEST);
+        }
+        return response.content();
     }
 
     public static void main(String[] args) throws IOException {

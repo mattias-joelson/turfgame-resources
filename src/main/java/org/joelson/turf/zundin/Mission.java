@@ -4,6 +4,7 @@ import org.joelson.turf.util.URLReader;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,10 +20,14 @@ public class Mission {
 
     private static String getMissionHTML(String user, int mission) throws IOException {
         String request = String.format("https://frut.zundin.se/mission.php?missionid=%d", mission);
-        if (user != null && user.length() > 0) {
+        if (user != null && !user.isEmpty()) {
             request += "&userid=" + user;
         }
-        return URLReader.getRequest(request);
+        URLReader.Response response = URLReader.getRequest(request);
+        if (response.statusCode() != HttpURLConnection.HTTP_OK) {
+            System.err.printf("Response statusCode: %d, request: %s", response.statusCode(), request);
+        }
+        return response.content();
     }
 
     public static void main(String[] args) throws IOException {

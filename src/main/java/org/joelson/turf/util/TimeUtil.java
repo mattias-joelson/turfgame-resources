@@ -43,7 +43,7 @@ public final class TimeUtil {
         return Instant.from(zonedDateTime);
     }
 
-    public static String turfAPITimestampFormatter(Instant instant) throws IOException {
+    public static String turfAPITimestampFormatter(Instant instant) {
         return TURF_API_FORMATTER.format(instant).replace(":", "%3A") + "%2B0000";
     }
 

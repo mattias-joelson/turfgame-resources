@@ -18,7 +18,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 
-public class Zones {
+public final class Zones {
+
     private static final String ALL_ZONES_REQUEST = "https://api.turfgame.com/v5/zones/all";
     private static final String DEFAULT_ZONES_FILENAME = "zones-all.v5.json";
 

@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpClient;
@@ -42,6 +43,14 @@ public final class URLReader {
         } catch (URISyntaxException | InterruptedException e) {
             throw new IOException(e);
         }
+    }
+
+    public static String getRequestAndPrintStatusCode(String request) throws IOException {
+        Response response = getRequest(request);
+        if (response.statusCode() != HttpURLConnection.HTTP_OK) {
+            System.err.printf("Response statusCode: %d, request: %s%n", response.statusCode(), request);
+        }
+        return response.content();
     }
 
     public static String readUTF8Stream(InputStream inputStream) throws IOException {

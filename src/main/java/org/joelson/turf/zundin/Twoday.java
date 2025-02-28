@@ -25,11 +25,7 @@ public class Twoday {
 
     public static Twoday fromZundin(String userName, String date) throws IOException {
         String request = "https://frut.zundin.se/2day.php?userid=" + userName + "&date=" + date;
-        URLReader.Response response = URLReader.getRequest(request);
-        if (response.statusCode() != HttpURLConnection.HTTP_OK) {
-            System.err.printf("Response statusCode: %d, request: %s", response.statusCode(), request);
-        }
-        return fromHTML(userName, date, response.content());
+        return fromHTML(userName, date, URLReader.getRequestAndPrintStatusCode(request));
     }
 
     public static Twoday fromHTML(String userName, String date, String html) {

@@ -9,7 +9,9 @@ import org.joelson.turf.statistics.Zone;
 import org.joelson.turf.util.URLReader;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.HttpURLConnection;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -48,8 +50,37 @@ public class Monthly {
         }
     }
 
-    public static Monthly fromZundin(String userName, int round) throws IOException {
-        String request = "http://frut.zundin.se/monthly.php?userid=" + userName;
+    public static void main(String[] args) throws IOException {
+        if (args.length != 2) {
+            printUsageAndExit();
+        }
+        String userName = null;
+        int round = -1;
+        for (String arg : args) {
+            if (arg.startsWith("user=")) {
+                userName = arg.substring(5);
+            } else if (arg.startsWith("round=")) {
+                round = Integer.parseInt(arg.substring(6));
+            }
+        }
+        if (userName == null || round <= 0) {
+            System.out.printf("Provided arguments: user=%s, round=%d", userName, round);
+            printUsageAndExit();
+        }
+        String html = getMonthlyHTML(userName, round);
+        String filename = String.format("monthly_%s_round%d.html", userName, round);
+        try (PrintWriter writer = new PrintWriter(filename, StandardCharsets.UTF_8)) {
+            writer.println(html);
+        }
+    }
+
+    private static void printUsageAndExit() {
+        System.out.printf("Usage:\n\t%s user=nick round=176%n", Monthly.class.getName());
+        System.exit(-1);
+    }
+
+    private static String getMonthlyHTML(String userName, int round) throws IOException {
+        String request = "https://frut.zundin.se/monthly.php?userid=" + userName;
         if (round > 0) {
             request += "&roundid=" + round;
         }
@@ -57,7 +88,12 @@ public class Monthly {
         if (response.statusCode() != HttpURLConnection.HTTP_OK) {
             System.err.printf("Response statusCode: %d, request: %s%n", response.statusCode(), request);
         }
-        return fromHTML(userName, round, response.content());
+        return response.content();
+    }
+
+    public static Monthly fromZundin(String userName, int round) throws IOException {
+        String content = getMonthlyHTML(userName, round);
+        return fromHTML(userName, round, content);
     }
 
     public static Monthly fromHTML(String userName, int round, String html) {

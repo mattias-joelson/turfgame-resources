@@ -6,11 +6,9 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.joelson.turf.turfgame.util.TurfgameURLReader;
 import org.joelson.turf.util.JacksonUtil;
-import org.joelson.turf.util.URLReader.Response;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
@@ -50,12 +48,7 @@ public final class Users {
         generator.close();
         String requestJSON = stream.toString(StandardCharsets.UTF_8);
         System.out.println(requestJSON);
-        Response response = TurfgameURLReader.postTurfgameRequest(USERS_REQUEST, requestJSON);
-        if (response.statusCode() != HttpURLConnection.HTTP_OK) {
-            System.err.printf("Response statusCode: %d, request URL: %s, JSON: %s%n%n",
-                    response.statusCode(), USERS_REQUEST, requestJSON);
-        }
-        return fromJSON(response.content());
+        return fromJSON(TurfgameURLReader.postRequestAndPrintStatusCode(USERS_REQUEST, requestJSON));
     }
 
     static List<User> fromJSON(String s) throws JsonProcessingException {

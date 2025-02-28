@@ -10,7 +10,6 @@ import org.joelson.turf.util.URLReader;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -84,11 +83,7 @@ public class Monthly {
         if (round > 0) {
             request += "&roundid=" + round;
         }
-        URLReader.Response response = URLReader.getRequest(request);
-        if (response.statusCode() != HttpURLConnection.HTTP_OK) {
-            System.err.printf("Response statusCode: %d, request: %s%n", response.statusCode(), request);
-        }
-        return response.content();
+        return URLReader.getRequestAndPrintStatusCode(request);
     }
 
     public static Monthly fromZundin(String userName, int round) throws IOException {

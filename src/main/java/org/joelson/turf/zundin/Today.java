@@ -3,7 +3,6 @@ package org.joelson.turf.zundin;
 import org.joelson.turf.util.URLReader;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -25,11 +24,7 @@ public class Today {
 
     public static Today fromZundin(String userName, String date) throws IOException {
         String request = "https://frut.zundin.se/today.php?userid=" + userName + "&date=" + date;
-        URLReader.Response response = URLReader.getRequest(request);
-        if (response.statusCode() != HttpURLConnection.HTTP_OK) {
-            System.err.printf("Response statusCode: %d, request: %s%n", response.statusCode(), request);
-        }
-        return fromHTML(userName, date, response.content());
+        return fromHTML(userName, date, URLReader.getRequestAndPrintStatusCode(request));
     }
 
     public static Today fromHTML(String userName, String date, String html) {

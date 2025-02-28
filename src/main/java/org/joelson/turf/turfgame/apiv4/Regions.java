@@ -29,7 +29,7 @@ public final class Regions {
     private static String getAllRegionsJSON() throws IOException {
         Response response = TurfgameURLReader.getTurfgameRequest(REGIONS_REQUEST);
         if (response.statusCode() != HttpURLConnection.HTTP_OK) {
-            System.err.printf("Response statusCode: %d, request: %s", response.statusCode(), REGIONS_REQUEST);
+            System.err.printf("Response statusCode: %d, request: %s%n", response.statusCode(), REGIONS_REQUEST);
         }
         return response.content();
     }

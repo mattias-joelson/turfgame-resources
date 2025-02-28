@@ -27,7 +27,7 @@ public class Today {
         String request = "https://frut.zundin.se/today.php?userid=" + userName + "&date=" + date;
         URLReader.Response response = URLReader.getRequest(request);
         if (response.statusCode() != HttpURLConnection.HTTP_OK) {
-            System.err.printf("Response statusCode: %d, request: %s", response.statusCode(), request);
+            System.err.printf("Response statusCode: %d, request: %s%n", response.statusCode(), request);
         }
         return fromHTML(userName, date, response.content());
     }

@@ -21,7 +21,7 @@ public final class Rounds {
     public static List<Round> readRounds() throws IOException {
         Response response = TurfgameURLReader.getTurfgameRequest(ROUNDS_REQUEST);
         if (response.statusCode() != HttpURLConnection.HTTP_OK) {
-            System.err.printf("Response statusCode: %d, request: %s", response.statusCode(), ROUNDS_REQUEST);
+            System.err.printf("Response statusCode: %d, request: %s%n", response.statusCode(), ROUNDS_REQUEST);
         }
         return fromJSON(response.content());
     }

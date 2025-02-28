@@ -34,7 +34,7 @@ public final class Municipality {
                 userName, country, region, municipality);
         URLReader.Response response = URLReader.getRequest(request);
         if (response.statusCode() != HttpURLConnection.HTTP_OK) {
-            System.err.printf("Response statusCode: %d, request: %s", response.statusCode(), request);
+            System.err.printf("Response statusCode: %d, request: %s%n", response.statusCode(), request);
         }
         return response.content();
     }

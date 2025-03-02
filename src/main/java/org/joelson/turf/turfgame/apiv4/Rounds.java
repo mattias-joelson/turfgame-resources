@@ -17,7 +17,6 @@ public final class Rounds {
     }
 
     public static List<Round> readRounds() throws IOException {
-
         return fromJSON(TurfgameURLReader.getRequestAndPrintStatusCode(ROUNDS_REQUEST));
     }
 

@@ -4,6 +4,7 @@ import org.joelson.turf.util.URLReader;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpClient;
@@ -52,6 +53,14 @@ public final class TurfgameURLReader {
         return getTurfgameBody(requestMessage, httpResponse);
     }
 
+    public static String getRequestAndPrintStatusCode(String request) throws IOException {
+        Response response = getTurfgameRequest(request);
+        if (response.statusCode() != HttpURLConnection.HTTP_OK) {
+            System.err.printf("Response statusCode: %d, request: %s%n", response.statusCode(), request);
+        }
+        return response.content();
+    }
+
     public static Response postTurfgameRequest(String request, String json)
             throws RequestFailureException, RequestContentException {
         String requestMessage = "POST " + request + " " + json;
@@ -67,6 +76,14 @@ public final class TurfgameURLReader {
             throw new RequestFailureException(requestMessage, e);
         }
         return getTurfgameBody(requestMessage, httpResponse);
+    }
+
+    public static String postRequestAndPrintStatusCode(String request, String json) throws IOException {
+        Response response = postTurfgameRequest(request, json);
+        if (response.statusCode() != HttpURLConnection.HTTP_OK) {
+            System.err.printf("Response statusCode: %d, request: %s, json: %s%n", response.statusCode(), request, json);
+        }
+        return response.content();
     }
 
     private static Response getTurfgameBody(String request, HttpResponse<InputStream> httpResponse)

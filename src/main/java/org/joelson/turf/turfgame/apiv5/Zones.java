@@ -3,10 +3,8 @@ package org.joelson.turf.turfgame.apiv5;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.joelson.turf.turfgame.util.TurfgameURLReader;
 import org.joelson.turf.util.JacksonUtil;
-import org.joelson.turf.util.URLReader.Response;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -18,7 +16,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 
-public class Zones {
+public final class Zones {
+
     private static final String ALL_ZONES_REQUEST = "https://api.turfgame.com/v5/zones/all";
     private static final String DEFAULT_ZONES_FILENAME = "zones-all.v5.json";
 
@@ -31,11 +30,7 @@ public class Zones {
     }
 
     private static String getAllZonesJSON() throws IOException {
-        Response response = TurfgameURLReader.getTurfgameRequest(ALL_ZONES_REQUEST);
-        if (response.statusCode() != HttpURLConnection.HTTP_OK) {
-            System.err.printf("Response statusCode: %d, request: %s", response.statusCode(), ALL_ZONES_REQUEST);
-        }
-        return response.content();
+        return TurfgameURLReader.getRequestAndPrintStatusCode(ALL_ZONES_REQUEST);
     }
 
     public static void main(String[] args) throws IOException {

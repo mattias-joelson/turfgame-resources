@@ -8,20 +8,39 @@ import org.joelson.turf.turfgame.apiv5.User;
 import org.joelson.turf.turfgame.apiv5.Zone;
 import org.joelson.turf.turfgame.util.DefaultFeedContentErrorHandler;
 import org.joelson.turf.turfgame.util.FeedsReader;
+import org.joelson.turf.util.TimeUtil;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 public class FeedsV5VisitsCSVExtractor {
 
+    private record ZoneTime(int zoneId, long takeTime) {
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o instanceof ZoneTime(int id, long time)) {
+                return zoneId == id && takeTime == time;
+            }
+            return false;
+        }
+    }
+
     private final Path saveDirectory;
     private final Path[] feedFiles;
+    private final Set<ZoneTime> zoneTimes = new HashSet<>();
+    private int skips = 0;
 
     public FeedsV5VisitsCSVExtractor(Path saveDirectory, Path[] feedFiles) {
         if (!Files.exists(Objects.requireNonNull(saveDirectory)) || !Files.isDirectory(saveDirectory)) {
@@ -68,12 +87,20 @@ public class FeedsV5VisitsCSVExtractor {
                 feedsReader.handleFeedObjectPath(feedFile, FeedsV5VisitsCSVExtractor::includePath,
                         feedObject -> handleVisit(writer, feedObject));
             }
+            System.out.printf("  total skips %d%n", skips);
         }
     }
 
     private void handleVisit(PrintWriter writer, FeedObject feedObject) {
         if (feedObject instanceof FeedTakeover takeover) {
             Zone zone = Objects.requireNonNull(takeover.getZone());
+            ZoneTime zoneTime = new ZoneTime(zone.getId(),
+                    TimeUtil.turfAPITimestampToInstant(takeover.getTime()).getEpochSecond());
+            if (!zoneTimes.add(zoneTime)) {
+                //System.out.printf("  skipping %s - %d %s...%n", takeover.getTime(), zone.getId(), zone.getName());
+                skips += 1;
+                return;
+            }
             Region region = Objects.requireNonNull(zone.getRegion());
             String baseCSV = String.format("%s;%s;%d;%s;%s;%d;%s;%d;%d",
                     takeover.getTime(), countryOf(region), region.getId(), region.getName(), areaOf(region),

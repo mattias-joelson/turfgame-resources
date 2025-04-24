@@ -122,18 +122,18 @@ public class FeedsV5VisitsCSVExtractor {
         }
     }
 
-    private String dateAndTimeOf(Instant instant) {
+    public static String dateAndTimeOf(Instant instant) {
         LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, ZoneOffset.UTC);
-        return String.format("%02d%02d%4d;%02d:%02d:%02d",
+        return String.format("%02d/%02d/%4d;%02d:%02d:%02d",
                 localDateTime.getDayOfMonth(), localDateTime.getMonth().getValue(), localDateTime.getYear(),
                 localDateTime.getHour(), localDateTime.getMinute(), localDateTime.getSecond());
     }
 
-    private static String countryOf(Region region) {
+    public static String countryOf(Region region) {
         return Objects.requireNonNullElse(region.getCountry(), "");
     }
 
-    private static String areaOf(Region region) {
+    public static String areaOf(Region region) {
         Area area = region.getArea();
         if (area != null) {
             return String.format("%d;%s", area.getId(), area.getName());

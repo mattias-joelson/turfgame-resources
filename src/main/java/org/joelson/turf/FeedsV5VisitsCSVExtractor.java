@@ -14,6 +14,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -94,8 +97,8 @@ public class FeedsV5VisitsCSVExtractor {
     private void handleVisit(PrintWriter writer, FeedObject feedObject) {
         if (feedObject instanceof FeedTakeover takeover) {
             Zone zone = Objects.requireNonNull(takeover.getZone());
-            ZoneTime zoneTime = new ZoneTime(zone.getId(),
-                    TimeUtil.turfAPITimestampToInstant(takeover.getTime()).getEpochSecond());
+            Instant takeoverInstant = TimeUtil.turfAPITimestampToInstant(takeover.getTime());
+            ZoneTime zoneTime = new ZoneTime(zone.getId(), takeoverInstant.getEpochSecond());
             if (!zoneTimes.add(zoneTime)) {
                 //System.out.printf("  skipping %s - %d %s...%n", takeover.getTime(), zone.getId(), zone.getName());
                 skips += 1;
@@ -103,7 +106,7 @@ public class FeedsV5VisitsCSVExtractor {
             }
             Region region = Objects.requireNonNull(zone.getRegion());
             String baseCSV = String.format("%s;%s;%d;%s;%s;%d;%s;%d;%d",
-                    takeover.getTime(), countryOf(region), region.getId(), region.getName(), areaOf(region),
+                    dateAndTimeOf(takeoverInstant), countryOf(region), region.getId(), region.getName(), areaOf(region),
                     zone.getId(), zone.getName(), zone.getTakeoverPoints(), zone.getPointsPerHour());
             User currentOwner = Objects.requireNonNull(takeover.getCurrentOwner());
             User previousOwner = zone.getPreviousOwner();
@@ -122,6 +125,13 @@ public class FeedsV5VisitsCSVExtractor {
                 }
             }
         }
+    }
+
+    private String dateAndTimeOf(Instant instant) {
+        LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, ZoneOffset.UTC);
+        return String.format("%02d%02d%4d;%02d:%02d:%02d",
+                localDateTime.getDayOfMonth(), localDateTime.getMonth().getValue(), localDateTime.getYear(),
+                localDateTime.getHour(), localDateTime.getMinute(), localDateTime.getSecond());
     }
 
     private static String countryOf(Region region) {

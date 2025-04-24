@@ -1,11 +1,6 @@
-package org.joelson.turf;
+package org.joelson.turf.turfgame.apiv5;
 
 import org.joelson.turf.turfgame.FeedObject;
-import org.joelson.turf.turfgame.apiv5.Area;
-import org.joelson.turf.turfgame.apiv5.FeedTakeover;
-import org.joelson.turf.turfgame.apiv5.Region;
-import org.joelson.turf.turfgame.apiv5.User;
-import org.joelson.turf.turfgame.apiv5.Zone;
 import org.joelson.turf.turfgame.util.DefaultFeedContentErrorHandler;
 import org.joelson.turf.turfgame.util.FeedsReader;
 import org.joelson.turf.util.TimeUtil;

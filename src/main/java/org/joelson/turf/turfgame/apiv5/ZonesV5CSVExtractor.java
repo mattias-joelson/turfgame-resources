@@ -51,9 +51,14 @@ public class ZonesV5CSVExtractor {
         } else {
             regionString = ";;;;";
         }
-        writer.printf("%s;%s;%d;%s;%d;%d;%d;%f;%f%n",
+        writer.printf("%s;%s;%d;%s;%d;%d;%d;%f;%f%s%n",
                 FeedsV5VisitsCSVExtractor.dateAndTimeOf(creationInstant), regionString, zone.getId(),
                 zone.getName(), zone.getTakeoverPoints(), zone.getPointsPerHour(), zone.getTotalTakeovers(),
-                zone.getLatitude(), zone.getLongitude());
+                zone.getLatitude(), zone.getLongitude(), typeOf(zone));
+    }
+
+    private static String typeOf(Zone zone) {
+        Type type = zone.getType();
+        return (type != null) ? String.format(";%d;%s", type.getId(), type.getName()) : ";;";
     }
 }

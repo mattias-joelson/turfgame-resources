@@ -5,7 +5,6 @@ import org.joelson.turf.turfgame.FeedObject;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -34,8 +33,10 @@ public class FeedsVerifier {
             verifyV4Zip(path);
         } else if (path.toString().contains("v5")) {
             verifyV5Zip(path);
+        } else if (path.toString().contains("v6")) {
+            verifyV6Zip(path);
         } else {
-            throw new RuntimeException(path.toString());
+            throw new RuntimeException("Unknown version type: " + path.toString() );
         }
     }
 
@@ -48,6 +49,13 @@ public class FeedsVerifier {
 
     private static void verifyV5Zip(Path path) {
         verifyZip("v5", path, Map.of("chat", org.joelson.turf.turfgame.apiv5.FeedChat.class,
+                "medal", org.joelson.turf.turfgame.apiv5.FeedMedal.class,
+                "takeover", org.joelson.turf.turfgame.apiv5.FeedTakeover.class,
+                "zone", org.joelson.turf.turfgame.apiv5.FeedZone.class));
+    }
+
+    private static void verifyV6Zip(Path path) {
+        verifyZip("v6", path, Map.of("chat", org.joelson.turf.turfgame.apiv5.FeedChat.class,
                 "medal", org.joelson.turf.turfgame.apiv5.FeedMedal.class,
                 "takeover", org.joelson.turf.turfgame.apiv5.FeedTakeover.class,
                 "zone", org.joelson.turf.turfgame.apiv5.FeedZone.class));

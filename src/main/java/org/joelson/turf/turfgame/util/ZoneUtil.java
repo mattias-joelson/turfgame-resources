@@ -1,6 +1,6 @@
 package org.joelson.turf.turfgame.util;
 
-import org.joelson.turf.turfgame.apiv4.Zone;
+import org.joelson.turf.turfgame.Zone;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -14,11 +14,11 @@ public class ZoneUtil {
         throw new InstantiationException("Should not be instantiated!");
     }
 
-    public static double calcDistance(Zone zone1, Zone zone2) {
+    public static <Z extends Zone> double calcDistance(Z zone1, Z zone2) {
         return calcDistance(zone1.getLatitude(), zone1.getLongitude(), zone2.getLatitude(), zone2.getLongitude());
     }
 
-    public static double calcDistance(double latitude, double longitude, Zone zone) {
+    public static <Z extends Zone> double calcDistance(double latitude, double longitude, Z zone) {
         return calcDistance(latitude, longitude, zone.getLatitude(), zone.getLongitude());
     }
 
@@ -43,14 +43,14 @@ public class ZoneUtil {
         return degrees * Math.PI / 180;
     }
 
-    public static Map<String, Zone> toNameMap(Collection<Zone> zones) {
-        Map<String, Zone> zonesMap = new HashMap<>(zones.size());
+    public static <Z extends Zone> Map<String, Z> toNameMap(Collection<Z> zones) {
+        Map<String, Z> zonesMap = new HashMap<>(zones.size());
         zones.forEach(zone -> zonesMap.put(zone.getName(), zone));
         return zonesMap;
     }
 
-    public static Map<Integer, Zone> toIdMap(Collection<Zone> zones) {
-        Map<Integer, Zone> zonesMap = new HashMap<>(zones.size());
+    public static <Z extends Zone> Map<Integer, Z> toIdMap(Collection<Z> zones) {
+        Map<Integer, Z> zonesMap = new HashMap<>(zones.size());
         zones.forEach(zone -> zonesMap.put(zone.getId(), zone));
         return zonesMap;
     }

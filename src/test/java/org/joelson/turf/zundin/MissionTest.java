@@ -2,7 +2,7 @@ package org.joelson.turf.zundin;
 
 import org.joelson.turf.lundkvist.MunicipalityTest;
 import org.joelson.turf.turfgame.apiv4.Zone;
-import org.joelson.turf.turfgame.apiv4.ZoneUtil;
+import org.joelson.turf.turfgame.util.ZoneUtil;
 import org.joelson.turf.turfgame.apiv4.ZonesTest;
 import org.joelson.turf.util.FilesUtil;
 import org.joelson.turf.util.URLReaderTest;

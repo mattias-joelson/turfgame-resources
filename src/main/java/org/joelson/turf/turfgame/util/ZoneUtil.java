@@ -1,4 +1,6 @@
-package org.joelson.turf.turfgame.apiv4;
+package org.joelson.turf.turfgame.util;
+
+import org.joelson.turf.turfgame.apiv4.Zone;
 
 import java.util.Collection;
 import java.util.HashMap;

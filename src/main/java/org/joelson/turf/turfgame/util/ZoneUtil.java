@@ -45,13 +45,14 @@ public class ZoneUtil {
 
     public static <Z extends Zone> Map<String, Z> toNameMap(Collection<Z> zones) {
         Map<String, Z> zonesMap = new HashMap<>(zones.size());
-        for (Z zone : zones) {
-            Z prevZone = zonesMap.putIfAbsent(zone.getName(), zone);
-            if (prevZone != null) {
-                throw new IllegalArgumentException(String.format("Contains two zones with name %s (id %d and %d).",
-                        zone.getName(), prevZone.getId(), zone.getId()));
-            }
-        }
+//        for (Z zone : zones) {
+//            Z prevZone = zonesMap.putIfAbsent(zone.getName(), zone);
+//            if (prevZone != null) {
+//                throw new IllegalArgumentException(String.format("Contains two zones with name %s (id %d and %d).",
+//                        zone.getName(), prevZone.getId(), zone.getId()));
+//            }
+//        }
+        zones.forEach(z -> zonesMap.put(z.getName(), z));
         return zonesMap;
     }
 

@@ -27,7 +27,7 @@ public class ZonesTest {
         Set<String> zoneNames = new HashSet<>(zones.size());
         zones.forEach(zone -> zoneNames.add(zone.getName()));
         assertEquals(131468, zones.size());
-        assertEquals(131467, zoneNames.size());
+        assertEquals(131468, zoneNames.size());
         assertEquals(2, zones.stream().map(Zone::getName)
                 .filter(s -> s.contains("FäbodaSwim") || s.contains("CarlislePlaza")).count());
     }

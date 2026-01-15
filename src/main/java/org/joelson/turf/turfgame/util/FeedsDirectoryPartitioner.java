@@ -36,6 +36,11 @@ public class FeedsDirectoryPartitioner {
             String firstUntil = getFirstUntil(feedpath);
             if (firstUntil == null) {
                 exitWithErrorMessage("No first date could be found in feedpath " + feedpath);
+            } else {
+                String today = LocalDate.now().toString();
+                if (firstUntil.compareTo(today) >= 0) {
+                    exitWithErrorMessage("Have reached present week - " + firstUntil + " is after " + today);
+                }
             }
             FeedsPartitioner.main(new String[] {
                     "-feedpath=" + feedpath,

@@ -45,7 +45,7 @@ public class FeedsDirectoryPartitioner {
                     exitWithErrorMessage("Have reached present week - " + firstUntil + " is after " + today);
                 }
             }
-			dates.add(firstUntil);
+            dates.add(firstUntil);
             FeedsPartitioner.main(new String[] {
                     "-feedpath=" + feedpath,
                     "-version=" + version,
@@ -53,9 +53,9 @@ public class FeedsDirectoryPartitioner {
                     "-until=" + firstUntil
             });
         }
-		for (String date: dates) {
-			System.out.println("date " + date);
-		}
+        for (String date : dates) {
+            System.out.println("date " + date);
+        }
     }
 
     private static boolean isEmpty(String pathString) {

@@ -6,7 +6,9 @@ import java.nio.file.Path;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.ChronoField;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -32,6 +34,7 @@ public class FeedsDirectoryPartitioner {
                     FeedsDirectoryPartitioner.class.getName());
         }
 
+        List<String> dates = new ArrayList<>();
         while (!isEmpty(feedpath)) {
             String firstUntil = getFirstUntil(feedpath);
             if (firstUntil == null) {
@@ -42,6 +45,7 @@ public class FeedsDirectoryPartitioner {
                     exitWithErrorMessage("Have reached present week - " + firstUntil + " is after " + today);
                 }
             }
+			dates.add(firstUntil);
             FeedsPartitioner.main(new String[] {
                     "-feedpath=" + feedpath,
                     "-version=" + version,
@@ -49,6 +53,9 @@ public class FeedsDirectoryPartitioner {
                     "-until=" + firstUntil
             });
         }
+		for (String date: dates) {
+			System.out.println("date " + date);
+		}
     }
 
     private static boolean isEmpty(String pathString) {

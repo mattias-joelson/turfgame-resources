@@ -8,6 +8,7 @@ import java.time.temporal.TemporalAccessor;
 final class Parser {
 
     static final String ZONE_NAME_LINK_TAG = "<a href='zone.php?zoneid=";
+    static final String ZONE2_NAME_LINK_TAG = "<a href='zone2.php?zoneid=";
     static final String TABLE_CELL_TAG = "<td>";
     static final String RIGHT_TABLE_CELL_TAG = "<td align='right'>";
     static final String LEFT_TABLE_CELL_TAG = "<td align='left'>";

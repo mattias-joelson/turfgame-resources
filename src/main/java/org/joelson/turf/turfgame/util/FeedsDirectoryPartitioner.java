@@ -42,7 +42,8 @@ public class FeedsDirectoryPartitioner {
             } else {
                 String today = LocalDate.now().toString();
                 if (firstUntil.compareTo(today) >= 0) {
-                    exitWithErrorMessage("Have reached present week - " + firstUntil + " is after " + today);
+                    System.out.printf("Have reached present week - %s is after %s.%n", firstUntil, today);
+                    break;
                 }
             }
             dates.add(firstUntil);

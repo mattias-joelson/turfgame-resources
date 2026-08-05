@@ -17,7 +17,7 @@ public class TakenZoneTest {
     @Test
     public void takenZonesTest() throws Exception {
         Map<String, Integer> takenZones = readTakenZones();
-        assertEquals(4642, takenZones.size());
+        assertEquals(4700, takenZones.size());
         assertTrue(takenZones.containsKey("Bockholmen"));
         assertEquals(1, (long) takenZones.get("Lambastranden"));
     }

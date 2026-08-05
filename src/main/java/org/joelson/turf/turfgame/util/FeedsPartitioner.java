@@ -137,7 +137,7 @@ public class FeedsPartitioner {
         }
     }
 
-    private static String getDate(Path path) {
+    static String getDate(Path path) {
         String filename = path.getFileName().toString();
         int startIndex = -1;
         for (int i = 0; i < filename.length(); i += 1) {
@@ -163,4 +163,3 @@ public class FeedsPartitioner {
         throw new NumberFormatException("Bad date format: " + filename.substring(startIndex, startIndex + 10));
     }
 }
-

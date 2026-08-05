@@ -12,8 +12,6 @@ public final class TakenZones {
     private static final String PROPERTIES_PROPERTY = "properties";
     private static final String TITLE_PROPERTY = "title";
     private static final String COUNT_PROPERTY = "count";
-    private static final char ARRAY_START = '[';
-    private static final char ARRAY_END = ']';
 
     private TakenZones() throws InstantiationException {
         throw new InstantiationException("Should not be instantiated!");
@@ -49,10 +47,9 @@ public final class TakenZones {
     }
 
     private static String getZonesJSONSting(String s) {
-        int startIndex = s.indexOf("\"features\": ");
-        startIndex = s.indexOf(ARRAY_START, startIndex);
-        int endIndex = s.indexOf("});", startIndex);
-        endIndex = s.lastIndexOf(ARRAY_END, endIndex) + 1;
-        return s.substring(startIndex, endIndex);
+        int startIndex = s.indexOf("\"features\":");
+        startIndex = s.indexOf("[", startIndex);
+        int endIndex = s.indexOf("}]", startIndex);
+        return s.substring(startIndex, endIndex + 2);
     }
 }

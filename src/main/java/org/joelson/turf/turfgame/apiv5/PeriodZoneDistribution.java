@@ -37,6 +37,10 @@ public class PeriodZoneDistribution {
                     PeriodZoneDistribution.class.getName());
             System.exit(-1);
         }
+        if (dateToInstant(args[0]).isAfter(dateToInstant(args[1]))) {
+            System.err.printf("Date %s is after %s, switch order?", args[0], args[1]);
+            System.exit(-1);
+        }
         new PeriodZoneDistribution(dateToInstant(args[0]), dateToInstant(args[1]),
                 Path.of(args[2])).printDistribution();
     }

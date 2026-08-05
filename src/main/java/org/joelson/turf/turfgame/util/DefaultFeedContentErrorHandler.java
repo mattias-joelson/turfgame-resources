@@ -60,9 +60,9 @@ public class DefaultFeedContentErrorHandler implements FeedContentErrorHandler {
             message("*** Unhandled exception type %s for path %s lacking content.",
                     e.getClass().getName(), path);
         } else {
-            String partOfContent = content.substring(0, 20);
-            message("*** Unhandled exception type %s for path %s having content starting with \"%s\"",
-                    e.getClass().getName(), path, partOfContent);
+            String partOfContent = content.substring(0, Math.min(20, content.length()));
+            message("*** Unhandled exception type %s for path %s having content %s\"%s\"",
+                    e.getClass().getName(), path, (content.length() <= 20) ? "" : "starting with ", partOfContent);
         }
     }
 

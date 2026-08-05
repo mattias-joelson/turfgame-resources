@@ -34,6 +34,9 @@ public class MonthlyZone {
 
     public static MonthlyZone fromHTML(String html) {
         StringPosition namePosition = Parser.getString(html, Parser.ZONE_NAME_LINK_TAG, new StringPosition("", 0));
+        if (namePosition.stringValue().isEmpty()) {
+            namePosition = Parser.getString(html, Parser.ZONE2_NAME_LINK_TAG, new StringPosition("", 0));
+        }
         StringPosition municipalityPosition = Parser.getString(html, Parser.TABLE_CELL_TAG, namePosition);
         StringPosition tpPosition = Parser.getString(html, Parser.RIGHT_TABLE_CELL_TAG, municipalityPosition);
         StringPosition pphPosition = Parser.getString(html, Parser.RIGHT_TABLE_CELL_TAG, tpPosition);

@@ -25,6 +25,9 @@ public class PeriodZoneDistribution {
     public PeriodZoneDistribution(Instant from, Instant to, Path zonesPath) {
         this.from = Objects.requireNonNull(from);
         this.to = Objects.requireNonNull(to);
+        if (this.from.isAfter(this.to)) {
+            throw new IllegalArgumentException("Date " + this.from + " is after " + this.to + ", switch order?");
+        }
         if (!Files.exists(Objects.requireNonNull(zonesPath)) || !Files.isRegularFile(zonesPath)) {
             throw new IllegalArgumentException("zonesPath " + zonesPath + " is not a file.");
         }
@@ -35,10 +38,6 @@ public class PeriodZoneDistribution {
         if (args.length != 3) {
             System.err.printf("Usage:%n\t%s 2025-01-05 2025-05-04 zones-all.v5.json",
                     PeriodZoneDistribution.class.getName());
-            System.exit(-1);
-        }
-        if (dateToInstant(args[0]).isAfter(dateToInstant(args[1]))) {
-            System.err.printf("Date %s is after %s, switch order?", args[0], args[1]);
             System.exit(-1);
         }
         new PeriodZoneDistribution(dateToInstant(args[0]), dateToInstant(args[1]),
